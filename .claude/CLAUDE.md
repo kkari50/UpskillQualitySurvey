@@ -6,6 +6,20 @@
 - **Tech Stack:** Next.js 14 (App Router), Supabase, Tailwind CSS, shadcn/ui, Vercel
 - **Status:** Phase 0 - Pre-Development Setup
 
+## GitHub Repository
+
+- **Owner:** `kkari50`
+- **Repo:** `WebAppTemplate`
+- **URL:** https://github.com/kkari50/WebAppTemplate
+- **Local folder:** `UpskillQualitySurvey` (differs from repo name)
+- **Default branch:** `main`
+
+When using GitHub MCP tools, always use:
+```
+owner: "kkari50"
+repo: "WebAppTemplate"
+```
+
 ## Development Principles
 
 ### Test-Driven Development (TDD) - MANDATORY
@@ -93,9 +107,73 @@ npm run test:e2e # Run E2E tests
 npm run start    # Start production server
 ```
 
+## MCP Servers
+
+The following MCP servers are configured in `.mcp.json` for enhanced capabilities:
+
+| Server | Package | Use When |
+|--------|---------|----------|
+| **supabase** | `@supabase/mcp-server-supabase` | Database queries, table operations, migrations |
+| **playwright** | `@anthropic/mcp-playwright` | Browser automation, E2E testing, screenshots |
+| **context7** | `@upstash/context7-mcp` | Looking up library documentation (React, Next.js, Tailwind, etc.) |
+| **sequential-thinking** | `@modelcontextprotocol/server-sequential-thinking` | Complex multi-step reasoning, breaking down problems |
+| **github** | `@modelcontextprotocol/server-github` | PR operations, issues, repo management |
+| **filesystem** | `@modelcontextprotocol/server-filesystem` | Advanced file operations within project |
+
+### When to Use Each MCP Server
+
+**Supabase MCP** - Prefer for:
+- Running SQL queries directly
+- Creating/modifying tables
+- Checking database state
+- Debugging data issues
+
+**Playwright MCP** - Prefer for:
+- E2E test development
+- Visual regression testing
+- Taking screenshots of UI states
+- Browser automation tasks
+
+**Context7 MCP** - Prefer for:
+- Looking up latest API documentation
+- Checking library-specific patterns (shadcn/ui, Tailwind, Next.js)
+- Finding code examples from official docs
+
+**Sequential Thinking MCP** - Prefer for:
+- Planning complex implementations
+- Breaking down multi-step tasks
+- Analyzing architectural decisions
+
+**GitHub MCP** - Prefer for:
+- Creating/reviewing PRs
+- Managing issues
+- Checking CI/CD status
+- Repository operations
+
+Always use these values for this project:
+```javascript
+owner: "kkari50"
+repo: "WebAppTemplate"
+```
+
+**Filesystem MCP** - Prefer for:
+- Batch file operations
+- Directory tree operations
+- File watching/monitoring
+
+### MCP Server Configuration
+
+Environment variables required (in `.env.local`):
+```bash
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+GITHUB_TOKEN=ghp_your_github_token
+```
+
 ## Database
 
 - Supabase project: `hrimxqdjbhlraadgowcf` (configured in `.env.local`)
+- Use **Supabase MCP** for direct database operations
 - Run migrations: `npx supabase db push` or execute SQL files in Supabase dashboard
 - Generate types: `npx supabase gen types typescript --project-id hrimxqdjbhlraadgowcf > src/types/database.ts`
 - Migrations: `supabase/migrations/*.sql`
