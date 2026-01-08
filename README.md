@@ -1,27 +1,31 @@
-# Web App Template
+# Upskill Quality Survey
 
-A starter template for building web applications with Next.js, Supabase, and Vercel.
+A 27-question quality assessment tool for ABA agencies with population benchmarking.
+
+## Features
+
+- 27 research-backed Yes/No questions across 5 categories
+- Instant results with circular progress visualizations
+- Population comparison with percentile ranking
+- Category-by-category breakdown with gap analysis
+- Mobile-responsive design
 
 ## Tech Stack
 
 - **Frontend:** Next.js 14 (App Router)
-- **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS, shadcn/ui
 - **Database:** Supabase (PostgreSQL)
-- **Authentication:** Supabase Auth
 - **Hosting:** Vercel
 - **State Management:** Zustand
 - **Validation:** Zod
-- **Icons:** Lucide React
 
 ## Getting Started
 
-### 1. Use This Template
-
-Click "Use this template" on GitHub or clone the repository:
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/WebAppTemplate.git my-project
-cd my-project
+git clone https://github.com/kkari50/UpskillQualitySurvey.git
+cd UpskillQualitySurvey
 ```
 
 ### 2. Install Dependencies
@@ -30,17 +34,15 @@ cd my-project
 npm install
 ```
 
-### 3. Set Up Supabase
+### 3. Set Up Environment
 
-1. Create a project at [supabase.com](https://supabase.com)
-2. Copy your project URL and keys from Settings > API
-3. Create `.env.local` from the template:
+Create `.env.local` with your Supabase credentials:
 
 ```bash
-cp .env.example .env.local
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
-
-4. Fill in your Supabase credentials
 
 ### 4. Start Development
 
@@ -48,35 +50,39 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view your app.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+## Survey Categories
+
+| Category | Questions | Focus Area |
+|----------|-----------|------------|
+| Daily Sessions | 7 | Session preparation and delivery |
+| Treatment Fidelity | 5 | Protocol adherence |
+| Data Analysis | 5 | Data collection and analysis practices |
+| Caregiver Guidance | 6 | Family involvement and training |
+| Supervision | 4 | Staff oversight and development |
+
+## Scoring
+
+- **Strong (85%+):** Emerald/green indicators
+- **Moderate (60-84%):** Amber/yellow indicators
+- **Needs Improvement (<60%):** Rose/red indicators
 
 ## Project Structure
 
 ```
-├── .claude/            # Claude Code configuration
-├── .github/workflows/  # CI/CD pipelines
 ├── context/            # Project documentation
-│   ├── requirements.md
-│   ├── architecture.md
-│   ├── style-guide.md
-│   └── api-design.md
-├── public/             # Static assets
 ├── src/
-│   ├── app/            # Next.js App Router
+│   ├── app/            # Next.js App Router pages
 │   ├── components/     # React components
-│   ├── hooks/          # Custom hooks
-│   ├── lib/            # Utilities
-│   ├── data/           # Static data
-│   └── types/          # TypeScript types
+│   │   ├── results/    # Results page components
+│   │   ├── survey/     # Survey flow components
+│   │   └── ui/         # shadcn/ui primitives
+│   ├── data/           # Questions and categories
+│   ├── lib/            # Utilities and validation
+│   └── stores/         # Zustand stores
 └── supabase/           # Database migrations
 ```
-
-## Development Workflow
-
-1. **Plan:** Document requirements in `context/requirements.md`
-2. **Design:** Define architecture in `context/architecture.md`
-3. **Build:** Follow the style guide in `context/style-guide.md`
-4. **Deploy:** Push to `main` for automatic Vercel deployment
 
 ## Commands
 
@@ -84,25 +90,8 @@ Open [http://localhost:3000](http://localhost:3000) to view your app.
 |---------|-------------|
 | `npm run dev` | Start development server |
 | `npm run build` | Create production build |
-| `npm run start` | Start production server |
+| `npm run test` | Run tests |
 | `npm run lint` | Run ESLint |
-
-## Deployment
-
-This template is optimized for Vercel:
-
-1. Connect your GitHub repo to Vercel
-2. Add environment variables in Vercel Dashboard
-3. Deploy automatically on push to `main`
-
-## Documentation
-
-See `PROJECT_WORKFLOW_TEMPLATE.md` for the complete workflow guide including:
-
-- MCP server setup
-- Claude Code configuration
-- Security checklist
-- Supabase commands
 
 ## License
 

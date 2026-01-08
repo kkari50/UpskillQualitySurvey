@@ -9,15 +9,14 @@
 ## GitHub Repository
 
 - **Owner:** `kkari50`
-- **Repo:** `WebAppTemplate`
-- **URL:** https://github.com/kkari50/WebAppTemplate
-- **Local folder:** `UpskillQualitySurvey` (differs from repo name)
+- **Repo:** `UpskillQualitySurvey`
+- **URL:** https://github.com/kkari50/UpskillQualitySurvey
 - **Default branch:** `main`
 
 When using GitHub MCP tools, always use:
 ```
 owner: "kkari50"
-repo: "WebAppTemplate"
+repo: "UpskillQualitySurvey"
 ```
 
 ## Development Principles
