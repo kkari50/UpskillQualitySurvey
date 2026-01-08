@@ -1,12 +1,28 @@
-import { z } from 'zod';
+/**
+ * Validation Schemas
+ *
+ * Re-export validation schemas from organized modules.
+ * Import from this file for convenience.
+ */
 
-// Add your Zod schemas here
-
-// Example schema
-export const exampleSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(255),
-  email: z.string().email('Invalid email address'),
-  message: z.string().max(1000).optional(),
-});
-
-export type ExampleInput = z.infer<typeof exampleSchema>;
+// Re-export survey validation schemas
+export {
+  userRoles,
+  leadSchema,
+  surveyAnswersSchema,
+  surveySubmissionSchema,
+  emailCaptureSchema,
+  statsQuerySchema,
+  percentileQuerySchema,
+  resultsTokenSchema,
+  validateAnswer,
+  formatZodErrors,
+  type UserRole,
+  type LeadInput,
+  type SurveyAnswersInput,
+  type SurveySubmissionInput,
+  type EmailCaptureInput,
+  type StatsQueryInput,
+  type PercentileQueryInput,
+  type ResultsTokenInput,
+} from './validation/survey'
