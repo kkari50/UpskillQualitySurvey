@@ -26,21 +26,22 @@ This is the source of truth for all project tasks. Update status as work progres
 - [x] Sync role enum between content.md and api-design.md
 
 ### Database Migrations (Blocks All API Work)
-- [ ] Create `supabase/migrations/001_initial_schema.sql`
-- [ ] Create `supabase/migrations/002_materialized_views.sql`
-- [ ] Create `supabase/migrations/003_rls_policies.sql`
-- [ ] Create `supabase/migrations/004_test_data_cleanup.sql` (pg_cron job)
+- [x] Create `supabase/migrations/001_initial_schema.sql`
+- [x] Create `supabase/migrations/002_materialized_views.sql`
+- [x] Create `supabase/migrations/003_rls_policies.sql`
+- [x] Create `supabase/migrations/004_test_data_cleanup.sql` (pg_cron job)
 
 ### Legal Content (Required Before Launch)
 - [ ] Write Privacy Policy page content
 - [ ] Write Terms of Service page content
 
 ### Implementation Utilities (Blocks API/Components)
-- [ ] Create `src/lib/scoring.ts` - Score calculation logic
-- [ ] Create `src/lib/validation/survey.ts` - Zod schemas
-- [ ] Create `src/lib/supabase/client.ts` - Browser client
-- [ ] Create `src/lib/supabase/server.ts` - Server client (service role)
-- [ ] Create `src/stores/survey.ts` - Zustand store definition
+- [x] Create `src/lib/scoring.ts` - Score calculation logic
+- [x] Create `src/lib/validation/survey.ts` - Zod schemas
+- [x] Create `src/lib/supabase/client.ts` - Browser client
+- [x] Create `src/lib/supabase/server.ts` - Server client
+- [x] Create `src/lib/supabase/service.ts` - Service role client (for API routes)
+- [x] Create `src/stores/survey.ts` - Zustand store definition
 
 ---
 
@@ -64,7 +65,7 @@ This is the source of truth for all project tasks. Update status as work progres
 - [x] Create `src/lib/constants/categories.ts` - Category metadata
 
 ### Database Setup
-- [ ] Create Supabase project
+- [x] Create Supabase project
 - [ ] Run migrations
 - [ ] Generate TypeScript types from schema
 
@@ -80,15 +81,15 @@ This is the source of truth for all project tasks. Update status as work progres
 ## Testing Infrastructure (TDD Requirement)
 
 ### Test Setup
-- [ ] Configure Vitest for unit/integration tests
-- [ ] Configure React Testing Library for component tests
-- [ ] Configure Playwright for E2E tests
-- [ ] Create test utilities and mock helpers
+- [x] Configure Vitest for unit/integration tests
+- [x] Configure React Testing Library for component tests
+- [x] Configure Playwright for E2E tests
+- [x] Create test utilities and mock helpers
 - [ ] Set up test database seeding scripts
 
 ### Test File Structure
-- [ ] Define test directory structure (`__tests__/`, `*.test.ts` patterns)
-- [ ] Create mock data fixtures for surveys
+- [x] Define test directory structure (`src/test/`, `*.test.ts` patterns)
+- [x] Create mock data fixtures for surveys
 - [ ] Create mock data fixtures for API responses
 - [ ] Document testing conventions
 
@@ -126,12 +127,12 @@ This is the source of truth for all project tasks. Update status as work progres
 ## Phase 1: V1 Core Implementation
 
 ### Project Scaffolding
-- [ ] Initialize Next.js 14 project with App Router
-- [ ] Install and configure Tailwind CSS
+- [x] Initialize Next.js 14 project with App Router
+- [x] Install and configure Tailwind CSS
 - [ ] Initialize shadcn/ui (`npx shadcn@latest init`)
 - [ ] Install required shadcn components
-- [ ] Set up project folder structure per architecture.md
-- [ ] Configure ESLint and Prettier
+- [x] Set up project folder structure per architecture.md
+- [x] Configure ESLint and Prettier
 - [ ] Set up Husky pre-commit hooks
 
 ### Landing Page
@@ -144,8 +145,8 @@ This is the source of truth for all project tasks. Update status as work progres
 - [ ] Add UpskillABA branding/footer
 
 ### Survey Interface
-- [ ] Create survey state management (Zustand store)
-- [ ] Implement localStorage backup for answers
+- [x] Create survey state management (Zustand store)
+- [x] Implement localStorage backup for answers
 - [ ] Create QuestionCard component
 - [ ] Create ResponseButtons component (Yes/No)
 - [ ] Create ProgressBar component
