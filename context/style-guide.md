@@ -293,44 +293,99 @@ Brief interstitial between survey sections:
 
 ## 7. Results Components
 
-### 7.1 Overall Score Display (PROMINENT)
-The score is the hero of the results page:
+### 7.1 Overall Score Display (Circular Progress Ring)
+The score is the hero of the results page, displayed as a large circular progress ring matching the category breakdown style:
 
 ```tsx
-<Card className="text-center p-8 md:p-12 shadow-lg border-0">
-  {/* Large score number */}
-  <div className="mb-4">
-    <span className="text-7xl md:text-8xl font-bold text-neutral-900">
-      {score}
-    </span>
-    <span className="text-4xl md:text-5xl font-light text-neutral-400">
-      /27
-    </span>
-  </div>
+// HeroCircularProgress component - larger version for overall score
+function HeroCircularProgress({ percentage, strokeColor }) {
+  const size = 144; // 144px diameter
+  const strokeWidth = 10;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (percentage / 100) * circumference;
 
-  {/* Percentage and label */}
-  <div className="mb-6">
-    <span className={`text-2xl font-semibold ${scoreColorClass}`}>
-      {percentage}%
-    </span>
-    <span className="text-lg text-neutral-600 ml-2">
-      — {performanceLabel}
-    </span>
-  </div>
-
-  {/* Visual progress bar */}
-  <div className="max-w-md mx-auto">
-    <div className="h-4 bg-neutral-100 rounded-full overflow-hidden">
-      <div
-        className={`h-full rounded-full transition-all duration-700 ${scoreBgClass}`}
-        style={{ width: `${percentage}%` }}
-      />
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg className="transform -rotate-90" width={size} height={size}>
+        {/* Background circle */}
+        <circle cx={size/2} cy={size/2} r={radius} fill="none"
+          strokeWidth={strokeWidth} className="stroke-slate-100" />
+        {/* Progress circle */}
+        <circle cx={size/2} cy={size/2} r={radius} fill="none"
+          strokeWidth={strokeWidth} strokeLinecap="round"
+          className={cn("transition-all duration-700 ease-out", strokeColor)}
+          style={{ strokeDasharray: circumference, strokeDashoffset: offset }} />
+      </svg>
+      {/* Center text */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-4xl font-bold text-foreground">{percentage}%</span>
+      </div>
     </div>
-  </div>
-</Card>
+  );
+}
+
+// Stroke colors per Section 3.4
+const strokeColors = {
+  emerald: "stroke-emerald-500", // Strong (85%+)
+  amber: "stroke-amber-500",     // Moderate (60-84%)
+  rose: "stroke-rose-400",       // Needs Improvement (<60%)
+};
 ```
 
-### 7.2 Category Score Cards
+**Specifications:**
+- Size: 144px diameter (larger than category rings at 80px)
+- Stroke width: 10px
+- Animation: 700ms ease-out transition
+- Center text: 4xl font bold
+
+### 7.2 Category Breakdown (Circular Progress)
+
+Category scores use circular progress rings (donut charts) for a modern, clean visualization. Colors follow the score threshold colors from Section 3.4.
+
+```tsx
+// CircularProgress component with score-based coloring
+function CircularProgress({ percentage, size = 80, strokeWidth = 8 }) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (percentage / 100) * circumference;
+
+  // Color based on score per Section 3.4
+  const getStrokeColor = () => {
+    if (percentage >= 85) return "stroke-emerald-500"; // Strong
+    if (percentage >= 60) return "stroke-amber-500";   // Moderate
+    return "stroke-rose-400";                          // Needs Improvement
+  };
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg className="transform -rotate-90" width={size} height={size}>
+        <circle cx={size/2} cy={size/2} r={radius} fill="none"
+          stroke="currentColor" strokeWidth={strokeWidth}
+          className="text-slate-100" />
+        <circle cx={size/2} cy={size/2} r={radius} fill="none"
+          strokeWidth={strokeWidth} strokeLinecap="round"
+          className={cn("transition-all duration-700", getStrokeColor())}
+          style={{ strokeDasharray: circumference, strokeDashoffset: offset }} />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-lg font-bold">{percentage}%</span>
+      </div>
+    </div>
+  );
+}
+
+// Badge colors use soft backgrounds (Section 3.2)
+const levelConfig = {
+  strong: { badge: "Strong", bgColor: "bg-emerald-100 text-emerald-700" },
+  moderate: { badge: "Moderate", bgColor: "bg-amber-100 text-amber-700" },
+  "needs-improvement": { badge: "Focus Area", bgColor: "bg-rose-100 text-rose-600" },
+};
+```
+
+**Layout:** 5-column grid on desktop (lg:grid-cols-5), 3 on tablet, 2 on mobile.
+
+### 7.2.1 Category Score Cards (Alternative - Bar Style)
 ```tsx
 <Card className={`border-l-4 ${borderColorClass}`}>
   <CardContent className="p-6">

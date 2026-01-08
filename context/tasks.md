@@ -66,8 +66,8 @@ This is the source of truth for all project tasks. Update status as work progres
 
 ### Database Setup
 - [x] Create Supabase project
-- [ ] Run migrations
-- [ ] Generate TypeScript types from schema
+- [x] Run migrations
+- [x] Generate TypeScript types from schema
 
 ### Environment Setup
 - [x] Create `.env.example` with required variables
@@ -129,59 +129,59 @@ This is the source of truth for all project tasks. Update status as work progres
 ### Project Scaffolding
 - [x] Initialize Next.js 14 project with App Router
 - [x] Install and configure Tailwind CSS
-- [ ] Initialize shadcn/ui (`npx shadcn@latest init`)
-- [ ] Install required shadcn components
+- [x] Initialize shadcn/ui (`npx shadcn@latest init`)
+- [x] Install required shadcn components
 - [x] Set up project folder structure per architecture.md
 - [x] Configure ESLint and Prettier
-- [ ] Set up Husky pre-commit hooks
+- [x] Set up Husky pre-commit hooks
 
 ### Landing Page
-- [ ] Create landing page layout
-- [ ] Implement hero section with value proposition
-- [ ] Add trust signals (27 questions, ~5 min, 5 categories)
-- [ ] Add privacy badge
-- [ ] Implement "Start Assessment" CTA
-- [ ] Mobile responsive design
-- [ ] Add UpskillABA branding/footer
+- [x] Create landing page layout
+- [x] Implement hero section with value proposition
+- [x] Add trust signals (27 questions, ~5 min, 5 categories)
+- [x] Add privacy badge
+- [x] Implement "Start Assessment" CTA
+- [x] Mobile responsive design
+- [x] Add UpskillABA branding/footer
 
 ### Survey Interface
 - [x] Create survey state management (Zustand store)
 - [x] Implement localStorage backup for answers
-- [ ] Create QuestionCard component
-- [ ] Create ResponseButtons component (Yes/No)
-- [ ] Create ProgressBar component
-- [ ] Create NavigationButtons component (Back/Next)
-- [ ] Create CategoryTransition component
+- [x] Create QuestionCard component
+- [x] Create ResponseButtons component (Yes/No)
+- [x] Create ProgressBar component
+- [x] Create NavigationButtons component (Back/Next)
+- [x] Create CategoryTransition component
 - [ ] Implement keyboard navigation (arrow keys, Enter)
 - [ ] Add slide animations (Framer Motion)
-- [ ] Mobile responsive design
+- [x] Mobile responsive design
 
 ### Email Capture
-- [ ] Create EmailCapture form component
-- [ ] Implement email validation
-- [ ] Add optional name field
-- [ ] Add optional role dropdown
-- [ ] Add marketing consent checkbox
-- [ ] Add privacy policy link
-- [ ] Form submission handling
+- [x] Create EmailCapture form component
+- [x] Implement email validation
+- [x] Add optional name field
+- [x] Add optional role dropdown
+- [x] Add marketing consent checkbox
+- [x] Add privacy policy link
+- [x] Form submission handling
 
 ### API Routes
-- [ ] Implement `POST /api/survey/submit`
-- [ ] Implement `GET /api/stats`
-- [ ] Implement `GET /api/stats/percentile`
-- [ ] Implement `GET /api/health`
+- [x] Implement `POST /api/survey/submit`
+- [x] Implement `GET /api/stats`
+- [x] Implement `GET /api/stats/percentile`
+- [x] Implement `GET /api/health`
 
 ### Results Dashboard
-- [ ] Create results page route (`/results/[token]`)
-- [ ] Implement OverallScoreCard component
-- [ ] Implement CategoryScoreCard component
+- [x] Create results page route (`/results/[token]`)
+- [x] Implement OverallScoreCard component (ScoreOverview)
+- [x] Implement CategoryScoreCard component (CategoryBreakdown)
 - [ ] Implement CategoryComparisonChart (Recharts)
-- [ ] Implement DetailedBreakdown accordion
-- [ ] Implement QuestionRow with population comparison
-- [ ] Add percentile rank display
+- [x] Implement DetailedBreakdown accordion (GapsList)
+- [x] Implement PopulationComparison component
+- [x] Add percentile rank display
 - [ ] Implement share URL functionality
 - [ ] Add "Retake Survey" button
-- [ ] Mobile responsive design
+- [x] Mobile responsive design
 
 ### Security & Performance
 - [ ] Configure security headers in next.config.ts

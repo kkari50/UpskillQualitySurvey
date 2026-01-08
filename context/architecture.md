@@ -21,7 +21,7 @@
 |-------|------------|-------|
 | Frontend | Next.js 14 (App Router) | V1 |
 | UI Components | shadcn/ui + Radix UI | V1 |
-| Styling | Tailwind CSS | V1 |
+| Styling | Tailwind CSS (mobile-first) | V1 |
 | State | Zustand + localStorage backup | V1 |
 | Database | Supabase (PostgreSQL) | V1 |
 | Validation | Zod | V1 |
@@ -33,6 +33,43 @@
 | Email | Resend | V2 |
 | Background Jobs | Inngest | V2 |
 | Payments | Stripe | V2 |
+
+---
+
+## Mobile-First Design Principles
+
+**All UI development must follow mobile-first approach.**
+
+### Breakpoint Strategy
+| Breakpoint | Width | Target Device |
+|------------|-------|---------------|
+| Default | 0px | Mobile phones (design starts here) |
+| `sm` | 640px | Large phones, small tablets |
+| `md` | 768px | Tablets |
+| `lg` | 1024px | Laptops |
+| `xl` | 1280px | Desktops |
+
+### Implementation Rules
+1. Write mobile styles first (no prefix), add larger breakpoints after
+2. Use `flex-col` → `sm:flex-row` for stack-to-row layouts
+3. Single column grids on mobile, multi-column on larger screens
+4. Touch targets minimum 44x44px (use `min-h-11 min-w-11`)
+5. Test on real devices, not just browser DevTools
+
+### Layout Patterns
+```tsx
+// Stack to row
+"flex flex-col sm:flex-row"
+
+// Responsive grid (1 col mobile → 2 tablet → 5 desktop)
+"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
+
+// Responsive padding
+"p-4 md:p-6 lg:p-8"
+
+// Hide on mobile, show on desktop
+"hidden lg:block"
+```
 
 ---
 

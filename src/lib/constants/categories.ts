@@ -6,6 +6,8 @@
 
 import type { CategoryId } from '@/data/questions/schema'
 
+export type { CategoryId }
+
 /**
  * Category display order (for rendering in UI)
  */
@@ -16,6 +18,17 @@ export const CATEGORY_ORDER: CategoryId[] = [
   'caregiver_guidance',
   'supervision',
 ]
+
+/**
+ * Category display metadata
+ */
+export const CATEGORIES: Record<CategoryId, { displayName: string; shortName: string }> = {
+  daily_sessions: { displayName: 'Daily Sessions', shortName: 'Sessions' },
+  treatment_fidelity: { displayName: 'Treatment Fidelity', shortName: 'Fidelity' },
+  data_analysis: { displayName: 'Data Analysis', shortName: 'Data' },
+  caregiver_guidance: { displayName: 'Caregiver Guidance', shortName: 'Caregiver' },
+  supervision: { displayName: 'Supervision', shortName: 'Supervision' },
+}
 
 /**
  * Category icons (Lucide icon names)

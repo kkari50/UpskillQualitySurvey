@@ -24,6 +24,43 @@ export const userRoles = [
 export type UserRole = (typeof userRoles)[number]
 
 /**
+ * Agency size options
+ */
+export const agencySizes = [
+  'solo_small',   // 1-10 staff
+  'medium',       // 11-50 staff
+  'large',        // 51-200 staff
+  'enterprise',   // 200+ staff
+] as const
+
+export type AgencySize = (typeof agencySizes)[number]
+
+/**
+ * Primary service setting options
+ */
+export const primarySettings = [
+  'in_home',
+  'clinic',
+  'school',
+  'hybrid',
+] as const
+
+export type PrimarySetting = (typeof primarySettings)[number]
+
+/**
+ * US States
+ */
+export const usStates = [
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC',
+] as const
+
+export type USState = (typeof usStates)[number]
+
+/**
  * Question ID format: 2-3 lowercase letters followed by underscore and 3 digits
  * Examples: ds_001, tf_002, cg_006, sup_001
  */
@@ -52,6 +89,9 @@ export const leadSchema = z.object({
     .optional()
     .nullable(),
   role: z.enum(userRoles).optional().nullable(),
+  agencySize: z.enum(agencySizes).optional().nullable(),
+  primarySetting: z.enum(primarySettings).optional().nullable(),
+  state: z.enum(usStates).optional().nullable(),
   marketingConsent: z.boolean().default(false),
 })
 
@@ -106,6 +146,9 @@ export const emailCaptureSchema = z.object({
     .optional()
     .or(z.literal('')),
   role: z.enum(userRoles).optional().or(z.literal('')),
+  agencySize: z.enum(agencySizes).optional().or(z.literal('')),
+  primarySetting: z.enum(primarySettings).optional().or(z.literal('')),
+  state: z.enum(usStates).optional().or(z.literal('')),
   marketingConsent: z.boolean().default(false),
 })
 

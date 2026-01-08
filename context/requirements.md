@@ -124,6 +124,11 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 - Next/Back buttons
 - Keyboard navigation support
 
+**State Management:**
+- Survey progress is saved to localStorage to allow users to continue if they close the browser mid-survey
+- After successful submission, localStorage is cleared so returning users see a fresh survey
+- Users cannot submit the same survey twice from the same browser without completing it again
+
 ### 5.2 Email Capture
 
 **Required Fields:**
@@ -144,8 +149,9 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 **Overall Score:**
 - Aggregate score: "X out of 27"
 - Percentage calculation
-- Visual indicator (gauge or progress)
-- Performance level label
+- Visual indicator: Circular progress ring (144px, 10px stroke)
+- Performance level label and badge
+- Color-coded by performance level (see Section 5.3.1)
 
 **Performance Thresholds:**
 | Level | Score Range | Meaning |
@@ -156,8 +162,23 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 
 **Category Breakdown:**
 - Individual score per category
-- Visual representation (charts/bars)
-- Color-coded by performance level
+- Visual representation (circular progress rings)
+- Color-coded by performance level (see Section 5.3.1)
+
+#### 5.3.1 Performance Level Colors
+
+All score visualizations use consistent score-based coloring:
+
+| Performance Level | Score Range | Color | Tailwind |
+|-------------------|-------------|-------|----------|
+| Strong Alignment | 85-100% | Emerald | `emerald-500` (#10B981) |
+| Moderate Alignment | 60-84% | Amber | `amber-500` (#F59E0B) |
+| Needs Improvement | <60% | Rose | `rose-400` (#FB7185) |
+
+This applies to:
+- Overall score display: Circular progress ring (144px diameter, 10px stroke)
+- Category breakdown: Circular progress rings (80px diameter, 8px stroke)
+- Performance badges and labels
 
 **Population Comparison:**
 - Percentile rank vs other respondents
@@ -197,20 +218,35 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 ### 6.1 User Experience
 - Survey completion under 5 minutes
 - Intuitive, no instructions needed
-- Mobile-responsive
 
-### 6.2 Performance
+### 6.2 Mobile-First Responsive Design (MANDATORY)
+**All features must work flawlessly on mobile devices.**
+
+- Design for mobile first, then scale up to desktop
+- Test on real devices (iPhone SE, standard iPhone, iPad, Android)
+- Minimum touch target: 44x44px
+- No horizontal scrolling on mobile
+- Readable text without zooming (16px minimum)
+- Support all breakpoints: mobile (default), sm (640px), md (768px), lg (1024px), xl (1280px)
+
+**Mobile-Specific Requirements:**
+- Survey: One question per screen, large Yes/No buttons
+- Results: Stacked layouts, scrollable category cards
+- Forms: Full-width inputs, adequate spacing between fields
+- Navigation: Thumb-friendly button placement
+
+### 6.3 Performance
 - Page load under 2 seconds
 - Instant question transitions
 - Results generation under 1 second
 
-### 6.3 Privacy & Security
+### 6.4 Privacy & Security
 - HTTPS encryption
 - Secure data storage
 - Privacy policy compliance
 - GDPR-compliant data handling
 
-### 6.4 Accessibility
+### 6.5 Accessibility
 - WCAG 2.1 AA compliance
 - Keyboard navigation
 - Screen reader support

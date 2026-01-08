@@ -365,15 +365,57 @@ Each decision follows this structure:
 
 ---
 
-### DES-004: Prominent Score Display
+### DES-004: Prominent Score Display with Circular Progress Ring
 
 **Date:** January 2026
 
 **Context:** How prominent should the score be on results page?
 
-**Decision:** Score is the hero - large typography (7xl/8xl), centered, with percentage and label.
+**Decision:** Score is the hero - displayed as a large circular progress ring (144px diameter) with percentage in center, matching the category breakdown visualization style.
 
-**Rationale:** User explicitly requested prominent scores. This is the primary value users get.
+**Implementation:**
+- Circular progress ring (donut chart) with 10px stroke width
+- Colors follow Section 3.4 score thresholds (emerald-500, amber-500, rose-400)
+- Percentage displayed prominently in center (4xl font)
+- Animated fill transition (700ms)
+- Consistent visual language with category breakdown rings
+
+**Rationale:** User explicitly requested prominent scores and consistent visualization. Circular progress ring matches category breakdown for visual cohesion across the results page.
+
+---
+
+### DES-005: Circular Progress Rings for Category Breakdown
+
+**Date:** January 2026
+
+**Context:** How to visualize per-category scores on the results page?
+
+**Options Considered:**
+| Option | Pros | Cons |
+|--------|------|------|
+| Horizontal bar charts | Familiar, easy to compare | Bold colors felt too harsh |
+| Circular progress rings (donuts) | Modern, clean, compact | Less familiar pattern |
+| Stacked cards with meters | Rich detail | Takes more vertical space |
+| Spider/radar chart | Shows all at once | Complex, not intuitive |
+
+**Decision:** Circular progress rings (donut charts) with score-based coloring.
+
+**Implementation:**
+- SVG-based circular progress with animated fill
+- Colors follow Section 3.4 score thresholds:
+  - Strong (85%+): `emerald-500` (#10B981)
+  - Moderate (60-84%): `amber-500` (#F59E0B)
+  - Needs Improvement (<60%): `rose-400` (#FB7185)
+- 5-column grid on desktop (lg:grid-cols-5), responsive grid on smaller screens
+- Percentage displayed in center of ring
+
+**Rationale:** User requested softer visual appearance after bar charts appeared too bold. Circular progress rings provide a modern, clean look that's compact and visually appealing. Score-based coloring maintains consistency with overall results display.
+
+**Consequences:**
+- Consistent color language across all score displays
+- More modern/polished appearance
+- Slightly less familiar than bar charts
+- Works well across all screen sizes
 
 ---
 

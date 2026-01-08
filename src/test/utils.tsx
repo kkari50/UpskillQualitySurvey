@@ -10,9 +10,7 @@ import { ReactElement, ReactNode } from 'react'
 /**
  * Custom render wrapper with providers
  */
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  // Add any provider props here
-}
+type CustomRenderOptions = Omit<RenderOptions, 'wrapper'>
 
 function AllProviders({ children }: { children: ReactNode }) {
   // Add providers here as needed (e.g., ThemeProvider, QueryClient)
