@@ -95,9 +95,10 @@ npm run start    # Start production server
 
 ## Database
 
-- Supabase project: [TO BE CREATED]
-- Run migrations: `npx supabase db push`
-- Generate types: `npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.ts`
+- Supabase project: `hrimxqdjbhlraadgowcf` (configured in `.env.local`)
+- Run migrations: `npx supabase db push` or execute SQL files in Supabase dashboard
+- Generate types: `npx supabase gen types typescript --project-id hrimxqdjbhlraadgowcf > src/types/database.ts`
+- Migrations: `supabase/migrations/*.sql`
 
 ### Key Tables (V1)
 - `leads` - Email capture and optional agency domain grouping
@@ -128,17 +129,134 @@ npm run start    # Start production server
 - All email types accepted - personal emails just aren't grouped into agencies
 - Minimum 10 responses required before showing population comparison
 
+## Git Workflow & Branching Strategy
+
+### Branch Requirements
+
+**Major features MUST use feature branches and Pull Requests:**
+
+| Change Type | Branch Required | PR Required |
+|-------------|-----------------|-------------|
+| New feature/component | Yes | Yes |
+| API endpoint | Yes | Yes |
+| Database changes | Yes | Yes |
+| Bug fixes (non-trivial) | Yes | Yes |
+| Documentation updates | No | No |
+| Small config changes | No | No |
+
+### Branch Naming Convention
+
+```bash
+feature/<description>   # New features (feature/landing-page)
+fix/<description>       # Bug fixes (fix/score-calculation)
+refactor/<description>  # Code restructuring (refactor/api-routes)
+test/<description>      # Test additions (test/survey-e2e)
+```
+
+### Feature Development Process
+
+1. **Create feature branch from main:**
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Develop with frequent commits:**
+   - Write tests first (TDD)
+   - Make small, focused commits
+   - Push regularly to remote
+
+3. **Create Pull Request:**
+   - Push branch to GitHub
+   - Create PR with descriptive title and summary
+   - Request Claude review
+
+4. **Claude PR Review:**
+   - Claude will review code for:
+     - Test coverage (TDD compliance)
+     - Mobile responsiveness
+     - Code quality and patterns
+     - Security concerns
+     - Performance implications
+   - Address review feedback
+   - Get approval before merging
+
+5. **Merge to main:**
+   - Squash and merge preferred
+   - Delete feature branch after merge
+
+### PR Template
+
+When creating PRs, include:
+
+```markdown
+## Summary
+Brief description of changes
+
+## Changes Made
+- List of specific changes
+
+## Test Plan
+- [ ] Unit tests added
+- [ ] E2E tests pass
+- [ ] Tested on mobile
+
+## Screenshots (if UI)
+[Add screenshots]
+```
+
+### Claude Review Checklist
+
+When reviewing PRs, Claude will verify:
+
+- [ ] Tests written FIRST (TDD compliance)
+- [ ] All tests pass (`npm run test:run`)
+- [ ] Mobile-responsive design
+- [ ] No TypeScript errors (`npm run build`)
+- [ ] Follows style guide patterns
+- [ ] No security vulnerabilities
+- [ ] No console.log in production code
+- [ ] Meaningful commit messages
+- [ ] Documentation updated if needed
+
+### Quick Reference
+
+```bash
+# Start feature
+git checkout -b feature/my-feature
+
+# Commit changes
+git add .
+git commit -m "feat: add component"
+
+# Push and create PR
+git push -u origin feature/my-feature
+
+# After PR approved, merge via GitHub UI
+# Then clean up
+git checkout main
+git pull origin main
+git branch -d feature/my-feature
+```
+
+See `CONTRIBUTING.md` for complete Git workflow documentation.
+
+---
+
 ## Development Workflow
 
-1. **Write tests first** - TDD is mandatory
-2. Check `context/tasks.md` for current task status
-3. Read `context/requirements.md` before implementing features
-4. Check `context/architecture.md` for technical decisions
-5. Follow `context/style-guide.md` for UI consistency
-6. **Test on mobile and desktop** before marking complete
-7. Log decisions in `context/decisions.md`
-8. Use `/plan` skill before major features
-9. Use `/commit` skill for clean commit messages
+1. **Create feature branch** for major work
+2. **Write tests first** - TDD is mandatory
+3. Check `context/tasks.md` for current task status
+4. Read `context/requirements.md` before implementing features
+5. Check `context/architecture.md` for technical decisions
+6. Follow `context/style-guide.md` for UI consistency
+7. **Test on mobile and desktop** before marking complete
+8. Log decisions in `context/decisions.md`
+9. Use `/plan` skill before major features
+10. **Create PR and request Claude review**
+11. Use `/commit` skill for clean commit messages
 
 ## Survey Structure
 
