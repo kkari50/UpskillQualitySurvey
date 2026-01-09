@@ -288,5 +288,6 @@ export function isCategoryComplete(
  * Check if survey is ready to submit (all questions answered)
  */
 export function isSurveyComplete(answers: SurveyAnswers): boolean {
-  return Object.keys(answers).length === TOTAL_QUESTIONS
+  // Check that every question in the current version has been answered
+  return QUESTIONS.every((q) => answers[q.id] !== undefined)
 }

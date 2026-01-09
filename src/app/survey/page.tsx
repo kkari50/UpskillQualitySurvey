@@ -8,6 +8,7 @@ import {
   QuestionCard,
   NavigationButtons,
   CategoryTransition,
+  SurveyIntro,
 } from "@/components/survey";
 import { useSurveyStore, isSurveyComplete } from "@/stores/survey";
 import { QUESTIONS, TOTAL_QUESTIONS, getQuestionsByCategory } from "@/data/questions";
@@ -39,13 +40,6 @@ export default function SurveyPage() {
   const questionsInCategory = currentCategoryId
     ? getQuestionsByCategory(currentCategoryId).length
     : 0;
-
-  // Start survey on mount if not started
-  useEffect(() => {
-    if (!isStarted) {
-      startSurvey();
-    }
-  }, [isStarted, startSurvey]);
 
   // Keyboard navigation
   const handleKeyDown = useCallback(
@@ -115,6 +109,21 @@ export default function SurveyPage() {
       goToNextQuestion();
     }
   };
+
+  // Show intro screen if survey hasn't started
+  if (!isStarted) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <main className="flex-1 py-8 md:py-12 px-4">
+          <div className="max-w-2xl mx-auto">
+            <SurveyIntro onStart={startSurvey} />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!currentQuestion) {
     return null;

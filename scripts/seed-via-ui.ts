@@ -12,16 +12,16 @@ const BASE_URL = 'http://localhost:3000';
 
 // 10 test profiles with different yes/no patterns
 const TEST_PROFILES = [
-  { name: 'Strong Agency', pattern: Array(27).fill(true).map((_, i) => i < 25) },         // 25 yes
-  { name: 'Good Agency', pattern: Array(27).fill(true).map((_, i) => i < 23) },           // 23 yes
-  { name: 'Above Average', pattern: Array(27).fill(true).map((_, i) => i < 21) },         // 21 yes
-  { name: 'Moderate High', pattern: Array(27).fill(true).map((_, i) => i < 20) },         // 20 yes
-  { name: 'Moderate', pattern: Array(27).fill(true).map((_, i) => i < 18) },              // 18 yes
-  { name: 'Moderate Low', pattern: Array(27).fill(true).map((_, i) => i < 17) },          // 17 yes
-  { name: 'Improving', pattern: Array(27).fill(true).map((_, i) => i < 15) },             // 15 yes
-  { name: 'Developing', pattern: Array(27).fill(true).map((_, i) => i < 13) },            // 13 yes
-  { name: 'Early Stage', pattern: Array(27).fill(true).map((_, i) => i < 11) },           // 11 yes
-  { name: 'Just Starting', pattern: Array(27).fill(true).map((_, i) => i < 9) },          // 9 yes
+  { name: 'Strong Agency', pattern: Array(28).fill(true).map((_, i) => i < 26) },         // 26 yes
+  { name: 'Good Agency', pattern: Array(28).fill(true).map((_, i) => i < 24) },           // 24 yes
+  { name: 'Above Average', pattern: Array(28).fill(true).map((_, i) => i < 22) },         // 22 yes
+  { name: 'Moderate High', pattern: Array(28).fill(true).map((_, i) => i < 21) },         // 21 yes
+  { name: 'Moderate', pattern: Array(28).fill(true).map((_, i) => i < 19) },              // 19 yes
+  { name: 'Moderate Low', pattern: Array(28).fill(true).map((_, i) => i < 18) },          // 18 yes
+  { name: 'Improving', pattern: Array(28).fill(true).map((_, i) => i < 16) },             // 16 yes
+  { name: 'Developing', pattern: Array(28).fill(true).map((_, i) => i < 14) },            // 14 yes
+  { name: 'Early Stage', pattern: Array(28).fill(true).map((_, i) => i < 12) },           // 12 yes
+  { name: 'Just Starting', pattern: Array(28).fill(true).map((_, i) => i < 10) },         // 10 yes
 ];
 
 async function submitSurvey(profileIndex: number) {
@@ -30,7 +30,7 @@ async function submitSurvey(profileIndex: number) {
 
   console.log(`\n📝 Submitting survey ${profileIndex + 1}/10: ${profile.name}`);
   console.log(`   Email: ${email}`);
-  console.log(`   Expected score: ${profile.pattern.filter(Boolean).length}/27`);
+  console.log(`   Expected score: ${profile.pattern.filter(Boolean).length}/28`);
 
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
@@ -40,8 +40,8 @@ async function submitSurvey(profileIndex: number) {
     await page.goto(`${BASE_URL}/survey`);
     await page.waitForLoadState('networkidle');
 
-    // Answer all 27 questions
-    for (let q = 0; q < 27; q++) {
+    // Answer all 28 questions
+    for (let q = 0; q < 28; q++) {
       const answer = profile.pattern[q];
 
       // Click Yes or No button

@@ -5,3 +5,4 @@ export { GapsList } from "./GapsList";
 export { PopulationComparison } from "./PopulationComparison";
 export { ShareButtons } from "./ShareButtons";
 export { TrendOverTime } from "./TrendOverTime";
+export { SurveyClearer } from "./SurveyClearer";

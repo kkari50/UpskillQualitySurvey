@@ -1,10 +1,10 @@
 /**
  * Survey Questions v1.0
  *
- * Original 27 questions across 5 categories for the
+ * 28 questions across 5 categories for the
  * Quick Quality Assessment Survey.
  *
- * Source: requirements.md Section 3
+ * Source: requirements.md Section 4
  */
 
 import type { Question, SurveyVersion, Category, CategoryId } from './schema'
@@ -20,15 +20,15 @@ export const VERSION: SurveyVersion = {
     'ds_001', 'ds_002', 'ds_003', 'ds_004', 'ds_005', 'ds_006', 'ds_007',
     // Treatment Fidelity (5)
     'tf_001', 'tf_002', 'tf_003', 'tf_004', 'tf_005',
-    // Data Analysis (5)
-    'da_001', 'da_002', 'da_003', 'da_004', 'da_005',
+    // Data Analysis (6)
+    'da_001', 'da_002', 'da_003', 'da_004', 'da_005', 'da_006',
     // Caregiver Guidance (6)
     'cg_001', 'cg_002', 'cg_003', 'cg_004', 'cg_005', 'cg_006',
     // Supervision (4)
     'sup_001', 'sup_002', 'sup_003', 'sup_004',
   ],
-  maxScore: 27,
-  changelog: 'Initial release with 27 questions across 5 categories',
+  maxScore: 28,
+  changelog: 'Initial release with 28 questions across 5 categories',
 }
 
 /**
@@ -56,8 +56,8 @@ export const CATEGORIES: Category[] = [
     name: 'Data Analysis',
     shortName: 'Data',
     description: 'Review data monitoring and intervention effectiveness practices',
-    questionCount: 5,
-    maxScore: 5,
+    questionCount: 6,
+    maxScore: 6,
   },
   {
     id: 'caregiver_guidance',
@@ -78,7 +78,7 @@ export const CATEGORIES: Category[] = [
 ]
 
 /**
- * All 27 questions for v1.0
+ * All 28 questions for v1.0
  */
 export const QUESTIONS: Question[] = [
   // ============================================
@@ -162,7 +162,7 @@ export const QUESTIONS: Question[] = [
   },
 
   // ============================================
-  // Category 3: Data Analysis (5 Questions)
+  // Category 3: Data Analysis (6 Questions)
   // ============================================
   {
     id: 'da_001',
@@ -179,17 +179,23 @@ export const QUESTIONS: Question[] = [
   {
     id: 'da_003',
     category: 'data_analysis',
-    text: 'The percentage of goals mastered for current treatment plan goals are monitored as an organization metric; goals that continue into the next authorization period have had any barriers identified, resolved, and have had protocols modified',
+    text: 'The percentage of goals mastered for current treatment plan goals are monitored as an organization metric',
     versionAdded: '1.0',
   },
   {
     id: 'da_004',
     category: 'data_analysis',
-    text: 'There is a standardized way to determine the effectiveness of challenging behavior interventions',
+    text: 'Goals that continue into the next authorization period have had any barriers identified, resolved, and have had protocols modified',
     versionAdded: '1.0',
   },
   {
     id: 'da_005',
+    category: 'data_analysis',
+    text: 'There is a standardized way to determine the effectiveness of challenging behavior interventions',
+    versionAdded: '1.0',
+  },
+  {
+    id: 'da_006',
     category: 'data_analysis',
     text: 'The interventions selected for challenging behavior have reduced challenging behavior to a desired level',
     versionAdded: '1.0',

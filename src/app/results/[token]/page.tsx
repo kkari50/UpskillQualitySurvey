@@ -7,6 +7,7 @@ import {
   PopulationComparison,
   ShareButtons,
   TrendOverTime,
+  SurveyClearer,
 } from "@/components/results";
 import { createServiceClient } from "@/lib/supabase/service";
 import { calculateScores, getScoreSummary, getGaps } from "@/lib/scoring";
@@ -203,6 +204,8 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      {/* Clear survey state from localStorage after viewing results */}
+      <SurveyClearer />
       <Header />
 
       <main className="flex-1 py-8 md:py-12 px-4">

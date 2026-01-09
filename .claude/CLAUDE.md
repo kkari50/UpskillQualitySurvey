@@ -2,7 +2,7 @@
 
 ## Quick Context
 
-- **Purpose:** 27-question quality assessment tool for ABA agencies with population benchmarking
+- **Purpose:** 28-question quality assessment tool for ABA agencies with population benchmarking
 - **Tech Stack:** Next.js 14 (App Router), Supabase, Tailwind CSS, shadcn/ui, Vercel
 - **Status:** Phase 0 - Pre-Development Setup
 
@@ -180,7 +180,7 @@ GITHUB_TOKEN=ghp_your_github_token
 ### Key Tables (V1)
 - `leads` - Email capture and optional agency domain grouping
 - `survey_responses` - Survey metadata and scores
-- `survey_answers` - Individual answers (27 rows per response)
+- `survey_answers` - Individual answers (28 rows per response)
 - `population_stats` - Materialized view for averages
 
 ## Deployment
@@ -337,8 +337,8 @@ See `CONTRIBUTING.md` for complete Git workflow documentation.
 
 ## Survey Structure
 
-- 27 Yes/No questions across 5 categories
-- Categories: Daily Sessions (7), Treatment Fidelity (5), Data Analysis (5), Caregiver Guidance (6), Supervision (4)
+- 28 Yes/No questions across 5 categories
+- Categories: Daily Sessions (7), Treatment Fidelity (5), Data Analysis (6), Caregiver Guidance (6), Supervision (4)
 - Score = count of "Yes" answers
 - Performance levels: Strong (85%+), Moderate (60-84%), Needs Improvement (<60%)
 

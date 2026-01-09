@@ -1,10 +1,10 @@
 # Upskill Quality Survey
 
-A 27-question quality assessment tool for ABA agencies with population benchmarking.
+A 28-question quality assessment tool for ABA agencies with population benchmarking.
 
 ## Features
 
-- 27 research-backed Yes/No questions across 5 categories
+- 28 research-backed Yes/No questions across 5 categories
 - Instant results with circular progress visualizations
 - Population comparison with percentile ranking
 - Category-by-category breakdown with gap analysis
@@ -58,7 +58,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 |----------|-----------|------------|
 | Daily Sessions | 7 | Session preparation and delivery |
 | Treatment Fidelity | 5 | Protocol adherence |
-| Data Analysis | 5 | Data collection and analysis practices |
+| Data Analysis | 6 | Data collection and analysis practices |
 | Caregiver Guidance | 6 | Family involvement and training |
 | Supervision | 4 | Staff oversight and development |
 

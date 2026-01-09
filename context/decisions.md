@@ -719,3 +719,75 @@ DELETE FROM leads WHERE is_test = true AND created_at < NOW() - INTERVAL '24 hou
 - API must detect test email patterns
 - Need pg_cron or external job for cleanup
 - Test data visible briefly but auto-cleaned
+
+---
+
+### DES-006: Global Navigation with Survey Results Link
+
+**Date:** January 2026
+
+**Context:** Users need a way to look up their previous survey results from any page in the application.
+
+**Options Considered:**
+| Option | Pros | Cons |
+|--------|------|------|
+| No global nav | Simpler | Users can't easily find past results |
+| Footer link only | Unobtrusive | Low visibility |
+| Header right-side link | Visible, consistent | Takes header space |
+| Hamburger menu | Clean header | Extra click on mobile |
+
+**Decision:** Add "Survey Results" link to the right side of the global header, visible on all pages.
+
+**Implementation:**
+- Header: Logo/brand on left, "Survey Results" link on right
+- Links to `/results` page
+- Mobile: Same layout, responsive header
+
+**Results Page Behavior:**
+- Default view (no email entered): Display population-level statistics
+  - Average scores across all respondents
+  - Score distribution by category
+  - Total survey completions
+  - Per-question benchmarks ("X% answered Yes")
+- Email lookup: Optional email input field
+  - If email found: Show individual results + population comparison
+  - If email not found: Prompt user to take the survey
+
+**Rationale:** Maximum visibility for result lookup feature. Showing population stats by default provides value even to non-participants, encouraging them to take the survey. Right-side placement follows common navigation patterns.
+
+**Consequences:**
+- `/results` page serves dual purpose: population stats + individual lookup
+- Consistent navigation across all pages
+- Mobile header must accommodate link
+- Population stats API endpoint needed
+
+---
+
+### DES-007: Split Compound Data Analysis Question
+
+**Date:** January 2026
+
+**Context:** Question da_003 in the Data Analysis category was a compound question covering two distinct concepts:
+> "The percentage of goals mastered for current treatment plan goals are monitored as an organization metric; goals that continue into the next authorization period have had any barriers identified, resolved, and have had protocols modified"
+
+This made the question difficult to answer accurately since respondents might have "Yes" for one part and "No" for the other.
+
+**Decision:** Split into two separate questions:
+1. **da_003:** "The percentage of goals mastered for current treatment plan goals are monitored as an organization metric"
+2. **da_004:** "Goals that continue into the next authorization period have had any barriers identified, resolved, and have had protocols modified"
+
+**Impact:**
+- Data Analysis category: 5 → 6 questions
+- Total survey questions: 27 → 28
+- Max score: 27 → 28
+- Performance thresholds updated:
+  - Strong: 85%+ (24-28)
+  - Moderate: 60-84% (17-23)
+  - Needs Improvement: <60% (0-16)
+
+**Rationale:** Each question should measure a single, clear practice. Compound questions create ambiguity and reduce data quality. Splitting allows more precise identification of improvement areas.
+
+**Consequences:**
+- Clearer survey responses
+- Better granularity in Data Analysis category
+- All documentation and code updated to reflect 28 questions

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, ChevronDown } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -108,11 +108,17 @@ export function EmailCapture({ onSubmitStart, onSubmitEnd }: EmailCaptureProps) 
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showOptional, setShowOptional] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Validate all required fields
+    if (!email || !name || !role || !agencySize || !primarySetting || !state) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
     setIsSubmitting(true);
     onSubmitStart?.();
 
@@ -124,11 +130,11 @@ export function EmailCapture({ onSubmitStart, onSubmitEnd }: EmailCaptureProps) 
         },
         body: JSON.stringify({
           email,
-          name: name || undefined,
-          role: role || undefined,
-          agencySize: agencySize || undefined,
-          primarySetting: primarySetting || undefined,
-          state: state || undefined,
+          name,
+          role,
+          agencySize,
+          primarySetting,
+          state,
           marketingConsent,
           answers,
           surveyVersion,
@@ -183,103 +189,94 @@ export function EmailCapture({ onSubmitStart, onSubmitEnd }: EmailCaptureProps) 
             />
           </div>
 
-          {/* Optional fields toggle */}
-          <button
-            type="button"
-            onClick={() => setShowOptional(!showOptional)}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ChevronDown className={`w-4 h-4 transition-transform ${showOptional ? 'rotate-180' : ''}`} />
-            {showOptional ? 'Hide' : 'Show'} optional fields for better benchmarking
-          </button>
+          {/* Name field */}
+          <div>
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              placeholder="Your name"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1"
+            />
+          </div>
 
-          {/* Optional fields */}
-          {showOptional && (
-            <div className="space-y-4 pt-2 border-t">
-              <p className="text-xs text-muted-foreground">
-                These optional fields help us show you more relevant comparisons.
-              </p>
+          {/* Role field */}
+          <div>
+            <Label htmlFor="role">Your Role *</Label>
+            <select
+              id="role"
+              required
+              value={role}
+              onChange={(e) => setRole(e.target.value as UserRole | "")}
+              className={selectClassName}
+            >
+              <option value="">Select your role</option>
+              {ROLES.map((r) => (
+                <option key={r.value} value={r.value}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
+          {/* Agency Size field */}
+          <div>
+            <Label htmlFor="agencySize">Agency Size *</Label>
+            <select
+              id="agencySize"
+              required
+              value={agencySize}
+              onChange={(e) => setAgencySize(e.target.value as AgencySize | "")}
+              className={selectClassName}
+            >
+              <option value="">Select agency size</option>
+              {AGENCY_SIZES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-              <div>
-                <Label htmlFor="role">Your Role</Label>
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as UserRole | "")}
-                  className={selectClassName}
-                >
-                  <option value="">Select your role</option>
-                  {ROLES.map((r) => (
-                    <option key={r.value} value={r.value}>
-                      {r.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {/* Primary Service Setting field */}
+          <div>
+            <Label htmlFor="primarySetting">Primary Service Setting *</Label>
+            <select
+              id="primarySetting"
+              required
+              value={primarySetting}
+              onChange={(e) => setPrimarySetting(e.target.value as PrimarySetting | "")}
+              className={selectClassName}
+            >
+              <option value="">Select primary setting</option>
+              {PRIMARY_SETTINGS.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-              <div>
-                <Label htmlFor="agencySize">Agency Size</Label>
-                <select
-                  id="agencySize"
-                  value={agencySize}
-                  onChange={(e) => setAgencySize(e.target.value as AgencySize | "")}
-                  className={selectClassName}
-                >
-                  <option value="">Select agency size</option>
-                  {AGENCY_SIZES.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="primarySetting">Primary Service Setting</Label>
-                <select
-                  id="primarySetting"
-                  value={primarySetting}
-                  onChange={(e) => setPrimarySetting(e.target.value as PrimarySetting | "")}
-                  className={selectClassName}
-                >
-                  <option value="">Select primary setting</option>
-                  {PRIMARY_SETTINGS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="state">State</Label>
-                <select
-                  id="state"
-                  value={state}
-                  onChange={(e) => setState(e.target.value as USState | "")}
-                  className={selectClassName}
-                >
-                  <option value="">Select state</option>
-                  {US_STATES.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          )}
+          {/* State field */}
+          <div>
+            <Label htmlFor="state">State *</Label>
+            <select
+              id="state"
+              required
+              value={state}
+              onChange={(e) => setState(e.target.value as USState | "")}
+              className={selectClassName}
+            >
+              <option value="">Select state</option>
+              {US_STATES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="flex items-start gap-3">
             <Checkbox

@@ -36,7 +36,7 @@ export default function SurveyCompletePage() {
               Survey Complete!
             </h1>
             <p className="text-muted-foreground">
-              You&apos;ve answered all 27 questions. Enter your email to see your results.
+              You&apos;ve answered all 28 questions. Enter your email to see your results.
             </p>
           </div>
 

@@ -25,5 +25,5 @@ export const RATE_LIMIT_PDF_GENERATE = 5
 
 // Survey metadata
 export const SURVEY_ESTIMATED_MINUTES = 5
-export const SURVEY_QUESTION_COUNT = 27
+export const SURVEY_QUESTION_COUNT = 28
 export const SURVEY_CATEGORY_COUNT = 5

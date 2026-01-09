@@ -70,6 +70,33 @@ export async function GET(request: NextRequest) {
       .select('*')
       .eq('survey_version', parsed.data.version);
 
+    // Get performance distribution (count by tier)
+    // Strong: 85%+ (24-28), Moderate: 60-84% (17-23), Needs Improvement: <60% (0-16)
+    const { data: allScores } = await supabase
+      .from('survey_responses')
+      .select('total_score')
+      .eq('survey_version', parsed.data.version)
+      .eq('is_test', false);
+
+    const distribution = {
+      strong: 0,      // 85%+ (score >= 24)
+      moderate: 0,    // 60-84% (score 17-23)
+      needsImprovement: 0,  // <60% (score <= 16)
+    };
+
+    if (allScores) {
+      allScores.forEach((r) => {
+        const score = r.total_score ?? 0;
+        if (score >= 24) {
+          distribution.strong++;
+        } else if (score >= 17) {
+          distribution.moderate++;
+        } else {
+          distribution.needsImprovement++;
+        }
+      });
+    }
+
     // Format response
     return NextResponse.json({
       available: true,
@@ -103,6 +130,7 @@ export async function GET(request: NextRequest) {
             }),
             {} as Record<string, { avgPercentage: number }>
           ) ?? {},
+        distribution,
       },
       meta: {
         surveyVersion: parsed.data.version,

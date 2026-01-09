@@ -14,8 +14,8 @@ const QUESTION_IDS = [
   'ds_001', 'ds_002', 'ds_003', 'ds_004', 'ds_005', 'ds_006', 'ds_007',
   // Treatment Fidelity (5)
   'tf_001', 'tf_002', 'tf_003', 'tf_004', 'tf_005',
-  // Data Analysis (5)
-  'da_001', 'da_002', 'da_003', 'da_004', 'da_005',
+  // Data Analysis (6)
+  'da_001', 'da_002', 'da_003', 'da_004', 'da_005', 'da_006',
   // Caregiver Guidance (6)
   'cg_001', 'cg_002', 'cg_003', 'cg_004', 'cg_005', 'cg_006',
   // Supervision (4)
@@ -24,16 +24,16 @@ const QUESTION_IDS = [
 
 // Test response profiles with different score distributions
 const TEST_PROFILES = [
-  { name: 'Strong Agency', yesRate: 0.92 },      // ~25/27 = 93%
-  { name: 'Good Agency', yesRate: 0.85 },        // ~23/27 = 85%
-  { name: 'Above Average', yesRate: 0.78 },      // ~21/27 = 78%
-  { name: 'Moderate High', yesRate: 0.74 },      // ~20/27 = 74%
-  { name: 'Moderate', yesRate: 0.67 },           // ~18/27 = 67%
-  { name: 'Moderate Low', yesRate: 0.63 },       // ~17/27 = 63%
-  { name: 'Improving', yesRate: 0.56 },          // ~15/27 = 56%
-  { name: 'Developing', yesRate: 0.48 },         // ~13/27 = 48%
-  { name: 'Early Stage', yesRate: 0.41 },        // ~11/27 = 41%
-  { name: 'Just Starting', yesRate: 0.33 },      // ~9/27 = 33%
+  { name: 'Strong Agency', yesRate: 0.93 },      // ~26/28 = 93%
+  { name: 'Good Agency', yesRate: 0.86 },        // ~24/28 = 86%
+  { name: 'Above Average', yesRate: 0.79 },      // ~22/28 = 79%
+  { name: 'Moderate High', yesRate: 0.75 },      // ~21/28 = 75%
+  { name: 'Moderate', yesRate: 0.68 },           // ~19/28 = 68%
+  { name: 'Moderate Low', yesRate: 0.64 },       // ~18/28 = 64%
+  { name: 'Improving', yesRate: 0.57 },          // ~16/28 = 57%
+  { name: 'Developing', yesRate: 0.50 },         // ~14/28 = 50%
+  { name: 'Early Stage', yesRate: 0.43 },        // ~12/28 = 43%
+  { name: 'Just Starting', yesRate: 0.36 },      // ~10/28 = 36%
 ];
 
 function generateAnswers(yesRate: number): Record<string, boolean> {
@@ -56,7 +56,7 @@ async function submitTestResponse(profile: typeof TEST_PROFILES[0], index: numbe
   const answers = generateAnswers(profile.yesRate);
   const yesCount = Object.values(answers).filter(Boolean).length;
 
-  console.log(`Submitting ${profile.name} (${yesCount}/27 = ${Math.round(yesCount/27*100)}%): ${email}`);
+  console.log(`Submitting ${profile.name} (${yesCount}/28 = ${Math.round(yesCount/28*100)}%): ${email}`);
 
   try {
     const response = await fetch(`${BASE_URL}/api/survey/submit`, {

@@ -56,16 +56,16 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 
 ## 4. Survey Content
 
-**Total:** 27 questions across 5 categories (Yes/No responses)
+**Total:** 28 questions across 5 categories (Yes/No responses)
 
 | Category | Questions | Max Score |
 |----------|-----------|-----------|
 | Daily Sessions | 7 | 7 |
 | Treatment Fidelity | 5 | 5 |
-| Data Analysis | 5 | 5 |
+| Data Analysis | 6 | 6 |
 | Caregiver Guidance | 6 | 6 |
 | Supervision | 4 | 4 |
-| **TOTAL** | **27** | **27** |
+| **TOTAL** | **28** | **28** |
 
 ### Category 1: Daily Sessions (7 Questions)
 1. Area is organized and necessary materials are readily available consistently
@@ -83,12 +83,13 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 4. The implementation of the behavior plan is presented utilizing BST
 5. The implementation of the behavior intervention plan is monitored with treatment fidelity checklists at least twice a month
 
-### Category 3: Data Analysis (5 Questions)
+### Category 3: Data Analysis (6 Questions)
 1. There is a standardized approach to ensure that all clinicians review skill acquisition data every 10 sessions
 2. There is a standardized approach for BT/RBTs to alert their supervisors of a problematic goal
-3. The percentage of goals mastered for current treatment plan goals are monitored as an organization metric; goals that continue into the next authorization period have had any barriers identified, resolved, and have had protocols modified
-4. There is a standardized way to determine the effectiveness of challenging behavior interventions
-5. The interventions selected for challenging behavior have reduced challenging behavior to a desired level
+3. The percentage of goals mastered for current treatment plan goals are monitored as an organization metric
+4. Goals that continue into the next authorization period have had any barriers identified, resolved, and have had protocols modified
+5. There is a standardized way to determine the effectiveness of challenging behavior interventions
+6. The interventions selected for challenging behavior have reduced challenging behavior to a desired level
 
 ### Category 4: Caregiver Guidance (6 Questions)
 1. Caregiver guidance happens at least once a month
@@ -112,7 +113,7 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 
 **Question Display:**
 - Display one question at a time with category indication
-- Show progress indicator (e.g., "Question 5 of 27")
+- Show progress indicator (e.g., "Question 5 of 28")
 - Visual transition between categories
 
 **Response Options:**
@@ -124,6 +125,27 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 - Next/Back buttons
 - Keyboard navigation support
 
+### 5.1.1 Global Navigation (Header)
+
+**Header Layout:**
+- Left side: UpskillABA logo/brand (links to landing page)
+- Right side: "Survey Results" link
+
+**Survey Results Link:**
+- Visible on all pages (landing, survey, results)
+- Links to `/results` page
+- Mobile: Condensed header with same navigation options
+
+**Results Page Behavior:**
+- Default view (no email): Shows overall population statistics
+  - Average scores across all respondents
+  - Score distribution by category
+  - Total number of survey completions
+  - Benchmarks per question ("X% answered Yes")
+- Email lookup: Optional email input to retrieve personal results
+  - If email found: Shows individual results with population comparison
+  - If email not found: Message prompting user to take the survey
+
 **State Management:**
 - Survey progress is saved to localStorage to allow users to continue if they close the browser mid-survey
 - After successful submission, localStorage is cleared so returning users see a fresh survey
@@ -133,21 +155,23 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 
 **Required Fields:**
 - Email address (validated)
+- Name
+- Role/Title (dropdown: Clinical Director, BCBA, BCaBA, RBT/BT, Owner/Founder, QA Manager, Consultant, Other)
+- Agency Size (dropdown: Small 1-10, Medium 11-50, Large 51-200, Enterprise 200+)
+- Primary Service Setting (dropdown: In-Home, Clinic/Center-Based, School-Based, Hybrid/Multiple)
+- State (all US states and DC)
 
 **Optional Fields:**
-- Name
-- Organization/Agency name
-- Role/Title (dropdown)
+- Marketing consent checkbox (opt-in)
 
 **Compliance:**
-- Marketing consent checkbox
 - Privacy policy link
 - GDPR-compliant language
 
 ### 5.3 Results Dashboard
 
 **Overall Score:**
-- Aggregate score: "X out of 27"
+- Aggregate score: "X out of 28"
 - Percentage calculation
 - Visual indicator: Circular progress ring (144px, 10px stroke)
 - Performance level label and badge
@@ -156,9 +180,9 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 **Performance Thresholds:**
 | Level | Score Range | Meaning |
 |-------|-------------|---------|
-| Strong Alignment | 85-100% (23-27) | Well-established practices |
-| Moderate Alignment | 60-84% (16-22) | Room for improvement |
-| Needs Improvement | <60% (0-15) | Significant gaps |
+| Strong Alignment | 85-100% (24-28) | Well-established practices |
+| Moderate Alignment | 60-84% (17-23) | Room for improvement |
+| Needs Improvement | <60% (0-16) | Significant gaps |
 
 **Category Breakdown:**
 - Individual score per category
@@ -209,7 +233,7 @@ This applies to:
 
 - Yes = 1 point
 - No = 0 points
-- Total possible = 27 points
+- Total possible = 28 points
 
 ---
 
@@ -256,7 +280,7 @@ This applies to:
 ## 7. User Flow
 
 ```
-Landing Page → Survey (27 questions) → Email Capture → Results Dashboard
+Landing Page → Survey (28 questions) → Email Capture → Results Dashboard
                                                               ↓
                                                     Premium Upsell (V2)
 ```
@@ -287,7 +311,7 @@ Landing Page → Survey (27 questions) → Email Capture → Results Dashboard
 
 The application will be considered complete when:
 
-- [ ] All 27 survey questions displayed in correct category order
+- [ ] All 28 survey questions displayed in correct category order
 - [ ] Users can navigate forward and backward through survey
 - [ ] Yes/No responses captured for all questions
 - [ ] Email capture validates and stores email addresses

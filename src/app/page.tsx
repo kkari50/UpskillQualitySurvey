@@ -10,7 +10,7 @@ import { useSurveyStore } from "@/stores/survey";
 const categories = [
   { name: "Daily Sessions", count: 7, icon: Target, color: "text-teal-600", bg: "bg-teal-50" },
   { name: "Treatment Fidelity", count: 5, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
-  { name: "Data Analysis", count: 5, icon: BarChart3, color: "text-blue-600", bg: "bg-blue-50" },
+  { name: "Data Analysis", count: 6, icon: BarChart3, color: "text-blue-600", bg: "bg-blue-50" },
   { name: "Caregiver Guidance", count: 6, icon: Users, color: "text-purple-600", bg: "bg-purple-50" },
   { name: "Supervision", count: 4, icon: BookOpen, color: "text-amber-600", bg: "bg-amber-50" },
 ];
@@ -117,7 +117,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="animate-fade-in-up delay-200 text-muted-foreground mb-8 text-lg md:text-xl max-w-xl mx-auto lg:mx-0">
-                Discover your agency&apos;s strengths and growth areas in just 5 minutes with 27 research-backed questions
+                Discover your agency&apos;s strengths and growth areas in just 5 minutes with 28 research-backed questions
               </p>
 
               {/* CTA Button */}
@@ -172,7 +172,7 @@ export default function LandingPage() {
                   </div>
                   <div className="text-left">
                     <p className="text-2xl md:text-3xl font-bold text-foreground">Strong</p>
-                    <p className="text-sm text-muted-foreground">21 of 27 aligned</p>
+                    <p className="text-sm text-muted-foreground">22 of 28 aligned</p>
                     <div className="flex items-center gap-1 mt-1">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                       <span className="text-xs text-emerald-600 font-medium">Above average</span>
@@ -202,7 +202,7 @@ export default function LandingPage() {
                 What You&apos;ll Discover
               </p>
               <p className="text-2xl md:text-3xl font-bold text-foreground">
-                5 Categories • 27 Research-Backed Questions
+                5 Categories • 28 Research-Backed Questions
               </p>
             </div>
 

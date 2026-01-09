@@ -51,7 +51,7 @@ export const CURRENT_VERSION = '1.0'
 /**
  * Total number of questions in current version
  */
-export const TOTAL_QUESTIONS = 27
+export const TOTAL_QUESTIONS = 28
 
 /**
  * Total number of categories
