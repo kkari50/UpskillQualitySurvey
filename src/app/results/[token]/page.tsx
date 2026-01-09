@@ -2,12 +2,13 @@ import { notFound } from "next/navigation";
 import { Header, Footer } from "@/components/layout";
 import {
   ResultsHero,
-  CategoryBreakdown,
   GapsList,
   PopulationComparison,
   ShareButtons,
   TrendOverTime,
   SurveyClearer,
+  StatCard,
+  HorizontalBarChartCard,
 } from "@/components/results";
 import { createServiceClient } from "@/lib/supabase/service";
 import { calculateScores, getScoreSummary, getGaps } from "@/lib/scoring";
@@ -208,8 +209,8 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
       <SurveyClearer />
       <Header />
 
-      <main className="flex-1 py-8 md:py-12 px-4">
-        <div className="max-w-4xl mx-auto">
+      <main className="flex-1 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
               Your Quality Assessment Results
@@ -220,6 +221,27 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
           </div>
 
           <div className="space-y-6">
+            {/* Summary Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <StatCard
+                value={`${summary.percentage}%`}
+                label="Overall Score"
+                trend={summary.percentage >= 85 ? 'up' : summary.percentage >= 60 ? 'neutral' : 'down'}
+              />
+              <StatCard
+                value={`${summary.total}/${summary.maxPossible}`}
+                label="Questions Aligned"
+              />
+              <StatCard
+                value={percentile !== null ? `Top ${100 - percentile}%` : 'N/A'}
+                label="Percentile Rank"
+              />
+              <StatCard
+                value={gaps.length}
+                label="Areas to Improve"
+              />
+            </div>
+
             {/* 1. Results Hero - "Here's your overall score!" */}
             <ResultsHero
               total={summary.total}
@@ -230,8 +252,20 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
               color={summary.color}
             />
 
-            {/* 2. Category Breakdown - "Here's how you did in each area" */}
-            <CategoryBreakdown categories={summary.categories} />
+            {/* Category Breakdown Bar Chart */}
+            <HorizontalBarChartCard
+              title="Category Breakdown"
+              description="Your scores by category"
+              data={summary.categories.map((c) => ({
+                name: c.name,
+                value: c.percentage,
+                color: c.percentage >= 85
+                  ? 'hsl(160, 84%, 39%)' // emerald-500
+                  : c.percentage >= 60
+                  ? 'hsl(38, 92%, 50%)' // amber-500
+                  : 'hsl(351, 95%, 71%)', // rose-400 #FB7185
+              }))}
+            />
 
             {/* 3. Gaps List - "Here's what to focus on" */}
             <GapsList gaps={gaps} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -36,7 +37,7 @@ const colorMap: Record<string, { badge: string; ring: string; stroke: string }> 
   },
 };
 
-// Circular progress ring component for the hero score
+// Animated circular progress ring component for the hero score
 function HeroCircularProgress({
   percentage,
   strokeColor,
@@ -44,11 +45,46 @@ function HeroCircularProgress({
   percentage: number;
   strokeColor: string;
 }) {
-  const size = 144; // w-36 = 9rem = 144px
-  const strokeWidth = 10;
+  const [animatedPercentage, setAnimatedPercentage] = useState(0);
+  const [displayPercentage, setDisplayPercentage] = useState(0);
+
+  const size = 160; // Slightly larger for hero
+  const strokeWidth = 12;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (percentage / 100) * circumference;
+  const offset = circumference - (animatedPercentage / 100) * circumference;
+
+  // Animate the circle fill and counter on mount
+  useEffect(() => {
+    // Small delay to ensure the component is mounted
+    const timer = setTimeout(() => {
+      setAnimatedPercentage(percentage);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [percentage]);
+
+  // Animate the number counter
+  useEffect(() => {
+    if (animatedPercentage === 0) return;
+
+    const duration = 1000; // 1 second
+    const steps = 60;
+    const increment = percentage / steps;
+    let current = 0;
+
+    const interval = setInterval(() => {
+      current += increment;
+      if (current >= percentage) {
+        setDisplayPercentage(percentage);
+        clearInterval(interval);
+      } else {
+        setDisplayPercentage(Math.round(current));
+      }
+    }, duration / steps);
+
+    return () => clearInterval(interval);
+  }, [animatedPercentage, percentage]);
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
@@ -62,7 +98,7 @@ function HeroCircularProgress({
           strokeWidth={strokeWidth}
           className="stroke-slate-100"
         />
-        {/* Progress circle */}
+        {/* Progress circle with animation */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -70,16 +106,19 @@ function HeroCircularProgress({
           fill="none"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          className={cn("transition-all duration-700 ease-out", strokeColor)}
+          className={cn(strokeColor)}
           style={{
             strokeDasharray: circumference,
             strokeDashoffset: offset,
+            transition: 'stroke-dashoffset 1s ease-out',
           }}
         />
       </svg>
-      {/* Center text */}
+      {/* Center text with animated counter */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-4xl font-bold text-foreground">{percentage}%</span>
+        <span className="text-4xl md:text-5xl font-bold text-foreground">
+          {displayPercentage}%
+        </span>
       </div>
     </div>
   );
@@ -127,7 +166,7 @@ export function ResultsHero({
         </div>
 
         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
-          {/* Score Circle - Circular Progress Ring */}
+          {/* Score Circle - Animated Circular Progress Ring */}
           <HeroCircularProgress
             percentage={percentage}
             strokeColor={colors.stroke}

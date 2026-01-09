@@ -15,16 +15,16 @@ import { Button } from "@/components/ui/button";
 import {
   Search,
   Users,
-  BarChart3,
-  TrendingUp,
   ArrowRight,
   Loader2,
   AlertCircle,
   CheckCircle2,
   ThumbsUp,
   ThumbsDown,
+  TrendingUp,
 } from "lucide-react";
 import { QUESTIONS } from "@/data/questions/v1.0";
+import { StatCard, PieChartCard, HorizontalBarChartCard } from "@/components/results";
 
 interface PopulationStats {
   available: boolean;
@@ -87,66 +87,6 @@ function truncateText(text: string, maxLength: number = 80): string {
   return text.slice(0, maxLength).trim() + "...";
 }
 
-// Circular progress component
-function CircularProgress({
-  percentage,
-  size = 80,
-  strokeWidth = 8,
-  label,
-}: {
-  percentage: number;
-  size?: number;
-  strokeWidth?: number;
-  label: string;
-}) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (percentage / 100) * circumference;
-
-  const getColor = () => {
-    if (percentage >= 85) return "stroke-emerald-500";
-    if (percentage >= 60) return "stroke-amber-500";
-    return "stroke-rose-400";
-  };
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg className="transform -rotate-90" width={size} height={size}>
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={strokeWidth}
-            className="text-slate-100"
-          />
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            className={`${getColor()} transition-all duration-700 ease-out`}
-            style={{
-              strokeDasharray: circumference,
-              strokeDashoffset: offset,
-            }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-lg font-bold text-foreground">{percentage}%</span>
-        </div>
-      </div>
-      <span className="text-xs text-muted-foreground font-medium text-center">
-        {label}
-      </span>
-    </div>
-  );
-}
-
 export default function ResultsPage() {
   const [stats, setStats] = useState<PopulationStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -197,8 +137,8 @@ export default function ResultsPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main className="flex-1 py-8 md:py-12 px-4">
-        <div className="max-w-4xl mx-auto">
+      <main className="flex-1 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
           {/* Page Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -301,110 +241,71 @@ export default function ResultsPage() {
               </Card>
             ) : stats?.available && stats.data ? (
               <>
-                {/* Performance Distribution */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-primary" />
-                      Performance Distribution
-                    </CardTitle>
-                    <CardDescription>
-                      How {stats.data.overall.totalResponses.toLocaleString()} respondents scored across performance levels
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {(() => {
-                      const total = stats.data!.overall.totalResponses;
-                      const dist = stats.data!.distribution;
-                      const tiers = [
-                        {
-                          label: "Strong Alignment",
-                          range: "85%+",
-                          count: dist.strong,
-                          color: "bg-emerald-500",
-                          bgLight: "bg-emerald-50",
-                          textColor: "text-emerald-700",
-                        },
-                        {
-                          label: "Moderate Alignment",
-                          range: "60-84%",
-                          count: dist.moderate,
-                          color: "bg-amber-500",
-                          bgLight: "bg-amber-50",
-                          textColor: "text-amber-700",
-                        },
-                        {
-                          label: "Needs Improvement",
-                          range: "<60%",
-                          count: dist.needsImprovement,
-                          color: "bg-rose-400",
-                          bgLight: "bg-rose-50",
-                          textColor: "text-rose-700",
-                        },
-                      ];
+                {/* Summary Stats Row */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <StatCard
+                    value={stats.data.overall.totalResponses.toLocaleString()}
+                    label="Total Responses"
+                  />
+                  <StatCard
+                    value={`${stats.data.overall.avgPercentage}%`}
+                    label="Average Score"
+                    trend={stats.data.overall.avgPercentage >= 75 ? 'up' : stats.data.overall.avgPercentage >= 60 ? 'neutral' : 'down'}
+                  />
+                  <StatCard
+                    value={stats.data.distribution.strong}
+                    label="Strong Alignment"
+                    trend="up"
+                  />
+                  <StatCard
+                    value={stats.data.distribution.needsImprovement}
+                    label="Needs Improvement"
+                    trend="down"
+                  />
+                </div>
 
-                      return tiers.map((tier) => {
-                        const percentage = total > 0 ? Math.round((tier.count / total) * 100) : 0;
-                        return (
-                          <div key={tier.label} className={`p-4 rounded-lg ${tier.bgLight}`}>
-                            <div className="flex items-center justify-between mb-2">
-                              <div>
-                                <span className={`font-semibold ${tier.textColor}`}>
-                                  {tier.label}
-                                </span>
-                                <span className="text-muted-foreground text-sm ml-2">
-                                  ({tier.range})
-                                </span>
-                              </div>
-                              <div className="text-right">
-                                <span className={`font-bold ${tier.textColor}`}>
-                                  {tier.count}
-                                </span>
-                                <span className="text-muted-foreground text-sm ml-1">
-                                  ({percentage}%)
-                                </span>
-                              </div>
-                            </div>
-                            <div className="h-3 bg-white/50 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full ${tier.color} rounded-full transition-all duration-700`}
-                                style={{ width: `${percentage}%` }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      });
-                    })()}
-                  </CardContent>
-                </Card>
+                {/* Charts Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Performance Distribution Pie Chart */}
+                  <PieChartCard
+                    title="Performance Distribution"
+                    description={`How ${stats.data.overall.totalResponses.toLocaleString()} respondents scored`}
+                    data={[
+                      {
+                        name: 'Strong (85%+)',
+                        value: stats.data.distribution.strong,
+                        color: 'hsl(160, 84%, 39%)',
+                      },
+                      {
+                        name: 'Moderate (60-84%)',
+                        value: stats.data.distribution.moderate,
+                        color: 'hsl(38, 92%, 50%)',
+                      },
+                      {
+                        name: 'Needs Work (<60%)',
+                        value: stats.data.distribution.needsImprovement,
+                        color: 'hsl(351, 95%, 71%)', // rose-400 #FB7185
+                      },
+                    ]}
+                    centerLabel="Total"
+                    centerValue={stats.data.overall.totalResponses}
+                  />
 
-                {/* Category Breakdown */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-primary" />
-                      Category Averages
-                    </CardTitle>
-                    <CardDescription>
-                      Average scores by category across all respondents
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 justify-items-center">
-                      {categoryOrder.map((key) => {
-                        const value = stats.data!.categories[key];
-                        if (!value) return null;
-                        return (
-                          <CircularProgress
-                            key={key}
-                            percentage={value.avgPercentage}
-                            label={categoryNames[key] || key}
-                          />
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
+                  {/* Category Averages Bar Chart */}
+                  <HorizontalBarChartCard
+                    title="Category Averages"
+                    description="Average scores by category across all respondents"
+                    data={categoryOrder.map((key) => ({
+                      name: categoryNames[key] || key,
+                      value: stats.data!.categories[key]?.avgPercentage || 0,
+                      color: (stats.data!.categories[key]?.avgPercentage || 0) >= 85
+                        ? 'hsl(160, 84%, 39%)' // emerald-500
+                        : (stats.data!.categories[key]?.avgPercentage || 0) >= 60
+                        ? 'hsl(38, 92%, 50%)' // amber-500
+                        : 'hsl(351, 95%, 71%)', // rose-400 #FB7185
+                    }))}
+                  />
+                </div>
 
                 {/* Top & Bottom Practices */}
                 <Card>

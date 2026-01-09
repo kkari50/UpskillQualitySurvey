@@ -791,3 +791,76 @@ This made the question difficult to answer accurately since respondents might ha
 - Clearer survey responses
 - Better granularity in Data Analysis category
 - All documentation and code updated to reflect 28 questions
+
+---
+
+### DES-008: Donut Chart Center Label Alignment
+
+**Date:** January 2026
+
+**Context:** When displaying donut charts (pie charts with inner radius), center labels were misaligning. Multiple approaches were tried before finding the correct solution.
+
+**Problem:** Two approaches were attempted and failed:
+1. **Recharts Label component** - Using `viewBox.cx` and `viewBox.cy` coordinates inside `<Pie>` required manual offset calculations that varied with chart size and were difficult to get right
+2. **Absolute positioning with percentages** - Using `top: X%` relative to the container didn't account for the chart's internal coordinate system
+
+**Decision:** Use the **card container as the reference frame** with CSS flexbox centering and padding offset for legend space.
+
+**Implementation Rules:**
+
+```tsx
+// CORRECT: Position relative to CardContent boundaries
+<CardContent className="h-[300px] relative">
+  {/* Center label - positioned relative to card, not SVG */}
+  <div
+    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+    style={{ paddingBottom: '50px' }} /* Account for legend space */
+  >
+    <div className="flex flex-col items-center">
+      <span className="text-4xl font-bold text-foreground">{displayValue}</span>
+      <span className="text-sm text-muted-foreground">{centerLabel}</span>
+    </div>
+  </div>
+  <ResponsiveContainer width="100%" height="100%">
+    <PieChart>
+      <Pie cx="50%" cy="45%" innerRadius={60} outerRadius={90} dataKey="value">
+        {data.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={entry.color} />
+        ))}
+      </Pie>
+      <Legend verticalAlign="bottom" />
+    </PieChart>
+  </ResponsiveContainer>
+</CardContent>
+
+// WRONG: Don't use Recharts Label with manual offset calculations
+<Label content={({ viewBox }) => {
+  // This requires guessing y-offset values that vary with chart size
+  return <tspan y={(cy ?? 0) - 10}>...</tspan>
+}} />
+
+// WRONG: Don't use percentage-based absolute positioning
+<div style={{ top: '42%' }}>
+  {/* Doesn't account for legend or chart position */}
+</div>
+```
+
+**Key Points:**
+1. Use `CardContent` with `position: relative` as the reference container
+2. Center label uses `absolute inset-0` to cover the entire card content area
+3. Use `flex items-center justify-center` for perfect horizontal and vertical centering
+4. Apply `paddingBottom: 50px` (or similar) to offset for legend space at bottom
+5. Add `pointer-events-none` so the overlay doesn't block chart interactions
+6. Keep the Pie's `cy="45%"` to position the chart appropriately with legend
+
+**Rationale:** Using the card container as reference provides predictable centering that:
+- Works regardless of ResponsiveContainer sizing
+- Doesn't require coordinate system calculations
+- Uses standard CSS flexbox (well-understood, reliable)
+- Only needs one offset value (paddingBottom for legend)
+
+**Consequences:**
+- Center labels always align perfectly within the donut hole
+- Works at all screen sizes and responsive breakpoints
+- Simple to understand and maintain
+- Consistent behavior across different chart configurations

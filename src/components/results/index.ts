@@ -6,3 +6,6 @@ export { PopulationComparison } from "./PopulationComparison";
 export { ShareButtons } from "./ShareButtons";
 export { TrendOverTime } from "./TrendOverTime";
 export { SurveyClearer } from "./SurveyClearer";
+export { StatCard } from "./StatCard";
+export { PieChartCard } from "./PieChartCard";
+export { HorizontalBarChartCard } from "./HorizontalBarChartCard";
