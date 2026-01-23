@@ -25,8 +25,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
-import { NCRFidelityPDF } from "@/components/pdf/NCRFidelityPDF";
-import { pdf } from "@react-pdf/renderer";
 
 // Types
 type Answer = "yes" | "no" | "na" | null;
@@ -427,10 +425,16 @@ export default function NCRFidelityPage() {
   // PDF generation state
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Handle PDF download
+  // Handle PDF download - dynamically import PDF libraries to reduce initial bundle
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { NCRFidelityPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/NCRFidelityPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <NCRFidelityPDF

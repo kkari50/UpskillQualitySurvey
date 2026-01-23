@@ -302,7 +302,7 @@ export function BIPMonitoringChecklistPDF({
                 <Text
                   style={[
                     styles.sectionProgress,
-                    sectionScore?.complete && styles.sectionComplete,
+                    sectionScore?.complete ? styles.sectionComplete : {},
                   ]}
                 >
                   {sectionScore?.checked || 0}/{sectionScore?.total || 0}
@@ -317,7 +317,7 @@ export function BIPMonitoringChecklistPDF({
                       key={item.id}
                       style={[
                         styles.itemRow,
-                        idx === section.items.length - 1 && styles.itemRowLast,
+                        idx === section.items.length - 1 ? styles.itemRowLast : {},
                       ]}
                     >
                       <View
@@ -333,7 +333,7 @@ export function BIPMonitoringChecklistPDF({
                       <Text
                         style={[
                           styles.itemLabel,
-                          isChecked && styles.itemLabelChecked,
+                          isChecked ? styles.itemLabelChecked : {},
                         ]}
                       >
                         {item.label}

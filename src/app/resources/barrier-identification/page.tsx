@@ -34,8 +34,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
-import { BarrierIdentificationPDF } from "@/components/pdf/BarrierIdentificationPDF";
-import { pdf } from "@react-pdf/renderer";
 
 // Types
 interface BarrierCategory {
@@ -422,6 +420,12 @@ export default function BarrierIdentificationPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { BarrierIdentificationPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/BarrierIdentificationPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <BarrierIdentificationPDF

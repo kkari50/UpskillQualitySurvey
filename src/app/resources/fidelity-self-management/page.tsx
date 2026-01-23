@@ -23,8 +23,6 @@ import {
   Info,
   RotateCcw,
 } from "lucide-react";
-import { SelfManagementFidelityPDF } from "@/components/pdf/SelfManagementFidelityPDF";
-import { pdf } from "@react-pdf/renderer";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
 import Link from "next/link";
@@ -139,6 +137,12 @@ export default function SelfManagementFidelityPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { SelfManagementFidelityPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/SelfManagementFidelityPDF"),
+      ]);
+
       const pdfData = {
         date: date ? format(date, "MMMM d, yyyy") : "",
         client,

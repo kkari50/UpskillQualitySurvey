@@ -365,8 +365,8 @@ export function BarrierIdentificationPDF({
                       key={item.id}
                       style={[
                         styles.itemRow,
-                        idx === category.items.length - 1 && styles.itemRowLast,
-                        isChecked && styles.itemRowChecked,
+                        idx === category.items.length - 1 ? styles.itemRowLast : {},
+                        isChecked ? styles.itemRowChecked : {},
                       ]}
                     >
                       <View
@@ -382,7 +382,7 @@ export function BarrierIdentificationPDF({
                       <Text
                         style={[
                           styles.itemLabel,
-                          isChecked && styles.itemLabelChecked,
+                          isChecked ? styles.itemLabelChecked : {},
                         ]}
                       >
                         {item.label}

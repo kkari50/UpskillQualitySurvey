@@ -418,7 +418,7 @@ export function BehaviorIntensityPDF({
                 key={obs.id}
                 style={[
                   styles.tableRow,
-                  idx === observations.length - 1 && styles.tableRowLast,
+                  idx === observations.length - 1 ? styles.tableRowLast : {},
                 ]}
               >
                 <Text style={[styles.tableCell, { width: "10%" }]}>

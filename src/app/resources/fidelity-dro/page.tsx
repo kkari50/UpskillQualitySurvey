@@ -27,8 +27,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { DROFidelityPDF } from "@/components/pdf/DROFidelityPDF";
-import { pdf } from "@react-pdf/renderer";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
 
@@ -404,6 +402,12 @@ export default function DROFidelityPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { DROFidelityPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/DROFidelityPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <DROFidelityPDF

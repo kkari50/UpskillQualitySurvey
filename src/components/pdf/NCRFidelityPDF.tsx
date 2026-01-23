@@ -366,9 +366,9 @@ function CriteriaRowPDF({
 }) {
   const rowStyles = [
     styles.criteriaRow,
-    isLast && styles.criteriaRowLast,
-    reversed && styles.criteriaRowReversed,
-  ].filter(Boolean);
+    isLast ? styles.criteriaRowLast : {},
+    reversed ? styles.criteriaRowReversed : {},
+  ];
 
   return (
     <View style={rowStyles}>
@@ -498,14 +498,14 @@ export function NCRFidelityPDF({
             style={[
               styles.noncomplianceItem,
               styles.noncomplianceItemLast,
-              rateExceedsCriterion && styles.noncomplianceWarning,
+              rateExceedsCriterion ? styles.noncomplianceWarning : {},
             ]}
           >
             <Text style={styles.noncomplianceLabel}>Rate (per hour)</Text>
             <Text
               style={[
                 styles.noncomplianceValue,
-                rateExceedsCriterion && styles.noncomplianceWarningValue,
+                rateExceedsCriterion ? styles.noncomplianceWarningValue : {},
               ]}
             >
               {noncomplianceRate.toFixed(2)}

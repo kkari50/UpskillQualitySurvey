@@ -24,8 +24,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
-import { BIPFidelityRatingPDF } from "@/components/pdf/BIPFidelityRatingPDF";
-import { pdf } from "@react-pdf/renderer";
 
 // Types
 type Answer = "yes" | "no" | null;
@@ -245,6 +243,12 @@ export default function BIPFidelityRatingPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { BIPFidelityRatingPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/BIPFidelityRatingPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <BIPFidelityRatingPDF

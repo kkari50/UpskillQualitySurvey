@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-for-dev";
 
@@ -43,5 +43,5 @@ export function createMagicLinkToken(
   resultsToken: string,
   expiresIn: string = "7d"
 ): string {
-  return jwt.sign({ email, resultsToken }, JWT_SECRET, { expiresIn });
+  return jwt.sign({ email, resultsToken }, JWT_SECRET, { expiresIn } as SignOptions);
 }

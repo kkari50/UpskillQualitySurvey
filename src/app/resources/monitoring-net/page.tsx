@@ -23,8 +23,6 @@ import {
   Trash2,
   TrendingUp,
 } from "lucide-react";
-import { NETMonitoringPDF } from "@/components/pdf/NETMonitoringPDF";
-import { pdf } from "@react-pdf/renderer";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
 
@@ -313,6 +311,12 @@ export default function NETMonitoringPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { NETMonitoringPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/NETMonitoringPDF"),
+      ]);
+
       const doc = (
         <NETMonitoringPDF
           supervisee={supervisee}

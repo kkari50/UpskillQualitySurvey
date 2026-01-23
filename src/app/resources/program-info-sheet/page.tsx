@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
-import { pdf } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import {
   Download,
@@ -38,7 +37,6 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import {
-  ProgramInfoSheetPDF,
   type EvaluationItem,
   type EvaluationAnswer,
   type ProgramComponent,
@@ -319,6 +317,12 @@ export default function ProgramInfoSheetPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { ProgramInfoSheetPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/ProgramInfoSheetPDF"),
+      ]);
+
       const logoUrl = `${window.location.origin}/images/logo-medium.png`;
 
       // Reconstruct evaluation items with original text for PDF

@@ -1,4 +1,5 @@
 export { CategoryBreakdown } from './CategoryBreakdown'
+export { FetchResultsForm } from './FetchResultsForm'
 export { GapsList } from './GapsList'
 export { HorizontalBarChartCard } from './HorizontalBarChartCard'
 export { PieChartCard } from './PieChartCard'

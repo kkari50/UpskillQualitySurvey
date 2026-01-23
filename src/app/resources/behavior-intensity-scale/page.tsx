@@ -32,8 +32,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
-import { BehaviorIntensityPDF } from "@/components/pdf/BehaviorIntensityPDF";
-import { pdf } from "@react-pdf/renderer";
 
 // Types
 interface BehaviorObservation {
@@ -256,11 +254,9 @@ function IntensitySlider({
 function ObservationCard({
   observation,
   onDelete,
-  index,
 }: {
   observation: BehaviorObservation;
   onDelete: () => void;
-  index: number;
 }) {
   const level = INTENSITY_LEVELS[observation.intensity];
   const behaviorType = BEHAVIOR_TYPES.find(
@@ -416,6 +412,12 @@ export default function BehaviorIntensityScalePage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { BehaviorIntensityPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/BehaviorIntensityPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <BehaviorIntensityPDF
@@ -712,12 +714,11 @@ export default function BehaviorIntensityScalePage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {observations.map((observation, index) => (
+                {observations.map((observation) => (
                   <ObservationCard
                     key={observation.id}
                     observation={observation}
                     onDelete={() => deleteObservation(observation.id)}
-                    index={index + 1}
                   />
                 ))}
               </div>

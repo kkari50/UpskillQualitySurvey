@@ -233,8 +233,8 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
   const resultsUrl = `/results/${token}`;
 
   // Calculate population comparison metric based on response count
-  const totalResponses = populationStats?.available ? populationStats.overall.totalResponses : 0;
-  const populationAvg = populationStats?.available ? populationStats.overall.avgPercentage : null;
+  const totalResponses = populationStats?.available ? populationStats.overall?.totalResponses ?? 0 : 0;
+  const populationAvg = populationStats?.available ? populationStats.overall?.avgPercentage ?? null : null;
 
   // Determine which metric to show: vs Average (0-19) or Percentile (>=20)
   const getPopulationMetric = (): { value: string; label: string } => {

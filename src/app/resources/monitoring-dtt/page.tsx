@@ -31,8 +31,6 @@ import {
   ChevronRight,
   CalendarIcon,
 } from "lucide-react";
-import { DTTMonitoringPDF } from "@/components/pdf/DTTMonitoringPDF";
-import { pdf } from "@react-pdf/renderer";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
 
@@ -541,6 +539,12 @@ export default function DTTMonitoringPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { DTTMonitoringPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/DTTMonitoringPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <DTTMonitoringPDF

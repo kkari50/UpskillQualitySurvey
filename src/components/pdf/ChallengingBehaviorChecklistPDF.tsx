@@ -401,7 +401,7 @@ export function ChallengingBehaviorChecklistPDF({
                 key={idx}
                 style={[
                   styles.criteriaRow,
-                  idx === CRITERIA_LABELS.length - 1 && styles.criteriaRowLast,
+                  idx === CRITERIA_LABELS.length - 1 ? styles.criteriaRowLast : {},
                 ]}
               >
                 <Text style={styles.criteriaNumber}>{idx + 1}</Text>

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { pdf } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { Download, Printer, RotateCcw, Loader2, Check, X, CalendarIcon } from "lucide-react";
 
@@ -16,7 +15,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import {
-  GetReadyChecklistPDF,
   DATA_COLLECTION_ITEMS,
   GENERAL_ITEMS,
   type Answer,
@@ -51,6 +49,12 @@ export default function GetReadyChecklistPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { GetReadyChecklistPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/GetReadyChecklistPDF"),
+      ]);
+
       // Format date for display if provided
       const displayDate = date ? format(date, "MMM d, yyyy") : "";
       const fileDate = date ? format(date, "yyyy-MM-dd") : "";

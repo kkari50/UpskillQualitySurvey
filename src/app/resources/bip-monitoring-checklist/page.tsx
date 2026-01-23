@@ -37,8 +37,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
-import { BIPMonitoringChecklistPDF } from "@/components/pdf/BIPMonitoringChecklistPDF";
-import { pdf } from "@react-pdf/renderer";
 
 // Types
 interface ChecklistSection {
@@ -510,6 +508,12 @@ export default function BIPMonitoringChecklistPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { BIPMonitoringChecklistPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/BIPMonitoringChecklistPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <BIPMonitoringChecklistPDF

@@ -30,8 +30,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
-import { ChallengingBehaviorChecklistPDF } from "@/components/pdf/ChallengingBehaviorChecklistPDF";
-import { pdf } from "@react-pdf/renderer";
 
 // Types
 type Answer = "yes" | "no" | "na" | null;
@@ -304,6 +302,12 @@ export default function ChallengingBehaviorChecklistPage() {
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
     try {
+      // Dynamic imports - only load PDF libraries when user clicks download
+      const [{ pdf }, { ChallengingBehaviorChecklistPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pdf/ChallengingBehaviorChecklistPDF"),
+      ]);
+
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
       const doc = (
         <ChallengingBehaviorChecklistPDF
