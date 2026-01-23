@@ -9,6 +9,7 @@ interface StatCardProps {
   label: string
   trend?: 'up' | 'down' | 'neutral'
   trendValue?: string
+  subtext?: string
   className?: string
 }
 
@@ -17,6 +18,7 @@ export function StatCard({
   label,
   trend,
   trendValue,
+  subtext,
   className,
 }: StatCardProps) {
   const formatValue = (val: number | string) => {
@@ -45,6 +47,9 @@ export function StatCard({
           {formatValue(value)}
         </div>
         <p className="text-sm text-muted-foreground mt-1">{label}</p>
+        {subtext && (
+          <p className="text-xs text-muted-foreground mt-1">{subtext}</p>
+        )}
         {trend && (
           <div className={cn('flex items-center gap-1 mt-2 text-sm', trendColor)}>
             <TrendIcon className="h-4 w-4" />

@@ -229,6 +229,31 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
 
   const resultsUrl = `/results/${token}`;
 
+  // Calculate population comparison metric based on response count
+  const totalResponses = populationStats?.available ? populationStats.overall.totalResponses : 0;
+  const populationAvg = populationStats?.available ? populationStats.overall.avgPercentage : null;
+
+  // Determine which metric to show: vs Average (0-19) or Percentile (>=20)
+  const getPopulationMetric = (): { value: string; label: string } => {
+    if (totalResponses < 20) {
+      // Show vs Average (0-19 responses)
+      const diff = summary.percentage - (populationAvg ?? 0);
+      const sign = diff >= 0 ? '+' : '';
+      return {
+        value: `${sign}${diff}%`,
+        label: 'vs Population Avg',
+      };
+    }
+
+    // Show Percentile (>=20 responses)
+    return {
+      value: percentile !== null ? `Top ${100 - percentile}%` : 'N/A',
+      label: 'Percentile Rank',
+    };
+  };
+
+  const populationMetric = getPopulationMetric();
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Clear survey state from localStorage after viewing results */}
@@ -259,8 +284,8 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
                 label="Questions Aligned"
               />
               <StatCard
-                value={percentile !== null ? `Top ${100 - percentile}%` : 'N/A'}
-                label="Percentile Rank"
+                value={populationMetric.value}
+                label={populationMetric.label}
               />
               <StatCard
                 value={gaps.length}
