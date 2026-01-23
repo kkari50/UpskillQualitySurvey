@@ -12,6 +12,7 @@ import {
 } from "@/components/results";
 import { createServiceClient } from "@/lib/supabase/service";
 import { calculateScores, getScoreSummary, getGaps } from "@/lib/scoring";
+import { isJwtToken, verifyMagicLinkToken } from "@/lib/auth/tokens";
 import type { SurveyAnswers } from "@/data/questions";
 
 // Force dynamic rendering - no caching for results pages
@@ -23,14 +24,39 @@ interface ResultsPageProps {
 
 const MIN_RESPONSES = 10;
 
+/**
+ * Resolve token to UUID
+ * - If token is a JWT (from magic link), verify and extract the UUID
+ * - If token is a UUID, use it directly
+ */
+function resolveToken(token: string): string | null {
+  // Check if it's a JWT (magic link token)
+  if (isJwtToken(token)) {
+    const payload = verifyMagicLinkToken(token);
+    if (payload?.resultsToken) {
+      return payload.resultsToken;
+    }
+    return null; // Invalid JWT
+  }
+
+  // Otherwise, assume it's a UUID
+  return token;
+}
+
 async function getResultsData(token: string) {
+  // Resolve token (JWT or UUID) to UUID
+  const resolvedToken = resolveToken(token);
+  if (!resolvedToken) {
+    return null; // Invalid token
+  }
+
   const supabase = createServiceClient();
 
   // Get survey response by token
   const { data: response, error: responseError } = await supabase
     .from("survey_responses")
     .select("*, leads(*)")
-    .eq("results_token", token)
+    .eq("results_token", resolvedToken)
     .single();
 
   if (responseError || !response) {

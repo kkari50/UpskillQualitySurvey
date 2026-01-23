@@ -8,13 +8,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Quick Quality Assessment | UpskillABA",
+  title: "Quick Quality Assessment | Upskill ABA",
   description:
     "Free 5-minute assessment for ABA agencies. Evaluate your quality practices across 28 research-backed questions and compare to industry benchmarks.",
   keywords:
     "ABA quality assessment, BCBA benchmarks, ABA provider evaluation, behavior analysis quality, treatment fidelity assessment",
   openGraph: {
-    title: "Quick Quality Assessment | UpskillABA",
+    title: "Quick Quality Assessment | Upskill ABA",
     description:
       "Free 5-minute assessment for ABA agencies. Evaluate your quality practices across 28 research-backed questions.",
     type: "website",

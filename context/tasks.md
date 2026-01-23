@@ -59,7 +59,7 @@ This is the source of truth for all project tasks. Update status as work progres
 
 ### Data Files
 - [x] Create `src/data/questions/schema.ts` - TypeScript types
-- [x] Create `src/data/questions/v1.0.ts` - All 27 questions structured
+- [x] Create `src/data/questions/v1.0.ts` - All 28 questions structured
 - [x] Create `src/data/questions/index.ts` - Export current version
 - [x] Create `src/lib/constants/email-domains.ts` - Email domain utils
 - [x] Create `src/lib/constants/categories.ts` - Category metadata
@@ -72,7 +72,9 @@ This is the source of truth for all project tasks. Update status as work progres
 ### Environment Setup
 - [x] Create `.env.example` with required variables
 - [ ] Update `.env.example` with Upstash Redis vars
+- [ ] Update `.env.example` with Resend API key
 - [ ] Set up Upstash Redis account (rate limiting)
+- [ ] Set up Resend account (magic link emails)
 - [ ] Configure Vercel project
 - [ ] Set environment variables in Vercel
 
@@ -117,8 +119,12 @@ This is the source of truth for all project tasks. Update status as work progres
 - [ ] Maintenance mode page
 - [ ] Empty state for insufficient comparison data
 
-### Email Templates (V2)
-- [ ] Results email template
+### Email Templates (V1 - Magic Links)
+- [ ] Magic link email template (results access)
+- [ ] Survey invitation email template (for non-existing emails)
+
+### Email Templates (V2 - PDF Delivery)
+- [ ] Results PDF email template
 - [ ] Email verification template
 - [ ] Password reset template
 
@@ -138,7 +144,7 @@ This is the source of truth for all project tasks. Update status as work progres
 ### Landing Page
 - [x] Create landing page layout
 - [x] Implement hero section with value proposition
-- [x] Add trust signals (27 questions, ~5 min, 5 categories)
+- [x] Add trust signals (28 questions, ~5 min, 5 categories)
 - [x] Add privacy badge
 - [x] Implement "Start Assessment" CTA
 - [x] Mobile responsive design
@@ -199,6 +205,79 @@ This is the source of truth for all project tasks. Update status as work progres
 
 ---
 
+## V1 New Features (Product Roadmap Meeting III - Jan 2026)
+
+### Magic Link for Results Retrieval
+- [ ] Set up Resend account and API key
+- [ ] Create `POST /api/results/request-link` endpoint
+- [ ] Implement magic link JWT generation
+- [ ] Create magic link email template
+- [ ] Create survey invitation email template
+- [ ] Implement privacy-preserving response (same message for all emails)
+- [ ] Add "Fetch Results" page/section
+- [ ] Rate limit magic link requests (5/min per IP)
+- [ ] E2E tests for magic link flow
+
+### Resources and Job Aids
+- [!] Create `src/data/resources/schema.ts` - Resource types (Blocked: waiting on Kristen's Excel mapping)
+- [!] Create `src/data/resources/v1.0.ts` - Question→Resource mappings (Blocked: waiting on Kristen's Excel mapping)
+- [ ] Create `src/data/resources/index.ts` - Export current version
+- [ ] Create ResourceAccordion component
+- [ ] Implement "Areas for Improvement" tab (default, shows only "No" answers)
+- [ ] Implement "All Questions" tab
+- [ ] Add resources to results page
+- [ ] Mobile responsive design for resources section
+- [ ] E2E tests for resources display
+
+### Ranking System
+- [ ] Update `GET /api/stats/percentile` to support agency size parameter
+- [ ] Create materialized view for stats by agency size
+- [ ] Implement overall percentile rank display
+- [ ] Implement rank by agency size display
+- [ ] Handle insufficient data for agency size categories (<10 responses)
+- [ ] Add "Not enough data" messaging for small categories
+- [ ] E2E tests for ranking features
+
+### Form Updates
+- [ ] Add optional Agency Name text field to EmailCapture form
+- [ ] Update Agency Size dropdown to use "BCBAs" wording (not "staff")
+- [ ] Update validation schema to include `agencyName` and `agencySize`
+- [ ] Update submit API to handle new fields
+- [ ] Create migration for `agency_name` column in leads table
+- [ ] E2E tests for form changes
+
+### UI Polish
+- [ ] Add info tooltips (?) next to "Strongest Questions" section
+- [ ] Add info tooltips (?) next to "Weakest Questions" section
+- [ ] Implement tooltip text: "Percentage shows how many respondents answered 'Yes'..."
+- [ ] Remove "Strong Alignment" count card from benchmarks (redundant with chart)
+- [ ] Remove "Needs Improvement" count card from benchmarks (redundant with chart)
+- [ ] Verify population benchmark hides when <10 responses
+
+### Branding Integration
+- [!] Apply "Upskill ABA" branding (with space, not "UpskillABA") - need web artifacts from Kristen
+- [!] Integrate full logo (Blocked: waiting on Kristen)
+- [!] Integrate avatar/icon logo (Blocked: waiting on Kristen)
+- [!] Apply color palette from brand guide (Blocked: waiting on Kristen)
+- [!] Apply fonts from brand guide (Blocked: waiting on Kristen)
+- [ ] Update landing page branding
+- [ ] Update results page branding
+- [ ] Update email templates with branding
+
+---
+
+## Dependencies on Kristen (Blocking Items)
+
+| Item | Blocks | Status |
+|------|--------|--------|
+| Web artifacts (logo, banners, colors, fonts) | Branding Integration | Pending |
+| Question → Resource mapping (Excel) | Resources Feature | Pending |
+| Resource files (PDFs, job aids) | Resources Feature | Pending |
+| Privacy Policy content | Legal Pages | Pending |
+| Terms of Service content | Legal Pages | Pending |
+
+---
+
 ## Phase 2: V2 Features (Future)
 
 ### Authentication
@@ -213,8 +292,7 @@ This is the source of truth for all project tasks. Update status as work progres
 - [ ] Create PDF HTML template
 - [ ] Create `POST /api/pdf/generate` endpoint
 - [ ] Set up Inngest for background jobs
-- [ ] Set up Resend for email
-- [ ] Implement email sending with PDF attachment
+- [ ] Implement email sending with PDF attachment (Resend already set up in V1)
 
 ### Payments
 - [ ] Set up Stripe account
@@ -286,4 +364,8 @@ _No bugs reported yet._
 - Database must be set up before API routes
 - Stats endpoints require materialized views
 - Population comparison requires minimum 10 responses
+- Agency size ranking requires minimum 10 responses per category
 - Deployment via GitHub → Vercel pipeline
+- Magic link emails use Resend (set up in V1, not V2)
+- Resources feature blocked on Kristen's Excel mapping
+- Branding integration blocked on Kristen's web artifacts

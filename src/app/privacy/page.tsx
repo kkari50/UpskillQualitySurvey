@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = {
   title: "Privacy Policy | Quick Quality Assessment",
-  description: "Privacy policy for the Quick Quality Assessment tool by UpskillABA",
+  description: "Privacy policy for the Quick Quality Assessment tool by Upskill ABA",
 };
 
 export default function PrivacyPage() {
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
                     Overview
                   </h2>
                   <p className="text-muted-foreground">
-                    UpskillABA (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates the Quick Quality
+                    Upskill ABA (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates the Quick Quality
                     Assessment tool. This privacy policy explains how we collect, use, and
                     protect your information when you use our assessment service.
                   </p>

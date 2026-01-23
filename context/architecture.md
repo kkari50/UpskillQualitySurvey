@@ -1,6 +1,6 @@
 # Quick Quality Assessment Survey - Architecture
 
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** January 2026
 
 ---
@@ -27,10 +27,10 @@
 | Validation | Zod | V1 |
 | Charts | Recharts | V1 |
 | Rate Limiting | Upstash Redis | V1 |
+| Email (Magic Links) | Resend | V1 |
 | Hosting | Vercel | V1 |
 | Authentication | Supabase Auth | V2 |
 | PDF Generation | Browserless.io | V2 |
-| Email | Resend | V2 |
 | Background Jobs | Inngest | V2 |
 | Payments | Stripe | V2 |
 
@@ -76,22 +76,30 @@
 ## V1: Public Survey
 
 ### Features
-- 27-question survey (public, no auth)
+- 28-question survey (public, no auth)
 - Email capture (required) with name/role (optional)
+- Optional agency name field (for lead generation)
 - Online results dashboard with scores
 - Population comparison (individual vs average)
 - Question-level benchmarking ("72% answered Yes")
+- Magic link email for results retrieval (privacy-preserving)
+- Resources/job aids linked to each question
+- Ranking by overall percentile and agency size
 
 ### Agency Handling (V1)
 - Auto-extract email domain
 - Personal emails (gmail, yahoo, etc.) → Not grouped
 - Work emails → Grouped by domain for reporting
+- Agency size tracked (based on BCBA count)
 
 ### User Flow
 ```
-Landing → Survey (27 questions) → Email Capture → Results Dashboard
+Landing → Survey (28 questions) → Email Capture → Results Dashboard
                                                         ↓
                                               /results/{token}
+
+Returning User:
+Fetch Results → Enter Email → Magic Link Email → Results Dashboard
 ```
 
 ---
@@ -151,10 +159,14 @@ src/
 │   ├── results/                    # Results page
 │   └── forms/                      # Form components
 ├── data/
-│   └── questions/
-│       ├── index.ts                # Current version export
-│       ├── v1.0.ts                 # Question definitions
-│       └── schema.ts               # TypeScript types
+│   ├── questions/
+│   │   ├── index.ts                # Current version export
+│   │   ├── v1.0.ts                 # Question definitions
+│   │   └── schema.ts               # TypeScript types
+│   └── resources/
+│       ├── index.ts                # Resource mappings export
+│       ├── v1.0.ts                 # Question → Resource mappings
+│       └── schema.ts               # Resource types
 ├── lib/
 │   ├── supabase/
 │   │   ├── client.ts               # Browser client
@@ -180,6 +192,8 @@ src/
 | email | text | Unique, required |
 | name | text | Optional |
 | role | text | Optional (enum) |
+| agency_name | text | Optional, for lead generation |
+| agency_size | text | Optional (enum: small, medium, large, enterprise) |
 | email_domain | text | Extracted from email (null for personal emails) |
 | marketing_consent | boolean | GDPR compliance |
 | is_test | boolean | Default false, true for E2E test data |
@@ -194,7 +208,7 @@ src/
 | lead_id | uuid | FK → leads |
 | survey_version | text | "1.0" |
 | total_score | integer | Calculated score |
-| max_possible_score | integer | 27 for v1.0 |
+| max_possible_score | integer | 28 for v1.0 |
 | results_token | text | Unique, for results URL |
 | is_test | boolean | Default false, true for E2E test data |
 | completed_at | timestamptz | Auto |
@@ -244,8 +258,13 @@ CREATE INDEX idx_answers_question ON survey_answers(question_id);
 ```
 src/data/questions/
 ├── index.ts        # Exports current version
-├── v1.0.ts         # Original 27 questions
+├── v1.0.ts         # Original 28 questions
 └── schema.ts       # Types
+
+src/data/resources/
+├── index.ts        # Exports current version
+├── v1.0.ts         # Question → Resource mappings
+└── schema.ts       # Resource types
 ```
 
 ### Question Schema
@@ -267,6 +286,22 @@ interface Question {
 | Remove question | Mark deprecated, exclude from new surveys |
 | Reorder | Change array order, IDs unchanged |
 
+### Resource Schema
+```typescript
+interface Resource {
+  questionId: string           // Links to question ID (e.g., "ds_001")
+  type: 'pdf' | 'link' | 'text'
+  title: string
+  description?: string
+  url?: string                 // For pdf and link types
+  content?: string             // For text type (action statements)
+}
+
+interface QuestionResources {
+  [questionId: string]: Resource[]
+}
+```
+
 ---
 
 ## API Endpoints (V1)
@@ -275,6 +310,9 @@ interface Question {
 |--------|----------|-------------|
 | POST | `/api/survey/submit` | Submit survey + create lead |
 | GET | `/api/stats` | Population statistics |
+| GET | `/api/stats/percentile` | Get percentile rank for score |
+| POST | `/api/results/request-link` | Send magic link email |
+| GET | `/api/health` | Health check endpoint |
 
 ### POST `/api/survey/submit`
 
@@ -331,7 +369,7 @@ const emailCaptureSchema = z.object({
 
 const surveyAnswersSchema = z.object({
   answers: z.record(z.string().regex(/^[a-z]{2,3}_\d{3}$/), z.boolean())
-    .refine(obj => Object.keys(obj).length === 27),
+    .refine(obj => Object.keys(obj).length === 28),
   surveyVersion: z.string().regex(/^\d+\.\d+$/)
 })
 ```
@@ -352,9 +390,11 @@ headers: [
 ## Results Page Features
 
 ### Individual Score Display
-- Overall score: X/27 with percentage
+- Overall score: X/28 with percentage
 - Performance label (Strong/Moderate/Needs Improvement)
 - Color-coded visual indicator
+- Overall percentile rank vs all respondents
+- Rank by agency size (when 10+ in category)
 
 ### Population Comparison
 - Percentile rank ("Higher than 68% of agencies")
@@ -383,13 +423,13 @@ SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY  # Secret
 UPSTASH_REDIS_REST_URL
 UPSTASH_REDIS_REST_TOKEN   # Secret
+RESEND_API_KEY             # Secret (for magic links)
 NEXT_PUBLIC_URL
 ```
 
 ### V2 Additional Variables
 ```
 BROWSERLESS_API_KEY        # Secret
-RESEND_API_KEY             # Secret
 INNGEST_SIGNING_KEY        # Secret
 STRIPE_SECRET_KEY          # Secret
 STRIPE_WEBHOOK_SECRET      # Secret
@@ -403,7 +443,7 @@ STRIPE_WEBHOOK_SECRET      # Secret
 
 **Context:** Need reporting on individual questions across all responses.
 **Decision:** Store each answer as a row in `survey_answers` table.
-**Consequences:** More rows (27 per response), but cleaner SQL for aggregations.
+**Consequences:** More rows (28 per response), but cleaner SQL for aggregations.
 
 ### Decision 2: Static Questions with Versioning
 

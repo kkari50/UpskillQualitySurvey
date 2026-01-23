@@ -8,7 +8,7 @@
 export const APP_NAME = 'Quick Quality Assessment'
 export const APP_DESCRIPTION =
   'A self-assessment tool for ABA agencies to evaluate clinical quality practices'
-export const APP_BRAND = 'UpskillABA'
+export const APP_BRAND = 'Upskill ABA'
 
 // URLs
 export const APP_URL = process.env.NEXT_PUBLIC_URL ?? 'http://localhost:3000'

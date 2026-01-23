@@ -10,21 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Search,
   Users,
   ArrowRight,
   Loader2,
-  AlertCircle,
-  CheckCircle2,
   ThumbsUp,
   ThumbsDown,
   TrendingUp,
 } from "lucide-react";
 import { QUESTIONS } from "@/data/questions/v1.0";
-import { StatCard, PieChartCard, HorizontalBarChartCard } from "@/components/results";
+import { StatCard, PieChartCard, HorizontalBarChartCard, FetchResultsForm } from "@/components/results";
 
 interface PopulationStats {
   available: boolean;
@@ -52,11 +48,6 @@ interface PopulationStats {
   };
 }
 
-interface LookupResult {
-  found: boolean;
-  token?: string;
-  message?: string;
-}
 
 // Category display names and order
 const categoryOrder = [
@@ -90,9 +81,6 @@ function truncateText(text: string, maxLength: number = 80): string {
 export default function ResultsPage() {
   const [stats, setStats] = useState<PopulationStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState("");
-  const [lookupLoading, setLookupLoading] = useState(false);
-  const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
 
   // Fetch population stats on mount
   useEffect(() => {
@@ -111,28 +99,6 @@ export default function ResultsPage() {
     fetchStats();
   }, []);
 
-  // Handle email lookup
-  async function handleLookup(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setLookupLoading(true);
-    setLookupResult(null);
-
-    try {
-      const response = await fetch(
-        `/api/results/lookup?email=${encodeURIComponent(email.trim())}`
-      );
-      const data = await response.json();
-      setLookupResult(data);
-    } catch (error) {
-      console.error("Lookup failed:", error);
-      setLookupResult({ found: false, message: "An error occurred. Please try again." });
-    } finally {
-      setLookupLoading(false);
-    }
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -149,82 +115,10 @@ export default function ResultsPage() {
             </p>
           </div>
 
-          {/* Email Lookup Card */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Search className="w-5 h-5 text-primary" />
-                Look Up Your Results
-              </CardTitle>
-              <CardDescription>
-                Enter the email you used when taking the survey to view your results
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-3">
-                <Input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1"
-                  disabled={lookupLoading}
-                />
-                <Button type="submit" disabled={lookupLoading || !email.trim()}>
-                  {lookupLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Searching...
-                    </>
-                  ) : (
-                    <>
-                      Find Results
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </Button>
-              </form>
-
-              {/* Lookup Result */}
-              {lookupResult && (
-                <div className="mt-4">
-                  {lookupResult.found ? (
-                    <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-emerald-800">
-                          Results found!
-                        </p>
-                        <p className="text-sm text-emerald-600">
-                          Click below to view your results
-                        </p>
-                      </div>
-                      <Button asChild size="sm">
-                        <Link href={`/results/${lookupResult.token}`}>
-                          View Results
-                        </Link>
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                      <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-amber-800">
-                          No results found
-                        </p>
-                        <p className="text-sm text-amber-600">
-                          {lookupResult.message || "No survey found for this email."}
-                        </p>
-                        <Button asChild variant="link" className="px-0 mt-1 h-auto">
-                          <Link href="/survey">Take the survey now</Link>
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Email Lookup Card - Magic Link */}
+          <div className="mb-8 max-w-md mx-auto sm:max-w-none sm:mx-0">
+            <FetchResultsForm />
+          </div>
 
           {/* Population Statistics */}
           <div className="space-y-6">

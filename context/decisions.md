@@ -864,3 +864,141 @@ This made the question difficult to answer accurately since respondents might ha
 - Works at all screen sizes and responsive breakpoints
 - Simple to understand and maintain
 - Consistent behavior across different chart configurations
+
+---
+
+### DEC-021: Magic Link for Results Retrieval
+
+**Date:** January 2026
+
+**Context:** Users need a way to retrieve their survey results by email. The implementation must prevent email enumeration attacks (where attackers can determine if an email exists in the database).
+
+**Options Considered:**
+| Option | Pros | Cons |
+|--------|------|------|
+| 6-digit verification code | Familiar UX, short-lived | Allows enumeration if different responses |
+| Magic link (privacy-preserving) | No enumeration, permanent access | Requires email service |
+| Email lookup with CAPTCHA | Reduces abuse | Still allows enumeration |
+| No email lookup (save URL only) | Simplest | Poor UX, users lose access |
+
+**Decision:** Magic link with privacy-preserving design:
+- Same response message regardless of email existence
+- Email EXISTS: Send magic link with results token
+- Email does NOT exist: Send survey invitation
+- Email is ALWAYS sent, preventing enumeration
+
+**Technical Details:**
+- Magic link uses signed JWT containing email and latest results_token
+- No expiry - permanent bookmark to results
+- No usage limits - users can share if they choose
+- Results page does not display email (anonymous to viewers)
+
+**Rationale:** Privacy is paramount. Users should not be able to discover if someone else has taken the survey. The magic link approach provides excellent UX while maintaining security.
+
+**Consequences:**
+- Requires email service (Resend) in V1
+- Slightly higher operational cost (emails sent even for non-users)
+- Excellent privacy protection
+- Users have permanent access to their results
+
+---
+
+### DEC-022: Resources Storage Strategy
+
+**Date:** January 2026
+
+**Context:** Each survey question needs linked resources (PDFs, job aids, action statements) to help agencies improve. Need to determine storage approach.
+
+**Options Considered:**
+| Option | Pros | Cons |
+|--------|------|------|
+| Database table | Dynamic updates | Over-engineered, sync complexity |
+| Static TypeScript | Version controlled, type-safe | Redeploy for updates |
+| External links only | Kristen updates directly | No metadata, fragile |
+| Hybrid (TypeScript + external links) | Best of both | Slight complexity |
+
+**Decision:** Hybrid approach:
+- Resource metadata stored as static TypeScript (version controlled)
+- External links for actual files (Google Drive, etc.)
+- Inline text for action statements
+- TypeScript provides structure, external links allow Kristen to update files
+
+**Implementation:**
+```typescript
+interface Resource {
+  questionId: string           // Links to question
+  type: 'pdf' | 'link' | 'text'
+  title: string
+  description?: string
+  url?: string                 // For pdf and link types
+  content?: string             // For text type
+}
+```
+
+**Rationale:** Flexibility for mixed content types while maintaining version control for the mappings. External files can be updated without code changes.
+
+**Consequences:**
+- New data directory: `src/data/resources/`
+- Mappings version controlled
+- External files can break if URLs change
+- Easy to audit which resources exist
+
+---
+
+### DEC-023: Email Service Promotion to V1
+
+**Date:** January 2026
+
+**Context:** Originally, email service (Resend) was planned for V2 (PDF delivery). Magic link feature now requires email in V1.
+
+**Options Considered:**
+| Option | Pros | Cons |
+|--------|------|------|
+| Keep email in V2, no magic links | Simpler V1 | Poor UX for results retrieval |
+| Add Resend to V1 | Magic links work | Earlier infrastructure cost |
+| Use different email for V1 vs V2 | Possible optimization | Unnecessary complexity |
+
+**Decision:** Promote Resend to V1 scope for magic link emails.
+
+**Implementation:**
+- Add `RESEND_API_KEY` to V1 environment variables
+- Create email templates for magic link and survey invitation
+- Rate limit magic link requests to prevent abuse
+
+**Rationale:** Magic link is a high-value feature that significantly improves UX. The infrastructure cost is minimal and will be reused in V2.
+
+**Consequences:**
+- Earlier Resend setup
+- Additional environment variable
+- Email templates needed in V1
+- Foundation ready for V2 PDF emails
+
+---
+
+### DEC-024: Agency Size Ranking Threshold
+
+**Date:** January 2026
+
+**Context:** Users want to see how they rank compared to similar-sized agencies. Need to determine when to show this ranking.
+
+**Options Considered:**
+| Option | Threshold | Rationale |
+|--------|-----------|-----------|
+| Always show | 0 | Maximum feature availability |
+| Low threshold | 5 | Quick activation |
+| Consistent threshold | 10 | Same as population comparison |
+| Higher threshold | 20 | More statistical confidence |
+
+**Decision:** Use same threshold as population comparison: 10 responses per agency size category.
+
+**Implementation:**
+- Agency size categories: small (1-10 BCBAs), medium (11-50), large (51-200), enterprise (200+)
+- Show ranking only when 10+ responses exist in that category
+- Display "Not enough data for [size] agencies yet" when below threshold
+
+**Rationale:** Consistency with existing threshold (DEC-011). 10 provides directional value without being misleading. Different thresholds for different features would confuse users.
+
+**Consequences:**
+- Ranking may not be available for all size categories initially
+- Need clear messaging for insufficient data
+- Consistent user expectations across features

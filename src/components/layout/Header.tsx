@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BarChart3 } from "lucide-react";
 
@@ -11,11 +12,32 @@ export function Header() {
 
   return (
     <header className="border-b border-border bg-white">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Left side - Logo/Brand */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-primary">UpskillABA</span>
-        </Link>
+      <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+        {/* Left side - Logo/Brand (links to main Upskill ABA site) */}
+        <a
+          href="https://upskillaba.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center"
+        >
+          {/* Full logo on desktop, avatar on mobile */}
+          <Image
+            src="/images/logo.png"
+            alt="Upskill ABA"
+            width={150}
+            height={40}
+            className="hidden sm:block h-8 w-auto"
+            priority
+          />
+          <Image
+            src="/images/avatar.png"
+            alt="Upskill ABA"
+            width={40}
+            height={40}
+            className="sm:hidden h-9 w-9"
+            priority
+          />
+        </a>
 
         {/* Right side - Navigation */}
         <nav className="flex items-center gap-4 sm:gap-6">

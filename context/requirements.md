@@ -1,8 +1,8 @@
 # Quick Quality Assessment Survey - Business Requirements
 
-**Version:** 2.0
+**Version:** 2.1
 **Date:** January 2026
-**Owner:** UpskillABA
+**Owner:** Upskill ABA
 **Status:** Approved
 
 > **Note:** This document contains business requirements only. For technical details, see:
@@ -128,7 +128,7 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 ### 5.1.1 Global Navigation (Header)
 
 **Header Layout:**
-- Left side: UpskillABA logo/brand (links to landing page)
+- Left side: Upskill ABA logo/brand (links to landing page)
 - Right side: "Survey Results" link
 
 **Survey Results Link:**
@@ -157,11 +157,18 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 - Email address (validated)
 - Name
 - Role/Title (dropdown: Clinical Director, BCBA, BCaBA, RBT/BT, Owner/Founder, QA Manager, Consultant, Other)
-- Agency Size (dropdown: Small 1-10, Medium 11-50, Large 51-200, Enterprise 200+)
+- Agency Size (dropdown based on number of BCBAs):
+  - Small: 1-10 BCBAs
+  - Medium: 11-50 BCBAs
+  - Large: 51-200 BCBAs
+  - Enterprise: 200+ BCBAs
 - Primary Service Setting (dropdown: In-Home, Clinic/Center-Based, School-Based, Hybrid/Multiple)
 - State (all US states and DC)
 
 **Optional Fields:**
+- Agency Name (text field, placeholder: "Agency Name (Optional)")
+  - Placement: After name/email fields, before survey questions
+  - Purpose: Lead generation for agency outreach
 - Marketing consent checkbox (opt-in)
 
 **Compliance:**
@@ -209,6 +216,13 @@ This applies to:
 - Average score comparison
 - Per-question benchmarks ("72% answered Yes")
 - Minimum 10 responses before showing comparisons
+- Hide entire benchmark section until threshold met (show placeholder message)
+- Display cards: Average Score, Total Responses only
+  - Note: Removed redundant "Strong Alignment" and "Needs Improvement" count cards (redundant with pie chart)
+
+**Strongest/Weakest Questions:**
+- Info tooltips (?) next to section headers
+- Tooltip text: "Percentage shows how many respondents answered 'Yes' to this question across all surveys"
 
 **Detailed View:**
 - Expandable sections per category
@@ -234,6 +248,79 @@ This applies to:
 - Yes = 1 point
 - No = 0 points
 - Total possible = 28 points
+
+### 5.6 Fetch Results with Magic Link
+
+**Privacy Objective:**
+Prevent email enumeration - a malicious user should NOT be able to determine whether someone else has taken the survey by entering their email. The system response must be identical regardless of whether the email exists.
+
+**User Flow (Same UX for ALL emails):**
+1. User enters email on "Fetch Results" page
+2. System displays: "Check your inbox for a link to your results."
+   - Same message regardless of whether email exists
+   - Additional text: "If you don't see it, check your spam folder."
+3. User clicks link in email → lands directly on results page
+
+**Backend Logic (Email Always Sent):**
+- **If email EXISTS:** Send magic link email
+  - Subject: "Access Your Quality Assessment Results - Upskill ABA"
+  - Body: One-click link to results page
+  - Link format: `survey.upskillaba.com/results?token=<signed-token>`
+- **If email does NOT exist:** Send survey invitation email
+  - Subject: "Complete Your Quality Assessment - Upskill ABA"
+  - Body: Invitation to take the survey with direct link
+- **Result:** An email is ALWAYS sent - attacker cannot determine if email exists
+
+**Magic Link Technical Specs:**
+- Token: Signed JWT or random UUID mapped to email
+- **No expiry** - link is a permanent bookmark to their results
+- **No usage limits** - user can share with colleagues if they choose
+- Results page does NOT display email or identifying info - effectively anonymous to viewers
+
+### 5.7 Resources and Job Aids
+
+**Purpose:**
+Provide actionable resources linked to each survey question to help agencies improve their practices.
+
+**Resource Types:**
+- PDFs and downloadable job aids
+- External links to training materials
+- Action statements (inline text guidance)
+
+**UI Implementation:**
+- Resources displayed as **expandable accordions** (collapsed by default)
+- Two tabs on results page:
+  - **"Areas for Improvement"** (default view) - only questions marked "No"
+  - **"All Questions"** - all questions with their resources
+- Each question shows its linked resource when expanded
+
+**Data Source:**
+- Resource mappings provided by Kristen (Excel document)
+- Stored as static TypeScript with external links for files
+
+### 5.8 Ranking and Comparison
+
+**Overall Rank:**
+- Show user's percentile rank compared to ALL respondents
+- Example display: "You're in the top 15% of all respondents"
+- Displayed prominently on results page
+
+**Rank by Agency Size:**
+- Show rank compared to similar-sized organizations (based on BCBA count)
+- **Threshold:** Only enable when at least **10 responses** exist in that agency size category
+- If < 10 responses in category: Hide category ranking or show "Not enough data yet"
+
+**Agency Size Categories (for ranking):**
+| Category | BCBA Count |
+|----------|------------|
+| Small | 1-10 BCBAs |
+| Medium | 11-50 BCBAs |
+| Large | 51-200 BCBAs |
+| Enterprise | 200+ BCBAs |
+
+**Multiple Submissions Logic:**
+- Same email, multiple submissions: Use **latest score only** for population benchmarks
+- Personal progress tracking: Show all historical attempts for that individual
 
 ---
 
@@ -311,17 +398,38 @@ Landing Page → Survey (28 questions) → Email Capture → Results Dashboard
 
 The application will be considered complete when:
 
+**Core Survey:**
 - [ ] All 28 survey questions displayed in correct category order
 - [ ] Users can navigate forward and backward through survey
 - [ ] Yes/No responses captured for all questions
 - [ ] Email capture validates and stores email addresses
+- [ ] Optional Agency Name field available
+
+**Results Dashboard:**
 - [ ] Results page displays overall score with visual indicator
 - [ ] Results page displays 5 category scores
 - [ ] Color-coding applied based on score thresholds
 - [ ] Detailed breakdown shows individual question responses
-- [ ] Population comparison shows when sufficient data exists
+- [ ] Population comparison shows when sufficient data exists (10+ responses)
+- [ ] Info tooltips on Strongest/Weakest Questions sections
+- [ ] Resources displayed in expandable accordions
+- [ ] Two tabs: "Areas for Improvement" and "All Questions"
+
+**Ranking:**
+- [ ] Overall percentile rank displayed
+- [ ] Rank by agency size displayed (when 10+ in category)
+
+**Magic Link:**
+- [ ] Fetch Results page accepts email input
+- [ ] Same response message regardless of email existence
+- [ ] Magic link email sent for existing users
+- [ ] Survey invitation email sent for non-existing users
+- [ ] Magic link provides permanent access to results
+
+**General:**
 - [ ] Application is mobile-responsive
 - [ ] Application is publicly accessible
+- [ ] "Upskill ABA" branding applied consistently (with space)
 
 ---
 

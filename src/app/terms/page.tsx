@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = {
   title: "Terms of Service | Quick Quality Assessment",
-  description: "Terms of service for the Quick Quality Assessment tool by UpskillABA",
+  description: "Terms of service for the Quick Quality Assessment tool by Upskill ABA",
 };
 
 export default function TermsPage() {
@@ -29,7 +29,7 @@ export default function TermsPage() {
                   </h2>
                   <p className="text-muted-foreground">
                     By accessing and using the Quick Quality Assessment tool provided by
-                    UpskillABA (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), you agree to be bound by these
+                    Upskill ABA (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), you agree to be bound by these
                     Terms of Service. If you do not agree to these terms, please do not
                     use our service.
                   </p>
@@ -104,7 +104,7 @@ export default function TermsPage() {
                     Limitation of Liability
                   </h2>
                   <p className="text-muted-foreground">
-                    To the fullest extent permitted by law, UpskillABA shall not be liable
+                    To the fullest extent permitted by law, Upskill ABA shall not be liable
                     for any indirect, incidental, special, consequential, or punitive
                     damages arising from your use of this assessment. This includes but is
                     not limited to decisions made based on assessment results, business
@@ -130,8 +130,8 @@ export default function TermsPage() {
                   </h2>
                   <p className="text-muted-foreground">
                     The assessment questions, methodology, design, and all related content
-                    are the intellectual property of UpskillABA. The UpskillABA name and
-                    logo are trademarks of UpskillABA. You may not use our trademarks
+                    are the intellectual property of Upskill ABA. The Upskill ABA name and
+                    logo are trademarks of Upskill ABA. You may not use our trademarks
                     without prior written permission.
                   </p>
                 </section>

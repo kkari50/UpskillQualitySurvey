@@ -1,6 +1,6 @@
 # Quick Quality Assessment Survey - API Design
 
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** January 2026
 
 ---
@@ -24,6 +24,8 @@ REST API for the Quick Quality Assessment Survey tool. All endpoints are Next.js
 |-------|----------|-------------|
 | V1 | `POST /api/survey/submit` | Submit survey and create lead |
 | V1 | `GET /api/stats` | Population statistics |
+| V1 | `GET /api/stats/percentile` | Get percentile rank for score |
+| V1 | `POST /api/results/request-link` | Send magic link email for results |
 | V1 | `GET /api/health` | Health check |
 | V2 | `POST /api/auth/claim-lead` | Link existing lead to new user |
 | V2 | `GET /api/user/responses` | User's survey history |
@@ -50,6 +52,8 @@ Submit completed survey and create/update lead record.
     "email": "sarah@abctherapy.com",
     "name": "Sarah Johnson",
     "role": "bcba",
+    "agencyName": "ABC Therapy Services",
+    "agencySize": "medium",
     "marketingConsent": true
   },
   "survey": {
@@ -74,8 +78,8 @@ Submit completed survey and create/update lead record.
     "resultsUrl": "/results/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "score": {
       "total": 19,
-      "maxPossible": 27,
-      "percentage": 70
+      "maxPossible": 28,
+      "percentage": 68
     }
   }
 }
@@ -105,6 +109,8 @@ const submitSurveySchema = z.object({
       'consultant',
       'other'
     ]).optional(),
+    agencyName: z.string().max(200).trim().optional(),
+    agencySize: z.enum(['small', 'medium', 'large', 'enterprise']).optional(),
     marketingConsent: z.boolean().default(false)
   }),
   survey: z.object({
@@ -112,8 +118,8 @@ const submitSurveySchema = z.object({
       z.string().regex(/^[a-z]{2,3}_\d{3}$/),
       z.boolean()
     ).refine(
-      (obj) => Object.keys(obj).length === 27,
-      { message: 'All 27 questions must be answered' }
+      (obj) => Object.keys(obj).length === 28,
+      { message: 'All 28 questions must be answered' }
     ),
     surveyVersion: z.string().regex(/^\d+\.\d+$/)
   })
@@ -127,7 +133,7 @@ const submitSurveySchema = z.object({
 4. Calculate scores (total + per category)
 5. Generate results token (UUID)
 6. Insert survey_response record
-7. Insert 27 survey_answers records
+7. Insert 28 survey_answers records
 8. Return results token
 
 ---
@@ -206,19 +212,21 @@ GET /api/stats?version=1.0
 
 ### `GET /api/stats/percentile`
 
-Get percentile rank for a specific score.
+Get percentile rank for a specific score, optionally filtered by agency size.
 
 **Authentication:** None (public)
 
 **Query Parameters:**
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `score` | integer | Yes | Score to check (0-27) |
+| `score` | integer | Yes | Score to check (0-28) |
 | `version` | string | No | Survey version (default: "1.0") |
+| `agencySize` | string | No | Filter by agency size (small, medium, large, enterprise) |
 
 **Request:**
 ```
 GET /api/stats/percentile?score=19&version=1.0
+GET /api/stats/percentile?score=19&version=1.0&agencySize=medium
 ```
 
 **Response (200 OK):**
@@ -226,9 +234,78 @@ GET /api/stats/percentile?score=19&version=1.0
 {
   "score": 19,
   "percentile": 68,
-  "message": "Higher than 68% of respondents"
+  "message": "Higher than 68% of respondents",
+  "agencySize": null,
+  "agencySizeRanking": {
+    "available": true,
+    "percentile": 72,
+    "message": "Higher than 72% of medium-sized agencies",
+    "totalInCategory": 156
+  }
 }
 ```
+
+**Response (Insufficient Data for Agency Size):**
+```json
+{
+  "score": 19,
+  "percentile": 68,
+  "message": "Higher than 68% of respondents",
+  "agencySize": "medium",
+  "agencySizeRanking": {
+    "available": false,
+    "message": "Not enough data for medium-sized agencies",
+    "totalInCategory": 7,
+    "minRequired": 10
+  }
+}
+```
+
+---
+
+### `POST /api/results/request-link`
+
+Send a magic link email for results retrieval. Privacy-preserving: same response regardless of whether email exists.
+
+**Authentication:** None (public)
+
+**Rate Limit:** 5 requests/minute per IP
+
+**Request Body:**
+```json
+{
+  "email": "sarah@abctherapy.com"
+}
+```
+
+**Response (200 OK):**
+Always returns success, regardless of whether email exists in database.
+```json
+{
+  "success": true,
+  "message": "Check your inbox for a link to your results. If you don't see it, check your spam folder."
+}
+```
+
+**Backend Logic (not visible to client):**
+- If email EXISTS in leads table: Send magic link email with results token
+- If email does NOT exist: Send survey invitation email
+- Email is ALWAYS sent to prevent email enumeration attacks
+
+**Email Templates:**
+- **Magic Link Email:**
+  - Subject: "Access Your Quality Assessment Results - Upskill ABA"
+  - Contains: One-click link to results page
+  - Link format: `https://survey.upskillaba.com/results?token=<jwt>`
+
+- **Survey Invitation Email:**
+  - Subject: "Complete Your Quality Assessment - Upskill ABA"
+  - Contains: Invitation to take the survey
+
+**Magic Link Token:**
+- Signed JWT containing email and latest results_token
+- No expiry (permanent bookmark)
+- No usage limits
 
 ---
 
@@ -435,6 +512,8 @@ interface Lead {
   email: string
   name?: string
   role?: Role
+  agencyName?: string  // Optional, for lead generation
+  agencySize?: AgencySize // Optional, for ranking
   emailDomain?: string // Extracted, null for personal emails
   marketingConsent: boolean
   userId?: string      // Linked in V2
@@ -451,6 +530,12 @@ type Role =
   | 'qa_manager'
   | 'consultant'
   | 'other'
+
+type AgencySize =
+  | 'small'      // 1-10 BCBAs
+  | 'medium'     // 11-50 BCBAs
+  | 'large'      // 51-200 BCBAs
+  | 'enterprise' // 200+ BCBAs
 ```
 
 ### SurveyResponse
@@ -531,7 +616,7 @@ All errors follow this structure:
     "details": {
       "fieldErrors": {
         "lead.email": ["Invalid email format"],
-        "survey.answers": ["All 27 questions must be answered"]
+        "survey.answers": ["All 28 questions must be answered"]
       }
     }
   }
@@ -548,6 +633,7 @@ Implemented via Upstash Redis.
 |----------|-------|--------|
 | `POST /api/survey/submit` | 10 | 1 minute |
 | `GET /api/stats` | 60 | 1 minute |
+| `POST /api/results/request-link` | 5 | 1 minute |
 | `POST /api/pdf/generate` | 5 | 1 minute |
 | `POST /api/checkout` | 10 | 1 minute |
 
