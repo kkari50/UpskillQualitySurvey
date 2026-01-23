@@ -78,16 +78,19 @@ function ResourceLink({ resource, onOpenPDF }: ResourceLinkProps) {
     );
   }
 
-  // Default: internal navigation
+  // Default: internal navigation - open tools/forms in new tab
   return (
     <Link
       href={resource.url}
+      target="_blank"
+      rel="noopener noreferrer"
       className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-teal-50 hover:bg-teal-100 transition-colors border border-teal-200"
     >
       <Icon className="w-4 h-4 text-teal-600 flex-shrink-0" />
       <span className="text-sm font-medium text-teal-700">
         {resource.title}
       </span>
+      <ExternalLink className="w-3 h-3 text-teal-500" />
     </Link>
   );
 }

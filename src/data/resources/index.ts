@@ -245,10 +245,9 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         id: "fidelity-check-ncr",
         title: "NCR Fidelity Checklist",
         description:
-          "A fidelity checklist for Non-Contingent Reinforcement (NCR) interventions.",
-        url: "/resources/treatment-fidelity/fidelity-check-ncr.pdf",
-        type: "checklist",
-        viewerType: "pdf-modal",
+          "An interactive fidelity checklist for Non-Contingent Reinforcement (NCR) interventions with phase tracking and noncompliance rate calculation.",
+        url: "/resources/fidelity-ncr",
+        type: "tool",
       },
     ],
   },
@@ -270,28 +269,25 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         id: "bip-fidelity-rating-form",
         title: "BIP Fidelity Rating Form",
         description:
-          "A form to rate the fidelity of behavior intervention plan implementation.",
-        url: "/resources/treatment-fidelity/bip-fidelity-rating-form.pdf",
-        type: "checklist",
-        viewerType: "pdf-modal",
+          "An interactive form to evaluate if a BIP fidelity checklist contains all required components. Requires 100% to pass.",
+        url: "/resources/bip-fidelity-rating",
+        type: "tool",
       },
       {
         id: "challenging-behavior-rating-form",
-        title: "Challenging Behavior Rating Form",
+        title: "Challenging Behavior Definition Checklist",
         description:
-          "A form to rate and document challenging behaviors.",
-        url: "/resources/treatment-fidelity/challenging-behavior-rating-form.pdf",
+          "An interactive checklist to evaluate if a behavior definition is observable, measurable, and repeatable.",
+        url: "/resources/challenging-behavior-checklist",
         type: "tool",
-        viewerType: "pdf-modal",
       },
       {
         id: "behavior-intensity-scale",
         title: "Behavior Intensity Scale",
         description:
-          "A scale to measure and document behavior intensity levels.",
-        url: "/resources/treatment-fidelity/behavior-intensity-scale.pdf",
+          "An interactive tool to log and track behavior intensity (0-7) during observations using the standardized IRS from Reeve & Carr (2000).",
+        url: "/resources/behavior-intensity-scale",
         type: "tool",
-        viewerType: "pdf-modal",
       },
     ],
   },
@@ -302,11 +298,106 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
     resources: [
       {
         id: "bip-monitoring-checklist",
-        title: "Behavior Intervention Plan Monitoring Checklist",
+        title: "BIP Monthly Monitoring Checklist",
         description:
-          "A comprehensive checklist for monitoring BIP implementation.",
-        url: "/resources/treatment-fidelity/bip-monitoring-checklist.pdf",
-        type: "checklist",
+          "A comprehensive interactive checklist for monthly BIP monitoring covering 8 areas: client info, data review, fidelity, environment, consultation, progress, documentation, and follow-up.",
+        url: "/resources/bip-monitoring-checklist",
+        type: "tool",
+      },
+    ],
+  },
+  // ============================================
+  // Data Analysis Resources
+  // ============================================
+  {
+    questionId: "da_001",
+    educationText:
+      "Evidence suggests that decisions about progress can be made in just 10 sessions (see Kipfmiller et al 2019, Ferraioli et al 2005, & Wolfe et al 2021). By instituting a standardized approach to ensure data is reviewed every 10 sessions ensures that learners are making rapid progress and that BTs/RBTs are supported in their role.",
+    resources: [
+      {
+        id: "da-ferraioli-2005",
+        title: "Ferraioli et al. (2005)",
+        description:
+          "Evidence-based approaches to data review frequency and decision-making.",
+        url: "/resources/data-analysis/Ferraioli et al 2005.pdf",
+        type: "research",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "da-wolfe-2021",
+        title: "Wolfe et al. (2021)",
+        description:
+          "Research on optimal data review intervals for skill acquisition.",
+        url: "/resources/data-analysis/Wolfe+et+al+2021.pdf",
+        type: "research",
+        viewerType: "pdf-modal",
+      },
+    ],
+  },
+  {
+    questionId: "da_002",
+    educationText:
+      "BTs/RBTs spend more time with our learners than BCBAs do and thus have a wealth of knowledge of the learner and are invaluable to their supervising BCBA when given the permission to raise concerns.",
+    resources: [],
+  },
+  {
+    questionId: "da_003",
+    educationText:
+      "When targeted goals have not met mastery criteria by the end of the authorization period there are several items to consider:\n\n1. Were program modifications not conducted rapidly enough?\n2. Was the ratio of goals targeted and hours authorized in alignment?\n3. Were there barriers to utilization?",
+    resources: [],
+  },
+  {
+    questionId: "da_004",
+    educationText:
+      "Sometimes goals extend across authorization periods. It is critically important that if that situation occurs, that barriers have been identified, resolved, and have had protocols modified. For additional support, please consider using the Barrier Identification Planning Checklist.",
+    resources: [
+      {
+        id: "barrier-identification-checklist",
+        title: "Barrier Identification Planning Checklist",
+        description:
+          "An interactive checklist to systematically identify barriers across 4 categories: skill deficits, environmental factors, instructional issues, and social/motivational barriers.",
+        url: "/resources/barrier-identification",
+        type: "tool",
+      },
+    ],
+  },
+  {
+    questionId: "da_005",
+    educationText:
+      "It's critically important to determine if challenging behavior is responding to the behavior intervention plan. One such method to do this is to utilize the percentage of non-overlapping data (PND). The percentage of non-overlapping data (PND) calculates the proportion of data points in a treatment phase that exceed the most extreme data point in the baseline phase. Please check out this link to calculate the PND with this PND calculator.",
+    resources: [
+      {
+        id: "pnd-calculator",
+        title: "PND Calculator",
+        description:
+          "An online tool to calculate the percentage of non-overlapping data (PND) for evaluating intervention effectiveness.",
+        url: "https://ktarlow.com/stats/pnd/",
+        type: "tool",
+        viewerType: "external",
+      },
+    ],
+  },
+  {
+    questionId: "da_006",
+    educationText:
+      "It's critically important that the intervention(s) selected for challenging behavior have reduced challenging behavior to a desired level that is in alignment with child development. For a job aid on behavior rates in typical child development, please refer to the Behavior of Typical Childhood Development guide and the article VanDevander et al 2023.",
+    resources: [
+      {
+        id: "typical-development-reference",
+        title: "Behavior of Typical Childhood Development",
+        description:
+          "Reference guide for comparing behavior patterns to typical developmental expectations.",
+        url: "/resources/data-analysis/Behavior of typical childhood development (2).pdf",
+        type: "guide",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "vandevander-2023",
+        title: "VanDevander et al. (2023)",
+        description:
+          "Research on aligning challenging behavior interventions with child development expectations.",
+        url: "/resources/data-analysis/VanDevander et al 2023.pdf",
+        type: "research",
         viewerType: "pdf-modal",
       },
     ],
