@@ -402,6 +402,211 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
       },
     ],
   },
+  // ============================================
+  // Caregiver Guidance Resources
+  // ============================================
+  {
+    questionId: "cg_001",
+    educationText:
+      "Having consistent and frequent training opportunities with families is important. Equally as important is teaching skills utilizing behavioral skills training (BST). BST is a comprehensive approach that involves instruction, modeling, rehearsal, and feedback to ensure caregivers can implement strategies correctly and confidently.",
+    resources: [
+      {
+        id: "cg-steps-bst",
+        title: "Steps of Behavioral Skills Training",
+        description:
+          "A handy reminder on the steps of BST for training caregivers on implementing interventions.",
+        url: "/resources/caregiver-guidance/steps-bst.pdf",
+        type: "guide",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "cg-monthly-check-in",
+        title: "BCBA Monthly Caregiver Check-In Form",
+        description:
+          "A structured form for conducting monthly caregiver check-ins covering medication changes, concerns, and progress updates.",
+        url: "/resources/caregiver-check-in",
+        type: "tool",
+      },
+    ],
+  },
+  {
+    questionId: "cg_002",
+    educationText:
+      "When a caregiver does not collect data consistently it can be difficult to determine if progress is being made in the home environment. One reason there may be a lack of data collection is that the goals assigned to caregivers are not meaningful to them. Please consider the following resources to help prioritize meaningful goals and provide practical data collection strategies.",
+    resources: [
+      {
+        id: "cg-prioritizing-targets",
+        title: "Job Aid for Prioritizing Treatment Targets for Caregivers",
+        description:
+          "A job aid to help BCBAs prioritize treatment targets that are meaningful and achievable for caregivers.",
+        url: "/resources/caregiver-guidance/prioritizing-treatment-targets.pdf",
+        type: "tool",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "cg-data-collection-tips",
+        title: "Data Collection Tips for Caregivers",
+        description:
+          "Practical tips for helping caregivers collect data accurately and consistently.",
+        url: "/resources/caregiver-guidance/data-collection-tips-caregivers.pdf",
+        type: "guide",
+        viewerType: "pdf-modal",
+      },
+    ],
+  },
+  {
+    questionId: "cg_003",
+    educationText:
+      "Regular caregiver surveys in ABA therapy are essential for monitoring treatment effectiveness, as caregivers provide valuable data on the child's behavior across various settings. These surveys respect caregivers' perspectives, fostering family engagement and better outcomes. The article by Taylor, LeBlanc, & Nosik (2018) provides suggested questions to include on a caregiver survey on pages 4 and 5.",
+    resources: [
+      {
+        id: "cg-taylor-2018-satisfaction",
+        title: "Taylor, LeBlanc & Nosik (2018)",
+        description:
+          "Research on compassionate care with suggested questions for caregiver satisfaction surveys (see pages 4-5).",
+        url: "/resources/caregiver-guidance/taylor-leblanc-nosik-2018.pdf",
+        type: "research",
+        viewerType: "pdf-modal",
+      },
+    ],
+  },
+  {
+    questionId: "cg_004",
+    educationText:
+      "A structured monthly update interview form to review items such as medication changes with caregivers allows BCBAs to be informed of any issues that may impact service delivery. This standardized approach prevents important information from being missed and creates documentation for the clinical record.",
+    resources: [
+      {
+        id: "cg-monthly-check-in-form",
+        title: "BCBA Monthly Caregiver Check-In Form",
+        description:
+          "An interactive form for structured monthly caregiver updates including medication changes, concerns, and progress notes.",
+        url: "/resources/caregiver-check-in",
+        type: "tool",
+      },
+    ],
+  },
+  {
+    questionId: "cg_005",
+    educationText:
+      "Caregiver goals should address caregiver primary concerns. Including an area for caregivers to express their concerns during the initial interview sets the tone for a collaborative relationship. It communicates that the family's perspective is valued and ensures that treatment planning addresses the issues most important to the family, not just clinically identified needs.",
+    resources: [
+      {
+        id: "cg-prioritizing-targets-initial",
+        title: "Job Aid for Prioritizing Treatment Targets for Caregivers",
+        description:
+          "Guidance on incorporating caregiver concerns into treatment target prioritization.",
+        url: "/resources/caregiver-guidance/prioritizing-treatment-targets.pdf",
+        type: "tool",
+        viewerType: "pdf-modal",
+      },
+    ],
+  },
+  {
+    questionId: "cg_006",
+    educationText:
+      "Including a quality of life assessment at the initial assessment and the 6-month reassessment allows the BCBA to assess if things are improving for the entire family, not just the learner. Research increasingly emphasizes the importance of socially valid outcomes that matter to families.",
+    resources: [
+      {
+        id: "cg-fqol",
+        title: "Family Quality of Life (FQOL) Scale",
+        description:
+          "Free access to a lite version of the Family Quality of Life Scale for assessments.",
+        url: "https://www.upskillaba.com/clinical-intelligence-forms",
+        type: "tool",
+        viewerType: "external",
+      },
+    ],
+  },
+  // ============================================
+  // Supervision Resources
+  // ============================================
+  {
+    questionId: "sup_001",
+    educationText:
+      "Making the most out of supervision sessions is critical for both the learner and the BT/RBT. A structured approach helps ensure all necessary topics are covered, progress is reviewed systematically, and specific training needs are addressed rather than supervision becoming reactive or unfocused. Additionally, supervision should involve the analysis of each treatment plan goal. While it may not be possible to address each goal during a supervision session, static goals should be prioritized.",
+    resources: [
+      {
+        id: "sup-session-checklist",
+        title: "BCBA Supervision Session Checklist",
+        description:
+          "An interactive checklist to help BCBAs prepare structured supervision sessions covering all essential components.",
+        url: "/resources/supervision-checklist",
+        type: "tool",
+      },
+    ],
+  },
+  {
+    questionId: "sup_002",
+    educationText:
+      "Behavior skills training (BST) is a comprehensive approach that can be used to teach a wide variety of skills and allows for consistency of implementation across staff. BST allows for active engagement and demonstration of the skills to ensure that the direct care staff can perform the desired behavior to competency. One step of BST is providing the BT/RBT with written instructions of how to implement the goal. Clear instructions will increase the likelihood that the skill is taught correctly.",
+    resources: [
+      {
+        id: "sup-steps-bst",
+        title: "Steps of Behavioral Skills Training",
+        description:
+          "A job aid on implementing BST with direct care staff during supervision.",
+        url: "/resources/supervision/steps-bst.pdf",
+        type: "guide",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "sup-parker-2023",
+        title: "Parker et al. (2023)",
+        description:
+          "Research on effective goal documentation and implementation strategies.",
+        url: "/resources/supervision/parker-2023.pdf",
+        type: "research",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "sup-program-component-list",
+        title: "Program Component List",
+        description:
+          "A checklist of essential program components to review during supervision.",
+        url: "/resources/supervision/program-component-list.pdf",
+        type: "checklist",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "sup-program-info-eval",
+        title: "Program Information Sheet Evaluation Tool",
+        description:
+          "An interactive tool to evaluate whether program information sheets contain all necessary components for proper implementation.",
+        url: "/resources/program-info-sheet",
+        type: "tool",
+      },
+    ],
+  },
+  {
+    questionId: "sup_003",
+    educationText:
+      "Regular supervision ensures that behavior intervention plans and skill acquisition goals are being implemented correctly and consistently. This helps maintain high standards of care and maximizes client outcomes. Less frequent supervision can result in errors going uncorrected for extended periods.",
+    resources: [],
+  },
+  {
+    questionId: "sup_004",
+    educationText:
+      "If your agency just provides the minimum 5% supervision, this may be insufficient. Clinical judgment should determine when additional supervision is necessary; keeping in mind that higher supervision rates may improve treatment outcomes. More complex cases, newer staff, or cases with challenging behaviors may require higher supervision percentages.",
+    resources: [
+      {
+        id: "sup-percentage-checklist",
+        title: "Checklist for More Than 5% Supervision",
+        description:
+          "A checklist to help determine when more than the minimum 5% supervision may be warranted.",
+        url: "/resources/supervision/supervision-percentage-checklist.pdf",
+        type: "checklist",
+        viewerType: "pdf-modal",
+      },
+      {
+        id: "sup-session-checklist-clinical",
+        title: "BCBA Supervision Session Checklist",
+        description:
+          "Use this interactive checklist to document supervision activities and ensure clinical alignment.",
+        url: "/resources/supervision-checklist",
+        type: "tool",
+      },
+    ],
+  },
   // Additional insights can be added here as they become available
 ];
 
