@@ -1,20 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, ChevronRight } from "lucide-react";
 
 interface HistoricalScore {
   date: string;
   percentage: number;
   total: number;
+  resultsToken: string;
 }
 
 interface TrendOverTimeProps {
   historicalScores: HistoricalScore[];
+  currentToken: string;
 }
 
-export function TrendOverTime({ historicalScores }: TrendOverTimeProps) {
+export function TrendOverTime({ historicalScores, currentToken }: TrendOverTimeProps) {
   if (historicalScores.length < 2) {
     return null;
   }
@@ -28,12 +31,16 @@ export function TrendOverTime({ historicalScores }: TrendOverTimeProps) {
     });
   };
 
-  const current = historicalScores[historicalScores.length - 1];
+  // Sort by date descending (newest first) for display
+  const sortedScores = [...historicalScores].reverse();
+
+  // Original order for calculations (oldest first)
+  const latest = historicalScores[historicalScores.length - 1];
   const previous = historicalScores[historicalScores.length - 2];
   const first = historicalScores[0];
 
-  const recentChange = current.percentage - previous.percentage;
-  const overallChange = current.percentage - first.percentage;
+  const recentChange = latest.percentage - previous.percentage;
+  const overallChange = latest.percentage - first.percentage;
 
   const getTrendIcon = (change: number) => {
     if (change > 0) return <TrendingUp className="h-5 w-5 text-emerald-600" />;
@@ -64,7 +71,7 @@ export function TrendOverTime({ historicalScores }: TrendOverTimeProps) {
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
           You&apos;ve completed this assessment {historicalScores.length} times.
-          Here&apos;s how your quality practices have evolved.
+          Click any entry to view those results.
         </p>
 
         {/* Summary stats */}
@@ -83,21 +90,28 @@ export function TrendOverTime({ historicalScores }: TrendOverTimeProps) {
           </div>
         </div>
 
-        {/* Timeline */}
+        {/* Timeline - newest first */}
         <div className="space-y-3">
-          {historicalScores.map((score, index) => {
-            const isLatest = index === historicalScores.length - 1;
+          {sortedScores.map((score) => {
+            const isCurrentlyViewing = score.resultsToken === currentToken;
+            const isLatest = score.resultsToken === latest.resultsToken;
+
+            // Calculate change from previous (in original chronological order)
+            const originalIndex = historicalScores.findIndex(
+              (s) => s.resultsToken === score.resultsToken
+            );
             const changeFromPrevious =
-              index > 0
-                ? score.percentage - historicalScores[index - 1].percentage
+              originalIndex > 0
+                ? score.percentage - historicalScores[originalIndex - 1].percentage
                 : null;
 
-            return (
+            const content = (
               <div
-                key={score.date}
                 className={cn(
-                  "flex items-center gap-4 p-3 rounded-lg",
-                  isLatest ? "bg-primary/5 ring-1 ring-primary/20" : "bg-muted/30"
+                  "flex items-center gap-4 p-3 rounded-lg transition-colors",
+                  isCurrentlyViewing
+                    ? "bg-primary/10 ring-2 ring-primary"
+                    : "bg-muted/30 hover:bg-muted/50 cursor-pointer"
                 )}
               >
                 <div className="flex-1">
@@ -105,7 +119,7 @@ export function TrendOverTime({ historicalScores }: TrendOverTimeProps) {
                     <span
                       className={cn(
                         "font-semibold",
-                        isLatest ? "text-primary" : "text-foreground"
+                        isCurrentlyViewing ? "text-primary" : "text-foreground"
                       )}
                     >
                       {score.percentage}%
@@ -113,6 +127,11 @@ export function TrendOverTime({ historicalScores }: TrendOverTimeProps) {
                     {isLatest && (
                       <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
                         Latest
+                      </span>
+                    )}
+                    {isCurrentlyViewing && !isLatest && (
+                      <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                        Viewing
                       </span>
                     )}
                   </div>
@@ -131,7 +150,25 @@ export function TrendOverTime({ historicalScores }: TrendOverTimeProps) {
                     {getTrendLabel(changeFromPrevious)}
                   </span>
                 )}
+
+                {!isCurrentlyViewing && (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                )}
               </div>
+            );
+
+            if (isCurrentlyViewing) {
+              return <div key={score.resultsToken}>{content}</div>;
+            }
+
+            return (
+              <Link
+                key={score.resultsToken}
+                href={`/results/${score.resultsToken}`}
+                className="block"
+              >
+                {content}
+              </Link>
             );
           })}
         </div>

@@ -322,6 +322,14 @@ Provide actionable resources linked to each survey question to help agencies imp
 - Same email, multiple submissions: Use **latest score only** for population benchmarks
 - Personal progress tracking: Show all historical attempts for that individual
 
+**Viewing Older Results:**
+- In the "Progress Over Time" section, entries are displayed in descending order (newest first)
+- Each entry is clickable and navigates to that specific result page
+- Currently viewed result is highlighted with a "Viewing" badge
+- Latest result always shows a "Latest" badge
+- Helps users easily navigate between their historical assessments
+- Population comparison remains LIVE (reflects current data)
+
 ---
 
 ## 6. Non-Functional Requirements

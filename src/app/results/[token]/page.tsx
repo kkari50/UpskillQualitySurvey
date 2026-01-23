@@ -181,22 +181,24 @@ async function getResultsData(token: string) {
     date: string;
     percentage: number;
     total: number;
+    resultsToken: string;
   }> = [];
 
   try {
     const { data: previousResponses } = await supabase
       .from("survey_responses")
-      .select("id, total_score, max_possible_score, completed_at")
+      .select("id, total_score, max_possible_score, completed_at, results_token")
       .eq("lead_id", response.lead_id)
       .order("completed_at", { ascending: true });
 
-    if (previousResponses && previousResponses.length > 1) {
+    if (previousResponses && previousResponses.length > 0) {
       historicalScores = previousResponses.map((r) => ({
         date: r.completed_at,
         percentage: Math.round(
           ((r.total_score ?? 0) / (r.max_possible_score ?? 27)) * 100
         ),
         total: r.total_score ?? 0,
+        resultsToken: r.results_token,
       }));
     }
   } catch {
@@ -220,7 +222,8 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
     notFound();
   }
 
-  const { answers, populationStats, percentile, historicalScores } = data;
+  const { response, answers, populationStats, percentile, historicalScores } = data;
+  const currentToken = response.results_token;
 
   // Calculate scores and summary
   const scores = calculateScores(answers);
@@ -253,6 +256,12 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
   };
 
   const populationMetric = getPopulationMetric();
+
+  // Count categories with 85%+ (Strong level)
+  const strongCategoriesCount = summary.categories.filter(
+    (cat) => cat.level === 'strong'
+  ).length;
+  const totalCategories = summary.categories.length;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -288,8 +297,8 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
                 label={populationMetric.label}
               />
               <StatCard
-                value={gaps.length}
-                label="Areas to Improve"
+                value={`${strongCategoriesCount}/${totalCategories}`}
+                label="Strong Categories"
               />
             </div>
 
@@ -334,7 +343,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
             />
 
             {/* 5. Trend Over Time - "Here's your progress over time" (repeat users only) */}
-            <TrendOverTime historicalScores={historicalScores} />
+            <TrendOverTime historicalScores={historicalScores} currentToken={currentToken} />
 
             {/* 6. Share Your Results - "Share your results" */}
             <ShareButtons
