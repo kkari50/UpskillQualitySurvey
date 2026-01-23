@@ -87,12 +87,14 @@ async function getResultsData(token: string) {
   let percentile: number | null = null;
 
   try {
-    // Get all non-test responses for this survey version
+    // Get all completed non-test responses for this survey version
     const { data: allResponses } = await supabase
       .from("survey_responses")
       .select("id, total_score, max_possible_score")
       .eq("survey_version", response.survey_version)
-      .eq("is_test", false);
+      .eq("is_test", false)
+      .not("completed_at", "is", null)
+      .not("total_score", "is", null);
 
     const totalResponses = allResponses?.length ?? 0;
 
