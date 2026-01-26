@@ -24,6 +24,19 @@ interface ResultsPageProps {
 
 const MIN_RESPONSES = 10;
 
+function getOrdinalSuffix(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function formatPercentileRank(percentile: number): string {
+  if (percentile >= 50) {
+    return `Top ${100 - percentile}%`;
+  }
+  return `${getOrdinalSuffix(percentile)} Percentile`;
+}
+
 /**
  * Resolve token to UUID
  * - If token is a JWT (from magic link), verify and extract the UUID
@@ -252,7 +265,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
 
     // Show Percentile (>=20 responses)
     return {
-      value: percentile !== null ? `Top ${100 - percentile}%` : 'N/A',
+      value: percentile !== null ? formatPercentileRank(percentile) : 'N/A',
       label: 'Percentile Rank',
     };
   };

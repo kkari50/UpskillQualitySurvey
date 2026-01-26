@@ -40,7 +40,7 @@ import {
   type EvaluationItem,
   type EvaluationAnswer,
   type ProgramComponent,
-} from "@/components/pdf/ProgramInfoSheetPDF";
+} from "@/components/pdf/program-info-sheet-data";
 
 // Initial evaluation items based on the PDF
 const INITIAL_EVALUATION_ITEMS: EvaluationItem[] = [

@@ -8,26 +8,15 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
+import type {
+  Category,
+  Reaction,
+  PreferenceEntry,
+  PreferencesData,
+} from "./building-new-preferences-data";
 
-// Define types
-export type Category = "tangible" | "social" | null;
-export type Reaction = "enjoyed" | "neutral" | "rejected" | null;
-
-export interface PreferenceEntry {
-  id: string;
-  category: Category;
-  description: string;
-  reaction: Reaction;
-}
-
-export interface PreferencesData {
-  date: string;
-  clientName: string;
-  therapistName: string;
-  entries: PreferenceEntry[];
-  notes: string;
-  logoUrl?: string;
-}
+// Re-export types for backwards compatibility
+export type { Category, Reaction, PreferenceEntry, PreferencesData } from "./building-new-preferences-data";
 
 // Colors
 const colors = {

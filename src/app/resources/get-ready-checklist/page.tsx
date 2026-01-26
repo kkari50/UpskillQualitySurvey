@@ -18,7 +18,7 @@ import {
   DATA_COLLECTION_ITEMS,
   GENERAL_ITEMS,
   type Answer,
-} from "@/components/pdf/GetReadyChecklistPDF";
+} from "@/components/pdf/get-ready-checklist-data";
 
 export default function GetReadyChecklistPage() {
   const [date, setDate] = useState<Date | undefined>(undefined);

@@ -37,7 +37,7 @@ import {
   type PreferenceEntry,
   type Category,
   type Reaction,
-} from "@/components/pdf/BuildingNewPreferencesPDF";
+} from "@/components/pdf/building-new-preferences-data";
 
 const INITIAL_ENTRY: PreferenceEntry = {
   id: "",

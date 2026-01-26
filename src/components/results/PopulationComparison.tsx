@@ -4,6 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
 
+function getOrdinalSuffix(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
 interface CategoryScore {
   id: string;
   name: string;
@@ -69,7 +75,7 @@ export function PopulationComparison({
         <div className="text-center p-4 rounded-lg bg-muted/50">
           {percentile !== null && (
             <p className="text-3xl font-bold text-primary mb-1">
-              Top {100 - percentile}%
+              {percentile >= 50 ? `Top ${100 - percentile}%` : `${getOrdinalSuffix(percentile)} Percentile`}
             </p>
           )}
           <p className="text-muted-foreground">

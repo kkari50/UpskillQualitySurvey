@@ -78,6 +78,41 @@ repo: "UpskillQualitySurvey"
 - **Accessibility:** WCAG 2.1 AA compliance, keyboard navigation, screen reader support
 - **Security:** Input validation (Zod), CSRF protection, rate limiting, secure headers
 
+### PDF Component Pattern - MANDATORY
+
+**Heavy libraries like `@react-pdf/renderer` must use code splitting to avoid bloating page bundles.**
+
+When creating PDF-enabled resource pages:
+
+1. **Separate data from rendering:** Create a `-data.ts` file with types and constants
+2. **PDF component imports from data file:** The PDF component imports types from the data file
+3. **Page imports from data file:** The page imports types/constants from the data file (NOT the PDF component)
+4. **Dynamic PDF import:** Use `import()` to load the PDF library only when user clicks download
+
+**File Structure:**
+```
+src/components/pdf/
+├── my-resource-data.ts           # Types + constants (no heavy deps)
+├── MyResourcePDF.tsx             # PDF component (imports @react-pdf/renderer)
+```
+
+**Example - Page importing data (CORRECT):**
+```tsx
+// Page file - imports from data file, not PDF component
+import { DATA_ITEMS, type ItemType } from "@/components/pdf/my-resource-data";
+
+// Dynamic PDF import only when needed
+const handleDownload = async () => {
+  const [{ pdf }, { MyResourcePDF }] = await Promise.all([
+    import("@react-pdf/renderer"),
+    import("@/components/pdf/MyResourcePDF"),
+  ]);
+  // ... generate PDF
+};
+```
+
+**Why this matters:** Importing types/constants directly from a PDF component pulls in `@react-pdf/renderer` (~500KB), even if you only need types. Separating data eliminates this bundle bloat.
+
 ## Key Files
 
 - Requirements: `context/requirements.md`
@@ -94,6 +129,11 @@ repo: "UpskillQualitySurvey"
 - Questions Index: `src/data/questions/index.ts`
 - Category Constants: `src/lib/constants/categories.ts`
 - Email Domain Utils: `src/lib/constants/email-domains.ts`
+
+### PDF Data Files (for code splitting)
+- Get Ready Checklist: `src/components/pdf/get-ready-checklist-data.ts`
+- Building New Preferences: `src/components/pdf/building-new-preferences-data.ts`
+- Program Info Sheet: `src/components/pdf/program-info-sheet-data.ts`
 
 ## Commands
 

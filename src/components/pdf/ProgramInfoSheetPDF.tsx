@@ -8,40 +8,20 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
+import type {
+  EvaluationAnswer,
+  EvaluationItem,
+  ProgramComponent,
+  ProgramInfoSheetData,
+} from "./program-info-sheet-data";
 
-// Types
-export type EvaluationAnswer = "yes" | "no" | "na" | null;
-
-export interface EvaluationItem {
-  id: string;
-  text: string;
-  answer: EvaluationAnswer;
-  comment: string;
-  hasSubChecklist?: boolean;
-}
-
-export interface ProgramComponent {
-  id: string;
-  label: string;
-  checked: boolean;
-}
-
-export interface ProgramInfoSheetData {
-  supervisee: string;
-  overseeingBCBA: string;
-  dateStart: string;
-  dateEnd: string;
-  programName: string;
-  evaluationItems: EvaluationItem[];
-  programComponents: ProgramComponent[];
-  skillsToMaintain: string[];
-  skillsToWorkOn: string[];
-  bcbaSignature: string;
-  bcbaSignatureDate: string;
-  superviseeSignature: string;
-  superviseeSignatureDate: string;
-  logoUrl?: string;
-}
+// Re-export types for backwards compatibility
+export type {
+  EvaluationAnswer,
+  EvaluationItem,
+  ProgramComponent,
+  ProgramInfoSheetData,
+} from "./program-info-sheet-data";
 
 // Colors
 const colors = {

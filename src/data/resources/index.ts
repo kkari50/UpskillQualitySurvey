@@ -592,10 +592,9 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         id: "sup-percentage-checklist",
         title: "Checklist for More Than 5% Supervision",
         description:
-          "A checklist to help determine when more than the minimum 5% supervision may be warranted.",
-        url: "/resources/supervision/supervision-percentage-checklist.pdf",
-        type: "checklist",
-        viewerType: "pdf-modal",
+          "An interactive checklist to help determine when more than the minimum 5% supervision may be warranted.",
+        url: "/resources/supervision-percentage-checklist",
+        type: "tool",
       },
       {
         id: "sup-session-checklist-clinical",
