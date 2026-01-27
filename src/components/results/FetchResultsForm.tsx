@@ -33,6 +33,11 @@ export function FetchResultsForm() {
     }
   };
 
+  const handleTryAgain = () => {
+    setIsSubmitted(false);
+    setEmail("");
+  };
+
   if (isSubmitted) {
     return (
       <Card>
@@ -46,6 +51,13 @@ export function FetchResultsForm() {
             <p className="text-sm text-muted-foreground mt-2">
               Don&apos;t see it? Check your spam folder.
             </p>
+            <Button
+              variant="outline"
+              onClick={handleTryAgain}
+              className="mt-4"
+            >
+              Try a different email
+            </Button>
           </div>
         </CardContent>
       </Card>
