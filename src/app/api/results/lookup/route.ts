@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     const email = parsed.data.email.toLowerCase();
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://survey.upskillaba.com";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://quality-assessment-upskillaba.com";
     const result = await findResultsToken(email);
 
     // Always send an email to prevent email enumeration attacks
