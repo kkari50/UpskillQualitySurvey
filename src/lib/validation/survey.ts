@@ -27,10 +27,10 @@ export type UserRole = (typeof userRoles)[number]
  * Agency size options
  */
 export const agencySizes = [
-  'solo_small',   // 1-10 staff
-  'medium',       // 11-50 staff
-  'large',        // 51-200 staff
-  'enterprise',   // 200+ staff
+  'solo_small',   // 1-10 BCBAs
+  'medium',       // 11-50 BCBAs
+  'large',        // 51-200 BCBAs
+  'enterprise',   // 200+ BCBAs
 ] as const
 
 export type AgencySize = (typeof agencySizes)[number]

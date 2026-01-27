@@ -23,10 +23,10 @@ const ROLES: { value: UserRole; label: string }[] = [
 ];
 
 const AGENCY_SIZES: { value: AgencySize; label: string }[] = [
-  { value: "solo_small", label: "Small (1-10 staff)" },
-  { value: "medium", label: "Medium (11-50 staff)" },
-  { value: "large", label: "Large (51-200 staff)" },
-  { value: "enterprise", label: "Enterprise (200+ staff)" },
+  { value: "solo_small", label: "Small (1-10 BCBAs)" },
+  { value: "medium", label: "Medium (11-50 BCBAs)" },
+  { value: "large", label: "Large (51-200 BCBAs)" },
+  { value: "enterprise", label: "Enterprise (200+ BCBAs)" },
 ];
 
 const PRIMARY_SETTINGS: { value: PrimarySetting; label: string }[] = [
