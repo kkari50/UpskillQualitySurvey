@@ -7,7 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FileText, ExternalLink } from "lucide-react";
 
 interface PDFViewerModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ interface PDFViewerModalProps {
 /**
  * PDF Viewer Modal with mobile-friendly fallback
  * Desktop: Uses browser's native PDF viewer via iframe
- * Mobile: Shows download/open buttons since inline PDF doesn't work well
+ * Mobile: Provides buttons to open PDF in new tab or download
  */
 export function PDFViewerModal({
   isOpen,
@@ -32,9 +33,10 @@ export function PDFViewerModal({
   useEffect(() => {
     // Detect mobile devices
     const checkMobile = () => {
-      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      ) || window.innerWidth < 768;
+      const mobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth < 768;
       setIsMobile(mobile);
     };
 
@@ -42,6 +44,11 @@ export function PDFViewerModal({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  const handleOpenInNewTab = () => {
+    window.open(pdfUrl, "_blank");
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -59,16 +66,21 @@ export function PDFViewerModal({
         </DialogHeader>
 
         {isMobile ? (
-          // Mobile: Show action buttons instead of iframe
-          <div className="p-6 flex flex-col items-center gap-4">
+          // Mobile: Show action buttons to open or download PDF
+          <div className="p-6 flex flex-col items-center gap-5">
             <div className="w-20 h-20 rounded-full bg-teal-50 flex items-center justify-center">
               <FileText className="w-10 h-10 text-teal-600" />
             </div>
             <p className="text-sm text-muted-foreground text-center">
-              PDF viewing is not supported on mobile devices.
-              <br />
-              Please use a desktop browser to view this document.
+              Choose how you&apos;d like to view this document:
             </p>
+            <Button
+              onClick={handleOpenInNewTab}
+              className="w-full bg-teal-600 hover:bg-teal-700"
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Open in Browser
+            </Button>
           </div>
         ) : (
           // Desktop: Show iframe with hidden toolbar
