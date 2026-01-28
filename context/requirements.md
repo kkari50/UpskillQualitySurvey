@@ -438,6 +438,7 @@ The application will be considered complete when:
 - [ ] Application is mobile-responsive
 - [ ] Application is publicly accessible
 - [ ] "Upskill ABA" branding applied consistently (with space)
+- [x] Browser tab favicon uses Upskill ABA icon (`avatar.png` bar chart graphic), not the default Vercel/Next.js favicon
 
 ---
 
