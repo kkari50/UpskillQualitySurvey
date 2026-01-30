@@ -416,9 +416,8 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Job Aid for Prioritizing Treatment Targets for Caregivers",
         description:
           "A job aid to help BCBAs prioritize treatment targets that are meaningful and achievable for caregivers.",
-        url: "/resources/caregiver-guidance/prioritizing-treatment-targets.pdf",
+        url: "/resources/prioritizing-treatment-targets",
         type: "tool",
-        viewerType: "pdf-modal",
       },
       {
         id: "cg-data-collection-tips",
@@ -441,9 +440,8 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Taylor, LeBlanc & Nosik (2018)",
         description:
           "Research on compassionate care with suggested questions for caregiver satisfaction surveys (see pages 4-5).",
-        url: "/resources/caregiver-guidance/taylor-leblanc-nosik-2018.pdf",
+        url: "https://doi.org/10.1007/s40617-018-00289-3",
         type: "research",
-        viewerType: "pdf-modal",
       },
     ],
   },
@@ -472,9 +470,8 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Job Aid for Prioritizing Treatment Targets for Caregivers",
         description:
           "Guidance on incorporating caregiver concerns into treatment target prioritization.",
-        url: "/resources/caregiver-guidance/prioritizing-treatment-targets.pdf",
+        url: "/resources/prioritizing-treatment-targets",
         type: "tool",
-        viewerType: "pdf-modal",
       },
     ],
   },

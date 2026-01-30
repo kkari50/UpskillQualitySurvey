@@ -34,6 +34,7 @@ import {
   MessageSquare,
   FileText,
   AlertCircle,
+  Minus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Header, Footer } from "@/components/layout";
@@ -49,6 +50,7 @@ interface ChecklistSection {
     id: string;
     label: string;
     hint?: string;
+    allowNA?: boolean;
   }[];
 }
 
@@ -155,27 +157,27 @@ const CHECKLIST_SECTIONS: ChecklistSection[] = [
       {
         id: "observeBIPImplementation",
         label: "Observe implementation of BIP strategies",
-        hint: "Mark N/A if no active BIP",
+        allowNA: true,
       },
       {
         id: "verifyAntecedentStrategies",
         label: "Verify antecedent strategies are being used",
-        hint: "Mark N/A if no active BIP",
+        allowNA: true,
       },
       {
         id: "assessConsequenceStrategies",
         label: "Assess consequence strategies implementation",
-        hint: "Mark N/A if no active BIP",
+        allowNA: true,
       },
       {
         id: "reviewReplacementBehaviors",
         label: "Review teaching of replacement behaviors",
-        hint: "Mark N/A if no active BIP",
+        allowNA: true,
       },
       {
         id: "checkCrisisProtocol",
         label: "Verify crisis protocol understanding (if applicable)",
-        hint: "Mark N/A if not applicable",
+        allowNA: true,
       },
     ],
   },
@@ -308,54 +310,87 @@ const FORM_INFO = {
 
 // Checkbox item component
 function CheckboxItem({
-  id,
   label,
   hint,
   checked,
+  isNA,
+  allowNA,
   onChange,
+  onToggleNA,
 }: {
-  id: string;
   label: string;
   hint?: string;
   checked: boolean;
+  isNA: boolean;
+  allowNA?: boolean;
   onChange: (checked: boolean) => void;
+  onToggleNA?: () => void;
 }) {
   return (
-    <label
-      htmlFor={id}
+    <div
       className={cn(
-        "flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors",
-        checked ? "bg-green-50" : "hover:bg-gray-50"
+        "p-3 rounded-lg transition-colors",
+        isNA ? "bg-gray-50" : checked ? "bg-green-50" : "hover:bg-gray-50"
       )}
     >
-      <button
-        type="button"
-        id={id}
-        role="checkbox"
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
-        className="mt-0.5 flex-shrink-0"
+      <div
+        className={cn(
+          "flex items-start gap-3 cursor-pointer",
+          isNA && "cursor-default"
+        )}
+        onClick={() => !isNA && onChange(!checked)}
       >
-        {checked ? (
-          <CheckSquare className="w-5 h-5 text-green-600" />
-        ) : (
-          <Square className="w-5 h-5 text-gray-400" />
-        )}
-      </button>
-      <div className="flex-1">
         <span
-          className={cn(
-            "text-sm",
-            checked ? "text-green-800" : "text-gray-700"
-          )}
+          className={cn("mt-0.5 flex-shrink-0", isNA && "opacity-40")}
+          aria-hidden="true"
         >
-          {label}
+          {!isNA && checked ? (
+            <CheckSquare className="w-5 h-5 text-green-600" />
+          ) : (
+            <Square className={cn("w-5 h-5", isNA ? "text-gray-300" : "text-gray-400")} />
+          )}
         </span>
-        {hint && (
-          <p className="text-xs text-gray-500 mt-0.5">{hint}</p>
-        )}
+        <div className="flex-1">
+          <span
+            className={cn(
+              "text-sm transition-colors",
+              isNA
+                ? "text-slate-400 line-through"
+                : checked
+                  ? "text-green-800"
+                  : "text-gray-700"
+            )}
+          >
+            {label}
+          </span>
+          {hint && !isNA && (
+            <p className="text-xs text-gray-500 mt-0.5">{hint}</p>
+          )}
+        </div>
       </div>
-    </label>
+      {allowNA && onToggleNA && (
+        <button
+          type="button"
+          className={cn(
+            "mt-1.5 ml-8 text-xs transition-colors",
+            isNA
+              ? "text-slate-500 font-medium"
+              : "text-slate-400 hover:text-slate-600"
+          )}
+          onClick={onToggleNA}
+        >
+          {isNA ? (
+            <span className="flex items-center gap-1">
+              <Minus className="w-3 h-3" />
+              Not applicable
+              <span className="text-slate-400 font-normal ml-1">(undo)</span>
+            </span>
+          ) : (
+            "Mark as not applicable"
+          )}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -363,20 +398,26 @@ function CheckboxItem({
 function ChecklistSectionCard({
   section,
   checkedItems,
+  naItems,
   onToggle,
+  onToggleNA,
   defaultOpen = false,
 }: {
   section: ChecklistSection;
   checkedItems: Set<string>;
+  naItems: Set<string>;
   onToggle: (itemId: string) => void;
+  onToggleNA: (itemId: string) => void;
   defaultOpen?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const checkedCount = section.items.filter((item) =>
+  const scorableItems = section.items.filter((item) => !naItems.has(item.id));
+  const checkedCount = scorableItems.filter((item) =>
     checkedItems.has(item.id)
   ).length;
-  const totalCount = section.items.length;
-  const isComplete = checkedCount === totalCount;
+  const naCount = section.items.filter((item) => naItems.has(item.id)).length;
+  const totalCount = scorableItems.length;
+  const isComplete = totalCount > 0 && checkedCount === totalCount;
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -397,6 +438,7 @@ function ChecklistSectionCard({
                   <CardTitle className="text-base">{section.title}</CardTitle>
                   <p className="text-xs text-gray-500 mt-0.5">
                     {checkedCount} of {totalCount} completed
+                    {naCount > 0 && ` (${naCount} N/A)`}
                   </p>
                 </div>
               </div>
@@ -432,11 +474,13 @@ function ChecklistSectionCard({
               {section.items.map((item) => (
                 <CheckboxItem
                   key={item.id}
-                  id={item.id}
                   label={item.label}
                   hint={item.hint}
                   checked={checkedItems.has(item.id)}
+                  isNA={naItems.has(item.id)}
+                  allowNA={item.allowNA}
                   onChange={() => onToggle(item.id)}
+                  onToggleNA={() => onToggleNA(item.id)}
                 />
               ))}
             </div>
@@ -458,6 +502,9 @@ export default function SupervisionChecklistPage() {
   // Checked items state
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
 
+  // N/A items state
+  const [naItems, setNaItems] = useState<Set<string>>(new Set());
+
   // Notes
   const [notes, setNotes] = useState("");
   const [followUpItems, setFollowUpItems] = useState("");
@@ -478,37 +525,68 @@ export default function SupervisionChecklistPage() {
     });
   };
 
+  // Toggle N/A
+  const toggleNA = (itemId: string) => {
+    setNaItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+        // Remove from checked if it was checked
+        setCheckedItems((prevChecked) => {
+          const nextChecked = new Set(prevChecked);
+          nextChecked.delete(itemId);
+          return nextChecked;
+        });
+      }
+      return next;
+    });
+  };
+
   // Calculate scores
   const scores = useMemo(() => {
     const totalItems = CHECKLIST_SECTIONS.reduce(
       (sum, section) => sum + section.items.length,
       0
     );
+    const naCount = naItems.size;
+    const scorableItems = totalItems - naCount;
     const checkedCount = checkedItems.size;
     const percentage =
-      totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0;
+      scorableItems > 0 ? Math.round((checkedCount / scorableItems) * 100) : 0;
 
     const sectionScores = CHECKLIST_SECTIONS.map((section) => {
-      const sectionChecked = section.items.filter((item) =>
+      const scorableInSection = section.items.filter(
+        (item) => !naItems.has(item.id)
+      );
+      const sectionChecked = scorableInSection.filter((item) =>
         checkedItems.has(item.id)
+      ).length;
+      const sectionNA = section.items.filter((item) =>
+        naItems.has(item.id)
       ).length;
       return {
         id: section.id,
         title: section.title,
         checked: sectionChecked,
-        total: section.items.length,
-        complete: sectionChecked === section.items.length,
+        total: scorableInSection.length,
+        naCount: sectionNA,
+        complete:
+          scorableInSection.length > 0 &&
+          sectionChecked === scorableInSection.length,
       };
     });
 
     return {
       checkedCount,
-      totalItems,
+      totalItems: scorableItems,
+      naCount,
       percentage,
       sectionScores,
       completeSections: sectionScores.filter((s) => s.complete).length,
     };
-  }, [checkedItems]);
+  }, [checkedItems, naItems]);
 
   // Reset form
   const handleReset = () => {
@@ -518,6 +596,7 @@ export default function SupervisionChecklistPage() {
     setClient("");
     setSupervisionType("");
     setCheckedItems(new Set());
+    setNaItems(new Set());
     setNotes("");
     setFollowUpItems("");
   };
@@ -532,6 +611,15 @@ export default function SupervisionChecklistPage() {
       ]);
 
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
+      // Strip React elements (icons) before passing to PDF
+      const pdfSections = CHECKLIST_SECTIONS.map((section) => ({
+        id: section.id,
+        title: section.title,
+        items: section.items.map((item) => ({
+          id: item.id,
+          label: item.label,
+        })),
+      }));
       const doc = (
         <SupervisionChecklistPDF
           date={date ? format(date, "PPP") : ""}
@@ -540,7 +628,8 @@ export default function SupervisionChecklistPage() {
           client={client}
           supervisionType={supervisionType}
           checkedItems={Array.from(checkedItems)}
-          sections={CHECKLIST_SECTIONS}
+          naItems={Array.from(naItems)}
+          sections={pdfSections}
           scores={scores}
           notes={notes}
           followUpItems={followUpItems}
@@ -659,6 +748,7 @@ export default function SupervisionChecklistPage() {
               <div className="flex justify-between text-xs text-gray-500">
                 <span>
                   {scores.checkedCount} of {scores.totalItems} items completed
+                  {scores.naCount > 0 && ` (${scores.naCount} N/A)`}
                 </span>
                 <span>
                   {scores.completeSections} of {CHECKLIST_SECTIONS.length} sections
@@ -747,7 +837,9 @@ export default function SupervisionChecklistPage() {
                 key={section.id}
                 section={section}
                 checkedItems={checkedItems}
+                naItems={naItems}
                 onToggle={toggleItem}
+                onToggleNA={toggleNA}
                 defaultOpen={index === 0}
               />
             ))}

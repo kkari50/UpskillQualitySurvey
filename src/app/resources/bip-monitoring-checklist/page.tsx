@@ -294,7 +294,6 @@ const FORM_INFO = {
 
 // Checkbox item component
 function CheckboxItem({
-  id,
   label,
   hint,
   checked,
@@ -303,7 +302,6 @@ function CheckboxItem({
   onChange,
   onToggleNA,
 }: {
-  id: string;
   label: string;
   hint?: string;
   checked: boolean;
@@ -319,28 +317,23 @@ function CheckboxItem({
         isNA ? "bg-gray-50" : checked ? "bg-green-50" : "hover:bg-gray-50"
       )}
     >
-      <label
-        htmlFor={id}
+      <div
         className={cn(
           "flex items-start gap-3 cursor-pointer",
           isNA && "cursor-default"
         )}
+        onClick={() => !isNA && onChange(!checked)}
       >
-        <button
-          type="button"
-          id={id}
-          role="checkbox"
-          aria-checked={isNA ? false : checked}
-          disabled={isNA}
-          onClick={() => !isNA && onChange(!checked)}
+        <span
           className={cn("mt-0.5 flex-shrink-0", isNA && "opacity-40")}
+          aria-hidden="true"
         >
           {!isNA && checked ? (
             <CheckSquare className="w-5 h-5 text-green-600" />
           ) : (
             <Square className={cn("w-5 h-5", isNA ? "text-gray-300" : "text-gray-400")} />
           )}
-        </button>
+        </span>
         <div className="flex-1">
           <span
             className={cn(
@@ -358,7 +351,7 @@ function CheckboxItem({
             <p className="text-xs text-gray-500 mt-0.5">{hint}</p>
           )}
         </div>
-      </label>
+      </div>
       {allowNA && onToggleNA && (
         <button
           type="button"
@@ -465,7 +458,6 @@ function ChecklistSectionCard({
               {section.items.map((item) => (
                 <CheckboxItem
                   key={item.id}
-                  id={item.id}
                   label={item.label}
                   hint={item.hint}
                   checked={checkedItems.has(item.id)}

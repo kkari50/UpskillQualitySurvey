@@ -21,12 +21,14 @@ interface ChecklistSection {
 interface Scores {
   checkedCount: number;
   totalItems: number;
+  naCount: number;
   percentage: number;
   sectionScores: {
     id: string;
     title: string;
     checked: number;
     total: number;
+    naCount: number;
     complete: boolean;
   }[];
   completeSections: number;
@@ -39,6 +41,7 @@ interface SupervisionChecklistPDFProps {
   client: string;
   supervisionType: string;
   checkedItems: string[];
+  naItems: string[];
   sections: ChecklistSection[];
   scores: Scores;
   notes: string;
@@ -202,6 +205,29 @@ const styles = StyleSheet.create({
   itemTextChecked: {
     color: colors.grayDark,
   },
+  itemTextNA: {
+    fontSize: 8,
+    color: "#9ca3af",
+    fontStyle: "italic",
+    textDecoration: "line-through",
+    lineHeight: 1.3,
+  },
+  naNote: {
+    fontSize: 7,
+    color: "#9ca3af",
+    fontStyle: "italic",
+    marginTop: 1,
+  },
+  checkboxNA: {
+    width: 10,
+    height: 10,
+    borderWidth: 1,
+    borderRadius: 2,
+    marginRight: 6,
+    marginTop: 1,
+    backgroundColor: "#f1f5f9",
+    borderColor: "#e2e8f0",
+  },
   notesSection: {
     marginTop: 10,
     marginBottom: 10,
@@ -255,10 +281,23 @@ const styles = StyleSheet.create({
 function ChecklistItem({
   label,
   checked,
+  isNA,
 }: {
   label: string;
   checked: boolean;
+  isNA: boolean;
 }) {
+  if (isNA) {
+    return (
+      <View style={styles.item}>
+        <View style={styles.checkboxNA} />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.itemTextNA}>{label}</Text>
+          <Text style={styles.naNote}>Not applicable</Text>
+        </View>
+      </View>
+    );
+  }
   return (
     <View style={styles.item}>
       <View style={checked ? [styles.checkbox, styles.checkboxChecked] : styles.checkbox}>
@@ -274,21 +313,26 @@ function ChecklistItem({
 function SectionBlock({
   section,
   checkedItems,
+  naItems,
   sectionScore,
 }: {
   section: ChecklistSection;
   checkedItems: string[];
-  sectionScore: { checked: number; total: number; complete: boolean };
+  naItems: string[];
+  sectionScore: { checked: number; total: number; naCount: number; complete: boolean };
 }) {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{section.title}</Text>
         {sectionScore.complete ? (
-          <Text style={styles.sectionComplete}>✓ Complete</Text>
+          <Text style={styles.sectionComplete}>
+            ✓ Complete{sectionScore.naCount > 0 ? ` (${sectionScore.naCount} N/A)` : ""}
+          </Text>
         ) : (
           <Text style={styles.sectionProgress}>
             {sectionScore.checked}/{sectionScore.total}
+            {sectionScore.naCount > 0 ? ` (${sectionScore.naCount} N/A)` : ""}
           </Text>
         )}
       </View>
@@ -298,6 +342,7 @@ function SectionBlock({
             key={item.id}
             label={item.label}
             checked={checkedItems.includes(item.id)}
+            isNA={naItems.includes(item.id)}
           />
         ))}
       </View>
@@ -312,6 +357,7 @@ export function SupervisionChecklistPDF({
   client,
   supervisionType,
   checkedItems,
+  naItems,
   sections,
   scores,
   notes,
@@ -361,6 +407,7 @@ export function SupervisionChecklistPDF({
           <View style={styles.progressStats}>
             <Text style={styles.progressStat}>
               {scores.checkedCount} of {scores.totalItems} items
+              {scores.naCount > 0 ? ` (${scores.naCount} N/A)` : ""}
             </Text>
             <Text style={styles.progressStat}>
               {scores.completeSections} of {sections.length} sections complete
@@ -372,12 +419,13 @@ export function SupervisionChecklistPDF({
         {sections.map((section) => {
           const sectionScore = scores.sectionScores.find(
             (s) => s.id === section.id
-          ) || { checked: 0, total: section.items.length, complete: false };
+          ) || { checked: 0, total: section.items.length, naCount: 0, complete: false };
           return (
             <SectionBlock
               key={section.id}
               section={section}
               checkedItems={checkedItems}
+              naItems={naItems}
               sectionScore={sectionScore}
             />
           );
