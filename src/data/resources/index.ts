@@ -188,18 +188,8 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Parker et al. (2023)",
         description:
           "Research on effective goal documentation and implementation strategies.",
-        url: "/resources/treatment-fidelity/parker-2023.pdf",
+        url: "https://doi.org/10.1007/s40617-022-00726-4",
         type: "research",
-        viewerType: "pdf-modal",
-      },
-      {
-        id: "tf-program-component-list",
-        title: "Program Component List",
-        description:
-          "A checklist to ensure all necessary components are included in goal documentation.",
-        url: "/resources/treatment-fidelity/program-component-list.pdf",
-        type: "checklist",
-        viewerType: "pdf-modal",
       },
       {
         id: "tf-program-info-sheet",
