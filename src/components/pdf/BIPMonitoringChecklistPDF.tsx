@@ -22,12 +22,14 @@ interface ChecklistSection {
 interface Scores {
   checkedCount: number;
   totalItems: number;
+  naCount: number;
   percentage: number;
   sectionScores: {
     id: string;
     title: string;
     checked: number;
     total: number;
+    naCount: number;
     complete: boolean;
   }[];
   completeSections: number;
@@ -39,6 +41,7 @@ export interface BIPMonitoringChecklistData {
   bcba: string;
   nextMonitoringDate: string;
   checkedItems: string[];
+  naItems: string[];
   sections: ChecklistSection[];
   scores: Scores;
   notes: string;
@@ -202,6 +205,28 @@ const styles = StyleSheet.create({
   itemLabelChecked: {
     color: "#059669",
   },
+  itemLabelNA: {
+    fontSize: 8,
+    color: "#9ca3af",
+    fontStyle: "italic",
+    textDecoration: "line-through",
+  },
+  naNote: {
+    fontSize: 7,
+    color: "#9ca3af",
+    fontStyle: "italic",
+    marginTop: 1,
+  },
+  checkboxNA: {
+    width: 12,
+    height: 12,
+    borderWidth: 1,
+    borderRadius: 2,
+    marginRight: 6,
+    marginTop: 1,
+    backgroundColor: "#f1f5f9",
+    borderColor: "#e2e8f0",
+  },
   notesSection: {
     marginTop: 10,
   },
@@ -241,11 +266,13 @@ export function BIPMonitoringChecklistPDF({
   bcba,
   nextMonitoringDate,
   checkedItems,
+  naItems,
   sections,
   scores,
   notes,
 }: BIPMonitoringChecklistData) {
   const checkedSet = new Set(checkedItems);
+  const naSet = new Set(naItems);
 
   return (
     <Document>
@@ -284,7 +311,8 @@ export function BIPMonitoringChecklistPDF({
         {/* Summary */}
         <View style={styles.summaryBox}>
           <Text style={styles.summaryLabel}>
-            {scores.checkedCount} of {scores.totalItems} items completed •{" "}
+            {scores.checkedCount} of {scores.totalItems} items completed
+            {scores.naCount > 0 && ` (${scores.naCount} N/A)`} •{" "}
             {scores.completeSections} of {sections.length} sections complete
           </Text>
           <Text style={styles.summaryValue}>{scores.percentage}%</Text>
@@ -312,6 +340,7 @@ export function BIPMonitoringChecklistPDF({
               <View style={styles.itemsContainer}>
                 {section.items.map((item, idx) => {
                   const isChecked = checkedSet.has(item.id);
+                  const isNA = naSet.has(item.id);
                   return (
                     <View
                       key={item.id}
@@ -320,24 +349,35 @@ export function BIPMonitoringChecklistPDF({
                         idx === section.items.length - 1 ? styles.itemRowLast : {},
                       ]}
                     >
-                      <View
-                        style={[
-                          styles.checkbox,
-                          isChecked
-                            ? styles.checkboxChecked
-                            : styles.checkboxUnchecked,
-                        ]}
-                      >
-                        {isChecked && <Text style={styles.checkmark}>✓</Text>}
-                      </View>
-                      <Text
-                        style={[
-                          styles.itemLabel,
-                          isChecked ? styles.itemLabelChecked : {},
-                        ]}
-                      >
-                        {item.label}
-                      </Text>
+                      {isNA ? (
+                        <View style={styles.checkboxNA} />
+                      ) : (
+                        <View
+                          style={[
+                            styles.checkbox,
+                            isChecked
+                              ? styles.checkboxChecked
+                              : styles.checkboxUnchecked,
+                          ]}
+                        >
+                          {isChecked && <Text style={styles.checkmark}>✓</Text>}
+                        </View>
+                      )}
+                      {isNA ? (
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.itemLabelNA}>{item.label}</Text>
+                          <Text style={styles.naNote}>Not applicable</Text>
+                        </View>
+                      ) : (
+                        <Text
+                          style={[
+                            styles.itemLabel,
+                            isChecked ? styles.itemLabelChecked : {},
+                          ]}
+                        >
+                          {item.label}
+                        </Text>
+                      )}
                     </View>
                   );
                 })}
