@@ -53,9 +53,9 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Howard et al. (2005)",
         description:
           "A comparison of intensive behavior analytic and eclectic treatments for young children with autism.",
-        url: "/resources/daily-sessions/howard-2005.pdf",
+        url: "https://doi.org/10.1016/j.ridd.2004.09.005",
         type: "research",
-        viewerType: "pdf-modal",
+        viewerType: "external",
       },
     ],
   },
@@ -89,18 +89,18 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Fisher et al. (1992)",
         description:
           "A comparison of two approaches for identifying reinforcers for persons with severe and profound disabilities.",
-        url: "/resources/daily-sessions/fisher-1992.pdf",
+        url: "https://doi.org/10.1901/jaba.1992.25-491",
         type: "research",
-        viewerType: "pdf-modal",
+        viewerType: "external",
       },
       {
         id: "mason-1989",
         title: "Mason et al. (1989)",
         description:
           "A practical strategy for ongoing reinforcer assessment.",
-        url: "/resources/daily-sessions/mason-1989.pdf",
+        url: "https://doi.org/10.1901/jaba.1989.22-171",
         type: "research",
-        viewerType: "pdf-modal",
+        viewerType: "external",
       },
       {
         id: "chazin-ledford-2016",
@@ -118,15 +118,6 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
     educationText:
       "If the SD, prompting strategy, reinforcement schedules, and target lists are missing from a learner's goals, it will make it very challenging for a BT/RBT to implement the goal as intended. Please consider the following resources to ensure comprehensive goal documentation.",
     resources: [
-      {
-        id: "program-component-list",
-        title: "Written Goal Component List",
-        description:
-          "A checklist to ensure all necessary components are included in goal documentation.",
-        url: "/resources/daily-sessions/program-component-list.pdf",
-        type: "checklist",
-        viewerType: "pdf-modal",
-      },
       {
         id: "program-info-sheet",
         title: "Program Information Sheet Evaluation Tool",

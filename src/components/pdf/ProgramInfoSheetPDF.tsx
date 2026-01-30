@@ -594,6 +594,16 @@ export function ProgramInfoSheetPDF({ data }: { data: ProgramInfoSheetData }) {
           </View>
         </View>
 
+        {/* Notes */}
+        {data.notes ? (
+          <View style={styles.skillsSection}>
+            <Text style={styles.skillsHeader}>Notes</Text>
+            <View style={styles.skillsBox}>
+              <Text style={styles.cellText}>{data.notes}</Text>
+            </View>
+          </View>
+        ) : null}
+
         {/* Signatures */}
         <View style={styles.signatureSection}>
           <View style={styles.signatureRow}>

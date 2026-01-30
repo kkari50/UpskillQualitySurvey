@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import { format } from "date-fns";
 import {
   Download,
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
   PopoverContent,
@@ -183,6 +183,9 @@ export default function ProgramInfoSheetPage() {
   const [skillsToMaintain, setSkillsToMaintain] = useState([""]);
   const [skillsToWorkOn, setSkillsToWorkOn] = useState([""]);
 
+  // Notes
+  const [notes, setNotes] = useState("");
+
   // Signatures
   const [bcbaSignature, setBcbaSignature] = useState("");
   const [bcbaSignatureDate, setBcbaSignatureDate] = useState<Date | undefined>(undefined);
@@ -301,6 +304,7 @@ export default function ProgramInfoSheetPage() {
     setProgramComponents(INITIAL_PROGRAM_COMPONENTS.map((comp) => ({ ...comp })));
     setSkillsToMaintain([""]);
     setSkillsToWorkOn([""]);
+    setNotes("");
     setBcbaSignature("");
     setBcbaSignatureDate(undefined);
     setSuperviseeSignature("");
@@ -344,6 +348,7 @@ export default function ProgramInfoSheetPage() {
             programComponents,
             skillsToMaintain,
             skillsToWorkOn,
+            notes,
             bcbaSignature,
             bcbaSignatureDate: bcbaSignatureDate ? format(bcbaSignatureDate, "MMM d, yyyy") : "",
             superviseeSignature,
@@ -436,21 +441,10 @@ export default function ProgramInfoSheetPage() {
           {/* Session Details */}
           <Card className="mb-6 shadow-sm border border-slate-200">
             <CardHeader className="pb-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <CardTitle className="text-lg">Evaluation Details</CardTitle>
-                  <CardDescription>
-                    Enter information about the evaluation
-                  </CardDescription>
-                </div>
-                <Image
-                  src="/images/logo-medium.png"
-                  alt="UpskillABA"
-                  width={140}
-                  height={40}
-                  className="h-10 w-auto"
-                />
-              </div>
+              <CardTitle className="text-lg">Evaluation Details</CardTitle>
+              <CardDescription>
+                Enter information about the evaluation
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -820,6 +814,25 @@ export default function ProgramInfoSheetPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Notes */}
+          <Card className="mb-6 shadow-sm border border-slate-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base text-slate-800">Notes</CardTitle>
+              <CardDescription>
+                Additional observations or comments
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                placeholder="Enter any additional notes..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={4}
+                className="text-sm resize-y"
+              />
+            </CardContent>
+          </Card>
 
           {/* Signatures */}
           <Card className="mb-6 shadow-sm border border-slate-200">

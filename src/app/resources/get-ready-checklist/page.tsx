@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { format } from "date-fns";
 import { Download, Printer, RotateCcw, Loader2, Check, X, Minus, CalendarIcon } from "lucide-react";
 
@@ -141,19 +140,8 @@ export default function GetReadyChecklistPage() {
           {/* Info Card with Date/Name */}
           <Card className="mb-6 shadow-sm border border-slate-200">
             <CardHeader className="pb-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <CardTitle className="text-lg">Session Details</CardTitle>
-                  <CardDescription>Enter your information for the checklist</CardDescription>
-                </div>
-                <Image
-                  src="/images/logo-medium.png"
-                  alt="UpskillABA"
-                  width={140}
-                  height={40}
-                  className="h-10 w-auto"
-                />
-              </div>
+              <CardTitle className="text-lg">Session Details</CardTitle>
+              <CardDescription>Enter your information for the checklist</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

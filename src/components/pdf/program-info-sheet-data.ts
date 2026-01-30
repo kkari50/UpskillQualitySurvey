@@ -31,6 +31,7 @@ export interface ProgramInfoSheetData {
   programComponents: ProgramComponent[];
   skillsToMaintain: string[];
   skillsToWorkOn: string[];
+  notes: string;
   bcbaSignature: string;
   bcbaSignatureDate: string;
   superviseeSignature: string;
