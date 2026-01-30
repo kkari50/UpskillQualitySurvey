@@ -131,9 +131,8 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Parker et al. (2023)",
         description:
           "Research on effective goal documentation and implementation strategies.",
-        url: "/resources/daily-sessions/parker-2023.pdf",
+        url: "https://doi.org/10.1007/s40617-022-00726-4",
         type: "research",
-        viewerType: "pdf-modal",
       },
     ],
   },
