@@ -374,9 +374,8 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "VanDevander et al. (2023)",
         description:
           "Research on aligning challenging behavior interventions with child development expectations.",
-        url: "/resources/data-analysis/VanDevander et al 2023.pdf",
+        url: "https://doi.org/10.1002/bin.1978",
         type: "research",
-        viewerType: "pdf-modal",
       },
     ],
   },
