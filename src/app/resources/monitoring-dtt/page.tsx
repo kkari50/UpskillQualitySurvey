@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,92 +33,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
-
-// Criteria structure for each trial
-interface TrialCriteria {
-  setupMaterials: boolean;
-  sdAttending: boolean;
-  sdAsWritten: boolean;
-  sdIntonation: boolean;
-  responseCorrect: boolean | null; // null = N/A (no response to mark)
-  correctionTimely: boolean | null;
-  correctionAttending: boolean | null;
-  correctionAsWritten: boolean | null;
-  correctionIntonation: boolean | null;
-  reinforcerImmediate: boolean;
-  reinforcerEffective: boolean;
-  reinforcerDescriptive: boolean;
-  reinforcerIntonation: boolean;
-  reinforcerAffectPlay: boolean;
-  pacingAdequate: boolean;
-  extraSR: boolean;
-  attentionForDisruptive: boolean;
-}
-
-const createEmptyTrial = (): TrialCriteria => ({
-  setupMaterials: false,
-  sdAttending: false,
-  sdAsWritten: false,
-  sdIntonation: false,
-  responseCorrect: null,
-  correctionTimely: null,
-  correctionAttending: null,
-  correctionAsWritten: null,
-  correctionIntonation: null,
-  reinforcerImmediate: false,
-  reinforcerEffective: false,
-  reinforcerDescriptive: false,
-  reinforcerIntonation: false,
-  reinforcerAffectPlay: false,
-  pacingAdequate: false,
-  extraSR: false,
-  attentionForDisruptive: false,
-});
-
-// Calculate trial completion percentage
-const getTrialCompletion = (trial: TrialCriteria): number => {
-  const fields: (keyof TrialCriteria)[] = [
-    "setupMaterials",
-    "sdAttending",
-    "sdAsWritten",
-    "sdIntonation",
-    "reinforcerImmediate",
-    "reinforcerEffective",
-    "reinforcerDescriptive",
-    "reinforcerIntonation",
-    "reinforcerAffectPlay",
-    "pacingAdequate",
-    "extraSR",
-    "attentionForDisruptive",
-  ];
-
-  // Response is required
-  let total = fields.length + 1; // +1 for responseCorrect
-  let completed = trial.responseCorrect !== null ? 1 : 0;
-
-  fields.forEach((field) => {
-    if (trial[field] === true) completed++;
-  });
-
-  // If response was incorrect, correction fields are also counted
-  if (trial.responseCorrect === false) {
-    total += 4; // 4 correction fields
-    if (trial.correctionTimely === true) completed++;
-    if (trial.correctionAttending === true) completed++;
-    if (trial.correctionAsWritten === true) completed++;
-    if (trial.correctionIntonation === true) completed++;
-  }
-
-  return Math.round((completed / total) * 100);
-};
-
-// Check if trial has been started
-const isTrialStarted = (trial: TrialCriteria): boolean => {
-  return (
-    trial.responseCorrect !== null ||
-    Object.values(trial).some((v) => v === true)
-  );
-};
+import {
+  type TrialCriteria,
+  createEmptyTrial,
+  getTrialCompletion,
+  isTrialStarted,
+  calculateScores,
+} from "./scoring";
 
 // Coding guidelines data
 const CODING_GUIDELINES = [
@@ -135,10 +56,10 @@ const CODING_GUIDELINES = [
     id: 2,
     title: "SD Attending",
     items: [
-      "Child is playing with the stimulus materials before/during SD delivery",
-      "Early responding. The child responds before or during the verbal SD",
-      "Child is consuming food or has access to the SR+",
-      "Child is not looking at the tutor and/or the stimulus material",
+      "Client is playing with the stimulus materials before/during SD delivery",
+      "Early responding. The client responds before or during the verbal SD",
+      "Client is consuming food or has access to the SR+",
+      "Client is not looking at the tutor and/or the stimulus material",
     ],
   },
   {
@@ -171,8 +92,8 @@ const CODING_GUIDELINES = [
     id: 6,
     title: "Correction Attending",
     items: [
-      "Child is not attending to the tutor when the tutor provides correction procedure",
-      "Child is tantruming",
+      "Client is not attending to the tutor when the tutor provides correction procedure",
+      "Client is tantruming",
     ],
   },
   {
@@ -180,7 +101,7 @@ const CODING_GUIDELINES = [
     title: "Correction as Written",
     items: [
       "Reinforcing an incorrect behavior",
-      "Tutor performs the behavior, rather than prompting the child",
+      "Tutor performs the behavior, rather than prompting the client",
       "Tutor does not use the hierarchy of prompts",
       'Tutor labels the incorrect behavior (e.g., "No, this is the shoe….and that is the banana")',
     ],
@@ -197,15 +118,15 @@ const CODING_GUIDELINES = [
     title: "SR+ (Reinforcer) Timely",
     items: [
       "Delay between R and SR+ >2 s",
-      "Tutor records child's response before delivering the SR+",
-      'Tutor does not use reinforcer because the child was "naughty" during previous trials',
+      "Tutor records client's response before delivering the SR+",
+      'Tutor does not use reinforcer because the client was "naughty" during previous trials',
     ],
   },
   {
     id: 10,
     title: "SR+ Effective",
     items: [
-      'Tutor presents a presumed "SR+" that the child refused on a previous trial',
+      'Tutor presents a presumed "SR+" that the client refused on a previous trial',
     ],
   },
   {
@@ -227,7 +148,7 @@ const CODING_GUIDELINES = [
     title: "Affection and Play",
     items: [
       "Tutor must use affection (high fives, pat on back, making funny faces, etc.) in addition to any social praise",
-      "Tutor must play with the toy when providing the item to the child",
+      "Tutor must play with the toy when providing the item to the client",
     ],
   },
   {
@@ -243,18 +164,18 @@ const CODING_GUIDELINES = [
     id: 15,
     title: "Extra Learning Opportunities",
     items: [
-      "Tutor must reinforce the child's other appropriate behaviors on average once every two trials in the booth",
-      "Tutor must reinforce the child's appropriate behaviors on average once every minute outside of the booth",
+      "Tutor must reinforce the client's other appropriate behaviors on average once every two trials in the booth",
+      "Tutor must reinforce the client's appropriate behaviors on average once every minute outside of the booth",
     ],
   },
   {
     id: 16,
     title: "Attention for Disruptive Behavior",
     items: [
-      "When the child shows disruptive behavior, tutor should instruct the child to go back to the appropriate behavior by following the hierarchy of prompts",
+      "When the client shows disruptive behavior, tutor should instruct the client to go back to the appropriate behavior by following the hierarchy of prompts",
       "Tutor should repeat verbal prompts only when following the hierarchy of prompts",
-      "Try not to make any facial expressions following child's disruptive behavior",
-      "Tutor should not make any unnecessary comments about child's disruptive behavior",
+      "Try not to make any facial expressions following client's disruptive behavior",
+      "Tutor should not make any unnecessary comments about client's disruptive behavior",
       "Tutor should not give a choice of reinforcers following disruptive behavior",
     ],
   },
@@ -351,9 +272,13 @@ export default function DTTMonitoringPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeTrial, trials.length]);
 
-  // Add new trial
+  // Add new trial and navigate to it
   const addTrial = () => {
-    setTrials((prev) => [...prev, createEmptyTrial()]);
+    setTrials((prev) => {
+      const newTrials = [...prev, createEmptyTrial()];
+      setActiveTrial(newTrials.length - 1);
+      return newTrials;
+    });
   };
 
   // Remove trial (keep at least 1 trial)
@@ -441,95 +366,7 @@ export default function DTTMonitoringPage() {
     updateTrialCriteria(trialIndex, field, newValue);
   };
 
-  // Calculate scores
-  const calculateScores = useCallback(() => {
-    const categories = {
-      setupMaterials: { correct: 0, total: 0 },
-      sd: { correct: 0, total: 0 },
-      correction: { correct: 0, total: 0 },
-      reinforcer: { correct: 0, total: 0 },
-      pacing: { correct: 0, total: 0 },
-      extraSR: { correct: 0, total: 0 },
-      attention: { correct: 0, total: 0 },
-    };
-
-    trials.forEach((trial) => {
-      categories.setupMaterials.total++;
-      if (trial.setupMaterials) categories.setupMaterials.correct++;
-
-      categories.sd.total += 3;
-      if (trial.sdAttending) categories.sd.correct++;
-      if (trial.sdAsWritten) categories.sd.correct++;
-      if (trial.sdIntonation) categories.sd.correct++;
-
-      if (trial.correctionTimely !== null) {
-        categories.correction.total++;
-        if (trial.correctionTimely) categories.correction.correct++;
-      }
-      if (trial.correctionAttending !== null) {
-        categories.correction.total++;
-        if (trial.correctionAttending) categories.correction.correct++;
-      }
-      if (trial.correctionAsWritten !== null) {
-        categories.correction.total++;
-        if (trial.correctionAsWritten) categories.correction.correct++;
-      }
-      if (trial.correctionIntonation !== null) {
-        categories.correction.total++;
-        if (trial.correctionIntonation) categories.correction.correct++;
-      }
-
-      categories.reinforcer.total += 5;
-      if (trial.reinforcerImmediate) categories.reinforcer.correct++;
-      if (trial.reinforcerEffective) categories.reinforcer.correct++;
-      if (trial.reinforcerDescriptive) categories.reinforcer.correct++;
-      if (trial.reinforcerIntonation) categories.reinforcer.correct++;
-      if (trial.reinforcerAffectPlay) categories.reinforcer.correct++;
-
-      categories.pacing.total++;
-      if (trial.pacingAdequate) categories.pacing.correct++;
-
-      categories.extraSR.total++;
-      if (trial.extraSR) categories.extraSR.correct++;
-
-      categories.attention.total++;
-      if (trial.attentionForDisruptive) categories.attention.correct++;
-    });
-
-    const getPercentage = (cat: { correct: number; total: number }) =>
-      cat.total > 0 ? Math.round((cat.correct / cat.total) * 100) : 0;
-
-    const totalCorrect =
-      categories.setupMaterials.correct +
-      categories.sd.correct +
-      categories.correction.correct +
-      categories.reinforcer.correct +
-      categories.pacing.correct +
-      categories.extraSR.correct +
-      categories.attention.correct;
-
-    const totalPossible =
-      categories.setupMaterials.total +
-      categories.sd.total +
-      categories.correction.total +
-      categories.reinforcer.total +
-      categories.pacing.total +
-      categories.extraSR.total +
-      categories.attention.total;
-
-    return {
-      setupMaterials: getPercentage(categories.setupMaterials),
-      sd: getPercentage(categories.sd),
-      correction: getPercentage(categories.correction),
-      reinforcer: getPercentage(categories.reinforcer),
-      pacing: getPercentage(categories.pacing),
-      extraSR: getPercentage(categories.extraSR),
-      attention: getPercentage(categories.attention),
-      overall: totalPossible > 0 ? Math.round((totalCorrect / totalPossible) * 100) : 0,
-    };
-  }, [trials]);
-
-  const scores = calculateScores();
+  const scores = calculateScores(trials);
 
   // Overall progress
   const trialsStarted = trials.filter(isTrialStarted).length;
@@ -862,7 +699,7 @@ export default function DTTMonitoringPage() {
                       </button>
                     </div>
                     <CriteriaCheckbox
-                      label="A. Attending - Child is attending before SD delivery"
+                      label="A. Attending - Client is attending before SD delivery"
                       checked={trials[activeTrial].sdAttending}
                       onChange={() =>
                         toggleTrialCriteria(activeTrial, "sdAttending")
@@ -963,7 +800,7 @@ export default function DTTMonitoringPage() {
                         isNullable
                       />
                       <CriteriaCheckbox
-                        label="B. Attending - Child attending during correction"
+                        label="B. Attending - Client attending during correction"
                         checked={trials[activeTrial].correctionAttending}
                         onChange={() =>
                           toggleTrialCriteria(activeTrial, "correctionAttending")
@@ -992,58 +829,65 @@ export default function DTTMonitoringPage() {
                     </div>
                   )}
 
-                  {/* Reinforcer Section */}
-                  <div className="border-b pb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-900">
-                          Reinforcer (S<sup>R+</sup>)
-                        </h3>
-                        <GuidelineInfo guidelineIds={[9, 10, 11, 12, 13]} />
+                  {/* Reinforcer Section - only show if response was correct */}
+                  {trials[activeTrial].responseCorrect === true && (
+                    <div className="border-b pb-4 bg-green-50 -mx-4 px-4 py-3 rounded">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900">
+                              Reinforcer (S<sup>R+</sup>)
+                            </h3>
+                            <GuidelineInfo guidelineIds={[9, 10, 11, 12, 13]} />
+                          </div>
+                          <p className="text-sm text-green-700">
+                            Rate reinforcement since response was correct
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => markAllInCategory("reinforcer", true)}
+                          className="text-xs text-teal-600 hover:text-teal-700 hover:underline"
+                        >
+                          Mark all ✓
+                        </button>
                       </div>
-                      <button
-                        onClick={() => markAllInCategory("reinforcer", true)}
-                        className="text-xs text-teal-600 hover:text-teal-700 hover:underline"
-                      >
-                        Mark all ✓
-                      </button>
+                      <CriteriaCheckbox
+                        label="A. Immediate - Delivered within 2 seconds"
+                        checked={trials[activeTrial].reinforcerImmediate}
+                        onChange={() =>
+                          toggleTrialCriteria(activeTrial, "reinforcerImmediate")
+                        }
+                      />
+                      <CriteriaCheckbox
+                        label="B. Effective - Client accepted reinforcer"
+                        checked={trials[activeTrial].reinforcerEffective}
+                        onChange={() =>
+                          toggleTrialCriteria(activeTrial, "reinforcerEffective")
+                        }
+                      />
+                      <CriteriaCheckbox
+                        label="C. Descriptive - Used specific praise"
+                        checked={trials[activeTrial].reinforcerDescriptive}
+                        onChange={() =>
+                          toggleTrialCriteria(activeTrial, "reinforcerDescriptive")
+                        }
+                      />
+                      <CriteriaCheckbox
+                        label="D. Intonation - Enthusiastic tone"
+                        checked={trials[activeTrial].reinforcerIntonation}
+                        onChange={() =>
+                          toggleTrialCriteria(activeTrial, "reinforcerIntonation")
+                        }
+                      />
+                      <CriteriaCheckbox
+                        label="E. Affect/Play - Used affection and/or play"
+                        checked={trials[activeTrial].reinforcerAffectPlay}
+                        onChange={() =>
+                          toggleTrialCriteria(activeTrial, "reinforcerAffectPlay")
+                        }
+                      />
                     </div>
-                    <CriteriaCheckbox
-                      label="A. Immediate - Delivered within 2 seconds"
-                      checked={trials[activeTrial].reinforcerImmediate}
-                      onChange={() =>
-                        toggleTrialCriteria(activeTrial, "reinforcerImmediate")
-                      }
-                    />
-                    <CriteriaCheckbox
-                      label="B. Effective - Child accepted reinforcer"
-                      checked={trials[activeTrial].reinforcerEffective}
-                      onChange={() =>
-                        toggleTrialCriteria(activeTrial, "reinforcerEffective")
-                      }
-                    />
-                    <CriteriaCheckbox
-                      label="C. Descriptive - Used specific praise"
-                      checked={trials[activeTrial].reinforcerDescriptive}
-                      onChange={() =>
-                        toggleTrialCriteria(activeTrial, "reinforcerDescriptive")
-                      }
-                    />
-                    <CriteriaCheckbox
-                      label="D. Intonation - Enthusiastic tone"
-                      checked={trials[activeTrial].reinforcerIntonation}
-                      onChange={() =>
-                        toggleTrialCriteria(activeTrial, "reinforcerIntonation")
-                      }
-                    />
-                    <CriteriaCheckbox
-                      label="E. Affect/Play - Used affection and/or play"
-                      checked={trials[activeTrial].reinforcerAffectPlay}
-                      onChange={() =>
-                        toggleTrialCriteria(activeTrial, "reinforcerAffectPlay")
-                      }
-                    />
-                  </div>
+                  )}
 
                   {/* Pacing, Extra SR, Attention */}
                   <div className="space-y-2">
@@ -1068,7 +912,7 @@ export default function DTTMonitoringPage() {
                       }
                     />
                     <CriteriaCheckbox
-                      label="Attention for Disruptive Behavior - Handled appropriately"
+                      label="No additional attention for disruptive behavior"
                       checked={trials[activeTrial].attentionForDisruptive}
                       onChange={() =>
                         toggleTrialCriteria(

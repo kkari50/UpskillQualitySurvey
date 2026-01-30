@@ -289,6 +289,129 @@ Brief interstitial between survey sections:
 </Card>
 ```
 
+### 6.6 Not Applicable (N/A) Pattern for Yes/No Lists
+
+When a Yes/No checklist contains items that may not apply to all users (e.g., "Has the token board ratio been updated (if used)?"), **do not** add a third N/A button inline with the Yes/No buttons. A third button on only some rows creates visual misalignment and breaks the consistent 2-button layout.
+
+**Instead, use a text link below the question text.**
+
+#### 6.6.1 Data Model
+
+Items that support N/A declare it via the `allowNA` flag in the data file:
+
+```typescript
+// in *-data.ts
+export interface ChecklistItem {
+  id: string;
+  text: string;
+  allowNA?: boolean;       // Enables "Mark as not applicable" link
+  conditionalOn?: string;  // Show only if parent answered "Y"
+}
+
+{ id: "token_board", text: "Has the token board ratio been updated (if used)?", allowNA: true },
+```
+
+#### 6.6.2 Web UI
+
+The N/A action is a subtle text link positioned below the question text. When selected, the Yes/No buttons disable and the question text dims with a strikethrough.
+
+```tsx
+<div className="p-4 hover:bg-slate-50 transition-colors">
+  {/* Row: question text + Yes/No buttons (always 2-button layout) */}
+  <div className="flex items-center justify-between gap-4">
+    <span className={cn(
+      "text-sm flex-1 leading-relaxed transition-colors",
+      isNA ? "text-slate-400 line-through" : "text-slate-700"
+    )}>
+      {item.text}
+    </span>
+    <div className="flex gap-2 shrink-0">
+      <Button size="sm" disabled={isNA} className={cn(
+        "w-12 h-10 transition-all",
+        answers[item.id] === "Y"
+          ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-md"
+          : isNA ? "opacity-40 cursor-not-allowed"
+          : "hover:border-emerald-300 hover:text-emerald-600"
+      )} onClick={() => handleAnswerChange(item.id, "Y")}>
+        <Check className="w-4 h-4" />
+      </Button>
+      <Button size="sm" disabled={isNA} className={cn(
+        "w-12 h-10 transition-all",
+        answers[item.id] === "N"
+          ? "bg-rose-400 hover:bg-rose-500 text-white shadow-md"
+          : isNA ? "opacity-40 cursor-not-allowed"
+          : "hover:border-rose-300 hover:text-rose-500"
+      )} onClick={() => handleAnswerChange(item.id, "N")}>
+        <X className="w-4 h-4" />
+      </Button>
+    </div>
+  </div>
+
+  {/* N/A text link — only rendered for allowNA items */}
+  {item.allowNA && (
+    <button type="button" className={cn(
+      "mt-1.5 text-xs transition-colors",
+      isNA ? "text-slate-500 font-medium" : "text-slate-400 hover:text-slate-600"
+    )} onClick={() => handleAnswerChange(item.id, "NA")}>
+      {isNA ? (
+        <span className="flex items-center gap-1">
+          <Minus className="w-3 h-3" /> Not applicable
+          <span className="text-slate-400 font-normal ml-1">(undo)</span>
+        </span>
+      ) : "Mark as not applicable"}
+    </button>
+  )}
+</div>
+```
+
+**Key design rules:**
+- Yes/No buttons always remain in the same position (right-aligned, 2-button layout)
+- The N/A text link sits below the question text, not in the button row
+- Selecting N/A disables + dims the Yes/No buttons (`opacity-40`, `cursor-not-allowed`)
+- The question text gets `text-slate-400` and `line-through`
+- The link toggles to show "Not applicable (undo)" when active
+- Clicking the link again (or the undo text) clears the N/A state
+
+#### 6.6.3 PDF Rendering
+
+N/A items in the PDF must mirror the web's visual treatment to maintain consistency between on-screen and printed output.
+
+```tsx
+// Styles for N/A rows in @react-pdf/renderer
+itemTextNA: {
+  fontSize: 8,
+  color: colors.gray,          // Dimmed text
+  lineHeight: 1.3,
+  fontStyle: "italic",
+  textDecoration: "line-through",
+},
+naLabel: {
+  fontSize: 7,
+  color: colors.gray,
+  fontStyle: "italic",
+},
+tableRowNA: {
+  backgroundColor: "#F8FAFC",  // Subtle differentiation
+},
+```
+
+**PDF N/A row treatment:**
+- Text: dimmed (`gray`), italic, strikethrough
+- "Not applicable" label below the item text (visible even in grayscale print)
+- Row number dims to `grayLight`
+- Checkbox shows gray box with "—" symbol
+- Row background: `#F8FAFC` to visually separate from answered items
+
+#### 6.6.4 When to Use This Pattern
+
+| Scenario | Approach |
+|----------|----------|
+| Item says "(if used)" or "(if applicable)" | Add `allowNA: true` to the data item |
+| All users must answer | Standard Yes/No only (no `allowNA`) |
+| Conditional follow-up (e.g., "If yes above...") | Use `conditionalOn` to hide/show the row instead |
+
+> **Reference:** See DES-009 in `context/decisions.md` for the full decision rationale and alternatives considered.
+
 ---
 
 ## 7. Results Components

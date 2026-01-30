@@ -423,14 +423,14 @@ const CRITERIA_ROWS = [
   { criteria: "B. Attending", field: "correctionAttending" as const, nullable: true },
   { criteria: "C. As written", field: "correctionAsWritten" as const, nullable: true },
   { criteria: "D. Intonation", field: "correctionIntonation" as const, nullable: true },
-  { category: "Reinforcer (SR+)", criteria: "A. Immediate", field: "reinforcerImmediate" as const },
-  { criteria: "B. Effective", field: "reinforcerEffective" as const },
-  { criteria: "C. Descriptive", field: "reinforcerDescriptive" as const },
-  { criteria: "D. Intonation", field: "reinforcerIntonation" as const },
-  { criteria: "E. Affect/Play", field: "reinforcerAffectPlay" as const },
+  { category: "Reinforcer (SR+)", criteria: "A. Immediate", field: "reinforcerImmediate" as const, nullable: true, showWhenCorrect: true },
+  { criteria: "B. Effective", field: "reinforcerEffective" as const, nullable: true, showWhenCorrect: true },
+  { criteria: "C. Descriptive", field: "reinforcerDescriptive" as const, nullable: true, showWhenCorrect: true },
+  { criteria: "D. Intonation", field: "reinforcerIntonation" as const, nullable: true, showWhenCorrect: true },
+  { criteria: "E. Affect/Play", field: "reinforcerAffectPlay" as const, nullable: true, showWhenCorrect: true },
   { category: "Pacing & Other", criteria: "Pacing Adequate", field: "pacingAdequate" as const },
   { criteria: "Extra SR", field: "extraSR" as const },
-  { criteria: "Attention for disruptive behavior", field: "attentionForDisruptive" as const },
+  { criteria: "No additional attention for disruptive behavior", field: "attentionForDisruptive" as const },
 ];
 
 // Main PDF Document
@@ -523,7 +523,11 @@ export function DTTMonitoringPDF({
                 </View>
                 {trials.map((trial, trialIndex) => {
                   const value = trial[row.field];
-                  const isNullable = row.nullable && trial.responseCorrect !== false;
+                  const isNullable = row.nullable && (
+                    row.showWhenCorrect
+                      ? trial.responseCorrect !== true
+                      : trial.responseCorrect !== false
+                  );
 
                   return (
                     <View key={trialIndex} style={styles.dataCell}>

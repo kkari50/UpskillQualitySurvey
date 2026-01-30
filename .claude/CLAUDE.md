@@ -78,6 +78,16 @@ repo: "UpskillQualitySurvey"
 - **Accessibility:** WCAG 2.1 AA compliance, keyboard navigation, screen reader support
 - **Security:** Input validation (Zod), CSRF protection, rate limiting, secure headers
 
+### Not Applicable (N/A) Pattern for Yes/No Lists
+
+**When a Yes/No checklist item may not apply to all users (e.g., "(if used)"), never add a third inline button.** Use a text link below the question text instead. This keeps all Yes/No buttons aligned in a consistent 2-button layout.
+
+- Data: Set `allowNA: true` on the `ChecklistItem`
+- Web: "Mark as not applicable" text link below question; selecting it disables + dims Yes/No buttons and strikes through the text
+- PDF: Italic strikethrough, dimmed row, "Not applicable" label below item text
+
+See Style Guide Section 6.6 and DES-009 in `context/decisions.md` for full details and code examples.
+
 ### PDF Component Pattern - MANDATORY
 
 **Heavy libraries like `@react-pdf/renderer` must use code splitting to avoid bloating page bundles.**

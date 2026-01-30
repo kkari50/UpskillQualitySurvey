@@ -867,6 +867,45 @@ This made the question difficult to answer accurately since respondents might ha
 
 ---
 
+### DES-009: Not Applicable Pattern for Yes/No Checklists
+
+**Date:** January 2026
+
+**Context:** The Get Ready Checklist uses Yes/No buttons for each item. Some items include a qualifier like "(if used)" — meaning the item may not apply to every user. An N/A option is needed for those items, but not for all items.
+
+The initial implementation added a third N/A button (minus icon) inline with the Yes/No buttons on applicable rows. This caused a visual inconsistency: rows with N/A had 3 buttons while all others had 2, shifting the Yes/No buttons out of alignment and making the interface look unpolished.
+
+**Options Considered:**
+| Option | Pros | Cons |
+|--------|------|------|
+| Inline 3rd button on applicable rows | Discoverable, grouped with Yes/No | Misaligns button layout, looks inconsistent |
+| 3 buttons on all rows (disable N/A where not applicable) | Consistent width | Wastes space, confusing disabled buttons |
+| Text link below question text | Keeps 2-button alignment, subtle, clear | Second interaction zone below the row |
+| Make "(if used)" text clickable | Contextual, no extra UI | Not discoverable, accessibility concerns |
+
+**Decision:** Use a subtle text link ("Mark as not applicable") positioned below the question text. When selected, the Yes/No buttons disable and dim, the question text gets a strikethrough, and the link shows "Not applicable (undo)".
+
+**Implementation:**
+- **Data model:** `allowNA?: boolean` flag on `ChecklistItem` interface
+- **Web UI:** Text link below question text; Yes/No buttons disable + dim on N/A; question text gets `line-through` + `text-slate-400`
+- **PDF:** N/A rows render with italic strikethrough text, dimmed row number, "Not applicable" label below item text, and subtle `#F8FAFC` background
+
+**Rationale:** This approach preserves the clean 2-button layout across all rows. The N/A action is visually separated from the answer action, making it clear that "not applicable" is a different kind of response. The text link is discoverable without disrupting the primary Yes/No interaction pattern. The PDF mirrors the web treatment for consistency between on-screen and printed output.
+
+**Consequences:**
+- All rows maintain consistent Yes/No button alignment
+- N/A items are visually distinct in both web and PDF
+- Pattern is reusable: any future checklist item can opt in with `allowNA: true`
+- Slightly more vertical space used on N/A rows (text link adds ~20px)
+
+**Reference files:**
+- Data: `src/components/pdf/get-ready-checklist-data.ts`
+- Web UI: `src/app/resources/get-ready-checklist/page.tsx`
+- PDF: `src/components/pdf/GetReadyChecklistPDF.tsx`
+- Style guide: Section 6.6 in `context/style-guide.md`
+
+---
+
 ### DEC-021: Magic Link for Results Retrieval
 
 **Date:** January 2026
