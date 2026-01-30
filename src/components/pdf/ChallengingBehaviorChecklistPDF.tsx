@@ -216,6 +216,22 @@ const styles = StyleSheet.create({
     fontSize: 8,
     color: "#374151",
   },
+  criteriaLabelCell: {
+    flex: 1,
+    padding: 6,
+  },
+  criteriaLabelTextNA: {
+    fontSize: 8,
+    color: "#9ca3af",
+    fontStyle: "italic",
+    textDecoration: "line-through",
+  },
+  naNote: {
+    fontSize: 7,
+    color: "#9ca3af",
+    fontStyle: "italic",
+    marginTop: 2,
+  },
   criteriaAnswer: {
     width: 50,
     padding: 6,
@@ -396,23 +412,33 @@ export function ChallengingBehaviorChecklistPDF({
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Definition Criteria</Text>
           <View style={styles.criteriaTable}>
-            {CRITERIA_LABELS.map((label, idx) => (
-              <View
-                key={idx}
-                style={[
-                  styles.criteriaRow,
-                  idx === CRITERIA_LABELS.length - 1 ? styles.criteriaRowLast : {},
-                ]}
-              >
-                <Text style={styles.criteriaNumber}>{idx + 1}</Text>
-                <Text style={styles.criteriaLabel}>{label}</Text>
+            {CRITERIA_LABELS.map((label, idx) => {
+              const isNA = answerArray[idx] === "na";
+              return (
                 <View
-                  style={[styles.criteriaAnswer, getAnswerStyle(answerArray[idx])]}
+                  key={idx}
+                  style={[
+                    styles.criteriaRow,
+                    idx === CRITERIA_LABELS.length - 1 ? styles.criteriaRowLast : {},
+                  ]}
                 >
-                  <Text>{formatAnswer(answerArray[idx])}</Text>
+                  <Text style={styles.criteriaNumber}>{idx + 1}</Text>
+                  {isNA ? (
+                    <View style={styles.criteriaLabelCell}>
+                      <Text style={styles.criteriaLabelTextNA}>{label}</Text>
+                      <Text style={styles.naNote}>Not applicable</Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.criteriaLabel}>{label}</Text>
+                  )}
+                  <View
+                    style={[styles.criteriaAnswer, getAnswerStyle(answerArray[idx])]}
+                  >
+                    <Text>{formatAnswer(answerArray[idx])}</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         </View>
 

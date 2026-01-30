@@ -27,6 +27,7 @@ import {
   XCircle,
   ChevronDown,
   Lightbulb,
+  Minus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
@@ -126,29 +127,33 @@ function AnswerButton({
   onChange,
   label,
   color,
+  disabled = false,
 }: {
   value: Answer;
   currentValue: Answer;
   onChange: (value: Answer) => void;
   label: string;
-  color: "green" | "red" | "gray";
+  color: "green" | "red";
+  disabled?: boolean;
 }) {
   const isSelected = currentValue === value;
   const colorClasses = {
     green: isSelected
       ? "bg-green-500 text-white border-green-500"
-      : "bg-white text-green-600 border-green-300 hover:bg-green-50",
+      : disabled
+        ? "opacity-40 cursor-not-allowed bg-white text-green-600 border-green-300"
+        : "bg-white text-green-600 border-green-300 hover:bg-green-50",
     red: isSelected
       ? "bg-red-500 text-white border-red-500"
-      : "bg-white text-red-600 border-red-300 hover:bg-red-50",
-    gray: isSelected
-      ? "bg-gray-500 text-white border-gray-500"
-      : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
+      : disabled
+        ? "opacity-40 cursor-not-allowed bg-white text-red-600 border-red-300"
+        : "bg-white text-red-600 border-red-300 hover:bg-red-50",
   };
 
   return (
     <button
       type="button"
+      disabled={disabled}
       onClick={() => onChange(isSelected ? null : value)}
       className={cn(
         "px-3 py-1.5 text-sm font-medium rounded-md border transition-colors",
@@ -176,44 +181,66 @@ function CriteriaRow({
   index: number;
   hasNA?: boolean;
 }) {
+  const isNA = value === "na";
+
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start justify-between py-4 border-b border-gray-100 last:border-0 gap-3">
-      <div className="flex-1 pr-4">
-        <div className="flex items-start gap-2">
-          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-100 text-teal-700 text-sm font-medium flex items-center justify-center">
-            {index}
-          </span>
-          <div>
-            <p className="text-sm text-gray-800">{label}</p>
-            {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
+    <div className="py-4 border-b border-gray-100 last:border-0">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="flex-1 pr-4">
+          <div className="flex items-start gap-2">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-100 text-teal-700 text-sm font-medium flex items-center justify-center">
+              {index}
+            </span>
+            <div>
+              <p className={cn(
+                "text-sm transition-colors",
+                isNA ? "text-slate-400 line-through" : "text-gray-800"
+              )}>{label}</p>
+              {hint && !isNA && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex gap-2 flex-shrink-0 ml-8 sm:ml-0">
-        <AnswerButton
-          value="yes"
-          currentValue={value}
-          onChange={onChange}
-          label="Yes"
-          color="green"
-        />
-        <AnswerButton
-          value="no"
-          currentValue={value}
-          onChange={onChange}
-          label="No"
-          color="red"
-        />
-        {hasNA && (
+        <div className="flex gap-2 flex-shrink-0 ml-8 sm:ml-0">
           <AnswerButton
-            value="na"
-            currentValue={value}
+            value="yes"
+            currentValue={isNA ? null : value}
             onChange={onChange}
-            label="N/A"
-            color="gray"
+            label="Yes"
+            color="green"
+            disabled={isNA}
           />
-        )}
+          <AnswerButton
+            value="no"
+            currentValue={isNA ? null : value}
+            onChange={onChange}
+            label="No"
+            color="red"
+            disabled={isNA}
+          />
+        </div>
       </div>
+      {hasNA && (
+        <button
+          type="button"
+          className={cn(
+            "mt-1.5 ml-8 text-xs transition-colors",
+            isNA
+              ? "text-slate-500 font-medium"
+              : "text-slate-400 hover:text-slate-600"
+          )}
+          onClick={() => onChange(isNA ? null : "na")}
+        >
+          {isNA ? (
+            <span className="flex items-center gap-1">
+              <Minus className="w-3 h-3" />
+              Not applicable
+              <span className="text-slate-400 font-normal ml-1">(undo)</span>
+            </span>
+          ) : (
+            "Mark as not applicable"
+          )}
+        </button>
+      )}
     </div>
   );
 }
