@@ -299,18 +299,16 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Ferraioli et al. (2005)",
         description:
           "Evidence-based approaches to data review frequency and decision-making.",
-        url: "/resources/data-analysis/Ferraioli et al 2005.pdf",
+        url: "https://eric.ed.gov/?id=EJ846778",
         type: "research",
-        viewerType: "pdf-modal",
       },
       {
         id: "da-wolfe-2021",
         title: "Wolfe et al. (2021)",
         description:
           "Research on optimal data review intervals for skill acquisition.",
-        url: "/resources/data-analysis/Wolfe+et+al+2021.pdf",
+        url: "https://doi.org/10.1007/s10864-021-09439-0",
         type: "research",
-        viewerType: "pdf-modal",
       },
     ],
   },
