@@ -59,7 +59,7 @@ const CODING_GUIDELINES = [
       "Client is playing with the stimulus materials before/during SD delivery",
       "Early responding. The client responds before or during the verbal SD",
       "Client is consuming food or has access to the SR+",
-      "Client is not looking at the tutor and/or the stimulus material",
+      "Client is not looking at the technician and/or the stimulus material",
     ],
   },
   {
@@ -92,7 +92,7 @@ const CODING_GUIDELINES = [
     id: 6,
     title: "Correction Attending",
     items: [
-      "Client is not attending to the tutor when the tutor provides correction procedure",
+      "Client is not attending to the technician when the technician provides correction procedure",
       "Client is tantruming",
     ],
   },
@@ -101,9 +101,9 @@ const CODING_GUIDELINES = [
     title: "Correction as Written",
     items: [
       "Reinforcing an incorrect behavior",
-      "Tutor performs the behavior, rather than prompting the client",
-      "Tutor does not use the hierarchy of prompts",
-      'Tutor labels the incorrect behavior (e.g., "No, this is the shoe….and that is the banana")',
+      "Technician performs the behavior, rather than prompting the client",
+      "Technician does not use the hierarchy of prompts",
+      'Technician labels the incorrect behavior (e.g., "No, this is the shoe….and that is the banana")',
     ],
   },
   {
@@ -118,22 +118,22 @@ const CODING_GUIDELINES = [
     title: "SR+ (Reinforcer) Timely",
     items: [
       "Delay between R and SR+ >2 s",
-      "Tutor records client's response before delivering the SR+",
-      'Tutor does not use reinforcer because the client was "naughty" during previous trials',
+      "Technician records client's response before delivering the SR+",
+      'Technician does not use reinforcer because the client was "naughty" during previous trials',
     ],
   },
   {
     id: 10,
     title: "SR+ Effective",
     items: [
-      'Tutor presents a presumed "SR+" that the client refused on a previous trial',
+      'Technician presents a presumed "SR+" that the client refused on a previous trial',
     ],
   },
   {
     id: 11,
     title: "SR+ Descriptive",
     items: [
-      'Tutor uses general praise. Use descriptive praise, the tutor should specify what they are praising. (ex. "Good touching your nose.")',
+      'Technician uses general praise. Use descriptive praise, the technician should specify what they are praising. (ex. "Good touching your nose.")',
     ],
   },
   {
@@ -147,8 +147,8 @@ const CODING_GUIDELINES = [
     id: 13,
     title: "Affection and Play",
     items: [
-      "Tutor must use affection (high fives, pat on back, making funny faces, etc.) in addition to any social praise",
-      "Tutor must play with the toy when providing the item to the client",
+      "Technician must use affection (high fives, pat on back, making funny faces, etc.) in addition to any social praise",
+      "Technician must play with the toy when providing the item to the client",
     ],
   },
   {
@@ -156,27 +156,27 @@ const CODING_GUIDELINES = [
     title: "Pacing Error",
     items: [
       "Searching for stimulus material between trials",
-      "The ITI exceeds 5 sec., when the tutor is only using praise",
-      "The ITI exceeds 25 sec. when the tutor is using an edible/tangible",
+      "The ITI exceeds 5 sec., when the technician is only using praise",
+      "The ITI exceeds 25 sec. when the technician is using an edible/tangible",
     ],
   },
   {
     id: 15,
     title: "Extra Learning Opportunities",
     items: [
-      "Tutor must reinforce the client's other appropriate behaviors on average once every two trials in the booth",
-      "Tutor must reinforce the client's appropriate behaviors on average once every minute outside of the booth",
+      "Technician must reinforce the client's other appropriate behaviors on average once every two trials in the booth",
+      "Technician must reinforce the client's appropriate behaviors on average once every minute outside of the booth",
     ],
   },
   {
     id: 16,
     title: "Attention for Disruptive Behavior",
     items: [
-      "When the client shows disruptive behavior, tutor should instruct the client to go back to the appropriate behavior by following the hierarchy of prompts",
-      "Tutor should repeat verbal prompts only when following the hierarchy of prompts",
+      "When the client shows disruptive behavior, technician should instruct the client to go back to the appropriate behavior by following the hierarchy of prompts",
+      "Technician should repeat verbal prompts only when following the hierarchy of prompts",
       "Try not to make any facial expressions following client's disruptive behavior",
-      "Tutor should not make any unnecessary comments about client's disruptive behavior",
-      "Tutor should not give a choice of reinforcers following disruptive behavior",
+      "Technician should not make any unnecessary comments about client's disruptive behavior",
+      "Technician should not give a choice of reinforcers following disruptive behavior",
     ],
   },
 ];
@@ -469,7 +469,7 @@ export default function DTTMonitoringPage() {
             DTT Session Monitoring Form
           </h1>
           <p className="text-gray-600">
-            Monitor tutor performance across discrete trials. Check each
+            Monitor technician performance across discrete trials. Check each
             criterion that was implemented correctly.
           </p>
         </div>
