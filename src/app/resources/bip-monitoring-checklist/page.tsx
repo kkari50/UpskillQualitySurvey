@@ -600,6 +600,15 @@ export default function BIPMonitoringChecklistPage() {
       ]);
 
       const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
+      // Strip React elements (icons) and UI-only props before passing to PDF
+      const pdfSections = CHECKLIST_SECTIONS.map((section) => ({
+        id: section.id,
+        title: section.title,
+        items: section.items.map((item) => ({
+          id: item.id,
+          label: item.label,
+        })),
+      }));
       const doc = (
         <BIPMonitoringChecklistPDF
           date={date ? format(date, "PPP") : ""}
@@ -610,7 +619,7 @@ export default function BIPMonitoringChecklistPage() {
           }
           checkedItems={Array.from(checkedItems)}
           naItems={Array.from(naItems)}
-          sections={CHECKLIST_SECTIONS}
+          sections={pdfSections}
           scores={scores}
           notes={notes}
         />
