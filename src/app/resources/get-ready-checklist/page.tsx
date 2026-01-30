@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { Download, Printer, RotateCcw, Loader2, Check, X, CalendarIcon } from "lucide-react";
+import { Download, Printer, RotateCcw, Loader2, Check, X, Minus, CalendarIcon } from "lucide-react";
 
 import { Header, Footer } from "@/components/layout";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
@@ -18,6 +18,7 @@ import {
   DATA_COLLECTION_ITEMS,
   GENERAL_ITEMS,
   type Answer,
+  type ChecklistItem,
 } from "@/components/pdf/get-ready-checklist-data";
 
 export default function GetReadyChecklistPage() {
@@ -80,9 +81,13 @@ export default function GetReadyChecklistPage() {
     }
   };
 
-  const completedCount = Object.values(answers).filter(a => a !== null).length;
-  const totalItems = DATA_COLLECTION_ITEMS.length + GENERAL_ITEMS.length;
-  const yesCount = Object.values(answers).filter(a => a === "Y").length;
+  const allItems = [...DATA_COLLECTION_ITEMS, ...GENERAL_ITEMS];
+  const isItemVisible = (item: ChecklistItem) =>
+    !item.conditionalOn || answers[item.conditionalOn] === "Y";
+  const visibleItems = allItems.filter(isItemVisible);
+  const completedCount = visibleItems.filter(item => answers[item.id] != null).length;
+  const totalItems = visibleItems.length;
+  const yesCount = visibleItems.filter(item => answers[item.id] === "Y").length;
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 to-white">
@@ -226,47 +231,83 @@ export default function GetReadyChecklistPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              {DATA_COLLECTION_ITEMS.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={cn(
-                    "flex items-center justify-between gap-4 p-4 hover:bg-slate-50 transition-colors",
-                    index !== DATA_COLLECTION_ITEMS.length - 1 && "border-b border-slate-100"
-                  )}
-                >
-                  <span className="text-sm text-slate-700 flex-1 leading-relaxed">
-                    {item.text}
-                  </span>
-                  <div className="flex gap-2 shrink-0">
-                    <Button
-                      size="sm"
-                      variant={answers[item.id] === "Y" ? "default" : "outline"}
-                      className={cn(
-                        "w-12 h-10 transition-all",
-                        answers[item.id] === "Y"
-                          ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-md"
-                          : "hover:border-emerald-300 hover:text-emerald-600"
-                      )}
-                      onClick={() => handleAnswerChange(item.id, "Y")}
-                    >
-                      <Check className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={answers[item.id] === "N" ? "default" : "outline"}
-                      className={cn(
-                        "w-12 h-10 transition-all",
-                        answers[item.id] === "N"
-                          ? "bg-rose-400 hover:bg-rose-500 text-white shadow-md"
-                          : "hover:border-rose-300 hover:text-rose-500"
-                      )}
-                      onClick={() => handleAnswerChange(item.id, "N")}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+              {DATA_COLLECTION_ITEMS.filter(isItemVisible).map((item, index, filtered) => {
+                const isNA = answers[item.id] === "NA";
+                return (
+                  <div
+                    key={item.id}
+                    className={cn(
+                      "p-4 hover:bg-slate-50 transition-colors",
+                      index !== filtered.length - 1 && "border-b border-slate-100"
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <span className={cn(
+                        "text-sm flex-1 leading-relaxed transition-colors",
+                        isNA ? "text-slate-400 line-through" : "text-slate-700"
+                      )}>
+                        {item.text}
+                      </span>
+                      <div className="flex gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          variant={answers[item.id] === "Y" ? "default" : "outline"}
+                          disabled={isNA}
+                          className={cn(
+                            "w-12 h-10 transition-all",
+                            answers[item.id] === "Y"
+                              ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-md"
+                              : isNA
+                                ? "opacity-40 cursor-not-allowed"
+                                : "hover:border-emerald-300 hover:text-emerald-600"
+                          )}
+                          onClick={() => handleAnswerChange(item.id, "Y")}
+                        >
+                          <Check className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={answers[item.id] === "N" ? "default" : "outline"}
+                          disabled={isNA}
+                          className={cn(
+                            "w-12 h-10 transition-all",
+                            answers[item.id] === "N"
+                              ? "bg-rose-400 hover:bg-rose-500 text-white shadow-md"
+                              : isNA
+                                ? "opacity-40 cursor-not-allowed"
+                                : "hover:border-rose-300 hover:text-rose-500"
+                          )}
+                          onClick={() => handleAnswerChange(item.id, "N")}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    {item.allowNA && (
+                      <button
+                        type="button"
+                        className={cn(
+                          "mt-1.5 text-xs transition-colors",
+                          isNA
+                            ? "text-slate-500 font-medium"
+                            : "text-slate-400 hover:text-slate-600"
+                        )}
+                        onClick={() => handleAnswerChange(item.id, "NA")}
+                      >
+                        {isNA ? (
+                          <span className="flex items-center gap-1">
+                            <Minus className="w-3 h-3" />
+                            Not applicable
+                            <span className="text-slate-400 font-normal ml-1">(undo)</span>
+                          </span>
+                        ) : (
+                          "Mark as not applicable"
+                        )}
+                      </button>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
 
@@ -284,47 +325,83 @@ export default function GetReadyChecklistPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              {GENERAL_ITEMS.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={cn(
-                    "flex items-center justify-between gap-4 p-4 hover:bg-slate-50 transition-colors",
-                    index !== GENERAL_ITEMS.length - 1 && "border-b border-slate-100"
-                  )}
-                >
-                  <span className="text-sm text-slate-700 flex-1 leading-relaxed">
-                    {item.text}
-                  </span>
-                  <div className="flex gap-2 shrink-0">
-                    <Button
-                      size="sm"
-                      variant={answers[item.id] === "Y" ? "default" : "outline"}
-                      className={cn(
-                        "w-12 h-10 transition-all",
-                        answers[item.id] === "Y"
-                          ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-md"
-                          : "hover:border-emerald-300 hover:text-emerald-600"
-                      )}
-                      onClick={() => handleAnswerChange(item.id, "Y")}
-                    >
-                      <Check className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={answers[item.id] === "N" ? "default" : "outline"}
-                      className={cn(
-                        "w-12 h-10 transition-all",
-                        answers[item.id] === "N"
-                          ? "bg-rose-400 hover:bg-rose-500 text-white shadow-md"
-                          : "hover:border-rose-300 hover:text-rose-500"
-                      )}
-                      onClick={() => handleAnswerChange(item.id, "N")}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+              {GENERAL_ITEMS.filter(isItemVisible).map((item, index, filtered) => {
+                const isNA = answers[item.id] === "NA";
+                return (
+                  <div
+                    key={item.id}
+                    className={cn(
+                      "p-4 hover:bg-slate-50 transition-colors",
+                      index !== filtered.length - 1 && "border-b border-slate-100"
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <span className={cn(
+                        "text-sm flex-1 leading-relaxed transition-colors",
+                        isNA ? "text-slate-400 line-through" : "text-slate-700"
+                      )}>
+                        {item.text}
+                      </span>
+                      <div className="flex gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          variant={answers[item.id] === "Y" ? "default" : "outline"}
+                          disabled={isNA}
+                          className={cn(
+                            "w-12 h-10 transition-all",
+                            answers[item.id] === "Y"
+                              ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-md"
+                              : isNA
+                                ? "opacity-40 cursor-not-allowed"
+                                : "hover:border-emerald-300 hover:text-emerald-600"
+                          )}
+                          onClick={() => handleAnswerChange(item.id, "Y")}
+                        >
+                          <Check className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={answers[item.id] === "N" ? "default" : "outline"}
+                          disabled={isNA}
+                          className={cn(
+                            "w-12 h-10 transition-all",
+                            answers[item.id] === "N"
+                              ? "bg-rose-400 hover:bg-rose-500 text-white shadow-md"
+                              : isNA
+                                ? "opacity-40 cursor-not-allowed"
+                                : "hover:border-rose-300 hover:text-rose-500"
+                          )}
+                          onClick={() => handleAnswerChange(item.id, "N")}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    {item.allowNA && (
+                      <button
+                        type="button"
+                        className={cn(
+                          "mt-1.5 text-xs transition-colors",
+                          isNA
+                            ? "text-slate-500 font-medium"
+                            : "text-slate-400 hover:text-slate-600"
+                        )}
+                        onClick={() => handleAnswerChange(item.id, "NA")}
+                      >
+                        {isNA ? (
+                          <span className="flex items-center gap-1">
+                            <Minus className="w-3 h-3" />
+                            Not applicable
+                            <span className="text-slate-400 font-normal ml-1">(undo)</span>
+                          </span>
+                        ) : (
+                          "Mark as not applicable"
+                        )}
+                      </button>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
 

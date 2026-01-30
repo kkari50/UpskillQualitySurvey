@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import { useSurveyStore } from "@/stores/survey";
 import type { UserRole, AgencySize, PrimarySetting, USState } from "@/lib/validation/survey";
 
@@ -105,7 +105,7 @@ export function EmailCapture({ onSubmitStart, onSubmitEnd }: EmailCaptureProps) 
   const [agencySize, setAgencySize] = useState<AgencySize | "">("");
   const [primarySetting, setPrimarySetting] = useState<PrimarySetting | "">("");
   const [state, setState] = useState<USState | "">("");
-  const [marketingConsent, setMarketingConsent] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -135,7 +135,7 @@ export function EmailCapture({ onSubmitStart, onSubmitEnd }: EmailCaptureProps) 
           agencySize,
           primarySetting,
           state,
-          marketingConsent,
+          marketingConsent: true,
           answers,
           surveyVersion,
         }),
@@ -276,22 +276,6 @@ export function EmailCapture({ onSubmitStart, onSubmitEnd }: EmailCaptureProps) 
                 </option>
               ))}
             </select>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <Checkbox
-              id="consent"
-              checked={marketingConsent}
-              onCheckedChange={(checked) =>
-                setMarketingConsent(checked === true)
-              }
-            />
-            <Label
-              htmlFor="consent"
-              className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
-            >
-              I&apos;d like to receive occasional tips and resources on ABA quality improvement
-            </Label>
           </div>
 
           {error && (

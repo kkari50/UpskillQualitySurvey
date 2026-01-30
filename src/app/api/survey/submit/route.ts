@@ -10,6 +10,8 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { calculateScores } from '@/lib/scoring';
 import { getAgencyDomain, isTestEmail } from '@/lib/constants/email-domains';
 import { surveySubmissionSchema, formatZodErrors } from '@/lib/validation/survey';
+import { resend, FROM_EMAIL } from '@/lib/email/resend';
+import { getResultsLinkEmail } from '@/lib/email/templates/results-link';
 import type { UserRole } from '@/types/database';
 
 export async function POST(request: NextRequest) {
@@ -154,6 +156,26 @@ export async function POST(request: NextRequest) {
     if (answersError) {
       console.error('Answers insert error:', answersError);
       throw new Error('Failed to save survey answers');
+    }
+
+    // Send results email (skip for test emails)
+    if (!isTest) {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://quality-assessment-upskillaba.com';
+      const resultsUrl = `${baseUrl}/results/${resultsToken}`;
+
+      try {
+        const { subject, html, text } = getResultsLinkEmail({ resultsUrl, baseUrl });
+        await resend.emails.send({
+          from: FROM_EMAIL,
+          to: lead.email,
+          subject,
+          html,
+          text,
+        });
+      } catch (emailError) {
+        // Log error but don't fail the submission
+        console.error('Failed to send results email:', emailError);
+      }
     }
 
     // Return success with results token

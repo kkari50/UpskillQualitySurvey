@@ -169,7 +169,7 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 - Agency Name (text field, placeholder: "Agency Name (Optional)")
   - Placement: After name/email fields, before survey questions
   - Purpose: Lead generation for agency outreach
-- Marketing consent checkbox (opt-in)
+- ~~Marketing consent checkbox (opt-in)~~ **Removed** — marketing consent is now granted by default (set to `true`) upon survey submission. The opt-in checkbox has been removed from the email capture form. Users can opt-out of marketing communications at any time per the privacy policy.
 
 **Compliance:**
 - Privacy policy link

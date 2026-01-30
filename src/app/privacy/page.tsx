@@ -52,7 +52,7 @@ export default function PrivacyPage() {
                       <strong>Assessment Responses:</strong> Your answers to the 28 assessment questions
                     </li>
                     <li>
-                      <strong>Marketing Preference:</strong> Whether you opt-in to receive quality improvement resources
+                      <strong>Marketing Preference:</strong> Consent to receive quality improvement resources (granted by default upon submission)
                     </li>
                   </ul>
                 </section>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
                     <li>Generate your personalized assessment results</li>
                     <li>Provide population comparison benchmarks (using anonymized, aggregated data)</li>
                     <li>Allow you to retrieve your results via the unique results link</li>
-                    <li>Send quality improvement tips and resources (only if you opt-in)</li>
+                    <li>Send quality improvement tips and resources</li>
                     <li>Improve our assessment tool based on aggregated usage patterns</li>
                   </ul>
                 </section>

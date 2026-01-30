@@ -92,7 +92,7 @@ export const leadSchema = z.object({
   agencySize: z.enum(agencySizes).optional().nullable(),
   primarySetting: z.enum(primarySettings).optional().nullable(),
   state: z.enum(usStates).optional().nullable(),
-  marketingConsent: z.boolean().default(false),
+  marketingConsent: z.boolean().default(true),
 })
 
 export type LeadInput = z.infer<typeof leadSchema>
@@ -149,7 +149,7 @@ export const emailCaptureSchema = z.object({
   agencySize: z.enum(agencySizes).optional().or(z.literal('')),
   primarySetting: z.enum(primarySettings).optional().or(z.literal('')),
   state: z.enum(usStates).optional().or(z.literal('')),
-  marketingConsent: z.boolean().default(false),
+  marketingConsent: z.boolean().default(true),
 })
 
 export type EmailCaptureInput = z.infer<typeof emailCaptureSchema>

@@ -183,6 +183,21 @@ const styles = StyleSheet.create({
     color: colors.black,
     lineHeight: 1.3,
   },
+  itemTextNA: {
+    fontSize: 8,
+    color: colors.gray,
+    lineHeight: 1.3,
+    fontStyle: "italic",
+    textDecoration: "line-through",
+  },
+  naLabel: {
+    fontSize: 7,
+    color: colors.gray,
+    fontStyle: "italic",
+  },
+  tableRowNA: {
+    backgroundColor: "#F8FAFC",
+  },
   checkboxCell: {
     width: 28,
     padding: 3,
@@ -208,6 +223,27 @@ const styles = StyleSheet.create({
   checkboxNo: {
     backgroundColor: colors.rose,
     borderColor: colors.rose,
+  },
+  checkboxNA: {
+    backgroundColor: colors.gray,
+    borderColor: colors.gray,
+  },
+  // Legend
+  legend: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: 8,
+    gap: 12,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  legendLabel: {
+    fontSize: 7,
+    color: colors.grayDark,
   },
   checkmark: {
     fontSize: 9,
@@ -305,6 +341,13 @@ function Checkbox({ answer }: { answer: Answer }) {
       </View>
     );
   }
+  if (answer === "NA") {
+    return (
+      <View style={[styles.checkbox, styles.checkboxNA]}>
+        <Text style={styles.checkmark}>—</Text>
+      </View>
+    );
+  }
   return <View style={styles.checkbox} />;
 }
 
@@ -320,17 +363,21 @@ function TableRow({
   answer: Answer;
   isLast: boolean;
 }) {
+  const isNA = answer === "NA";
   return (
     <View style={[
       styles.tableRow,
       isLast ? styles.tableRowLast : {},
-      index % 2 === 1 ? styles.tableRowAlt : {},
+      isNA ? styles.tableRowNA : index % 2 === 1 ? styles.tableRowAlt : {},
     ]}>
       <View style={styles.numberCell}>
-        <Text style={styles.numberText}>{index + 1}</Text>
+        <Text style={[styles.numberText, isNA ? { color: colors.grayLight } : {}]}>{index + 1}</Text>
       </View>
       <View style={styles.textCell}>
-        <Text style={styles.itemText}>{item.text}</Text>
+        <Text style={isNA ? styles.itemTextNA : styles.itemText}>
+          {item.text}
+        </Text>
+        {isNA && <Text style={styles.naLabel}>Not applicable</Text>}
       </View>
       <View style={styles.checkboxCell}>
         <Checkbox answer={answer} />
@@ -351,6 +398,10 @@ function ChecklistSection({
   answers: Record<string, Answer>;
   startIndex?: number;
 }) {
+  const visibleItems = items.filter(
+    (item) => !item.conditionalOn || answers[item.conditionalOn] === "Y"
+  );
+
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
@@ -368,13 +419,13 @@ function ChecklistSection({
             <Text style={styles.tableHeaderCell}>✓</Text>
           </View>
         </View>
-        {items.map((item, index) => (
+        {visibleItems.map((item, index) => (
           <TableRow
             key={item.id}
             item={item}
             index={startIndex + index}
             answer={answers[item.id] ?? null}
-            isLast={index === items.length - 1}
+            isLast={index === visibleItems.length - 1}
           />
         ))}
       </View>
@@ -422,6 +473,32 @@ export function GetReadyChecklistPDF({ data }: { data: ChecklistData }) {
           </View>
         </View>
 
+        {/* Legend */}
+        <View style={styles.legend}>
+          <View style={styles.legendItem}>
+            <View style={[styles.checkbox, styles.checkboxChecked, { width: 10, height: 10 }]}>
+              <Text style={[styles.checkmark, { fontSize: 7 }]}>✓</Text>
+            </View>
+            <Text style={styles.legendLabel}>Yes</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.checkbox, styles.checkboxNo, { width: 10, height: 10 }]}>
+              <Text style={[styles.checkmark, { fontSize: 7 }]}>✗</Text>
+            </View>
+            <Text style={styles.legendLabel}>No</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.checkbox, styles.checkboxNA, { width: 10, height: 10 }]}>
+              <Text style={[styles.checkmark, { fontSize: 7 }]}>—</Text>
+            </View>
+            <Text style={styles.legendLabel}>N/A</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.checkbox, { width: 10, height: 10 }]} />
+            <Text style={styles.legendLabel}>Unanswered</Text>
+          </View>
+        </View>
+
         {/* Data Collection Section */}
         <ChecklistSection
           title="Section 1: Data Collection"
@@ -435,7 +512,9 @@ export function GetReadyChecklistPDF({ data }: { data: ChecklistData }) {
           title="Section 2: General Preparation"
           items={GENERAL_ITEMS}
           answers={data.answers}
-          startIndex={DATA_COLLECTION_ITEMS.length}
+          startIndex={DATA_COLLECTION_ITEMS.filter(
+            (item) => !item.conditionalOn || data.answers[item.conditionalOn] === "Y"
+          ).length}
         />
 
         {/* Notes Section */}

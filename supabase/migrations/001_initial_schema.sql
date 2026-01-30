@@ -24,7 +24,7 @@ CREATE TABLE leads (
   name TEXT,
   role user_role,
   email_domain TEXT, -- Extracted from email (null for personal domains)
-  marketing_consent BOOLEAN NOT NULL DEFAULT false,
+  marketing_consent BOOLEAN NOT NULL DEFAULT true,
   is_test BOOLEAN NOT NULL DEFAULT false, -- Flag for E2E test data
   user_id UUID, -- For V2: link to auth.users
   claimed_at TIMESTAMPTZ, -- When linked to authenticated user

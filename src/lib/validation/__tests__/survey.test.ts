@@ -173,12 +173,12 @@ describe('leadSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('defaults marketingConsent to false', () => {
+  it('defaults marketingConsent to true', () => {
     const result = leadSchema.safeParse({ email: 'user@example.com' })
 
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.marketingConsent).toBe(false)
+      expect(result.data.marketingConsent).toBe(true)
     }
   })
 })
