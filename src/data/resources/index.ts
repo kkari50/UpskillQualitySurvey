@@ -528,18 +528,8 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
         title: "Parker et al. (2023)",
         description:
           "Research on effective goal documentation and implementation strategies.",
-        url: "/resources/supervision/parker-2023.pdf",
+        url: "https://doi.org/10.1007/s40617-022-00726-4",
         type: "research",
-        viewerType: "pdf-modal",
-      },
-      {
-        id: "sup-program-component-list",
-        title: "Program Component List",
-        description:
-          "A checklist of essential program components to review during supervision.",
-        url: "/resources/supervision/program-component-list.pdf",
-        type: "checklist",
-        viewerType: "pdf-modal",
       },
       {
         id: "sup-program-info-eval",
