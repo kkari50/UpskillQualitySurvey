@@ -10,7 +10,6 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { percentileQuerySchema } from '@/lib/validation/survey';
 import { calculatePercentile } from '@/lib/scoring';
 
-const MIN_RESPONSES = 10;
 
 export async function GET(request: NextRequest) {
   try {
@@ -55,14 +54,13 @@ export async function GET(request: NextRequest) {
     const totalResponses =
       distribution?.reduce((sum, d) => sum + (d.frequency ?? 0), 0) ?? 0;
 
-    if (totalResponses < MIN_RESPONSES) {
+    if (totalResponses === 0) {
       return NextResponse.json({
         score,
         percentile: null,
-        message: 'Not enough data for percentile calculation',
+        message: 'No data for percentile calculation',
         meta: {
-          minRequired: MIN_RESPONSES,
-          currentCount: totalResponses,
+          currentCount: 0,
         },
       });
     }

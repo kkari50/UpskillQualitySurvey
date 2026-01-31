@@ -20,7 +20,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { QUESTIONS } from "@/data/questions/v1.0";
-import { StatCard, PieChartCard, HorizontalBarChartCard, FetchResultsForm } from "@/components/results";
+import { StatCard, PieChartCard, HorizontalBarChartCard, ScoreHistogramCard, FetchResultsForm } from "@/components/results";
 
 interface PopulationStats {
   available: boolean;
@@ -40,6 +40,12 @@ interface PopulationStats {
       moderate: number;
       needsImprovement: number;
     };
+    histogram: Array<{
+      range: string;
+      label: string;
+      tier: string;
+      count: number;
+    }>;
   };
   meta?: {
     surveyVersion: string;
@@ -47,6 +53,23 @@ interface PopulationStats {
     currentCount?: number;
   };
 }
+
+interface AgencySizeStats {
+  available: boolean;
+  data: Array<{
+    agencySize: string;
+    totalResponses: number;
+    avgPercentage: number;
+    medianScore: number;
+  }>;
+}
+
+const agencySizeLabels: Record<string, string> = {
+  solo_small: "Solo / Small (1-10)",
+  medium: "Medium (11-50)",
+  large: "Large (51-200)",
+  enterprise: "Enterprise (200+)",
+};
 
 
 // Category display names and order
@@ -80,18 +103,27 @@ function truncateText(text: string, maxLength: number = 80): string {
 
 export default function ResultsPage() {
   const [stats, setStats] = useState<PopulationStats | null>(null);
+  const [agencySizeStats, setAgencySizeStats] = useState<AgencySizeStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch population stats on mount
+  // Fetch population stats and agency size stats on mount
   useEffect(() => {
     async function fetchStats() {
       try {
-        const response = await fetch("/api/stats");
-        const data = await response.json();
-        setStats(data);
+        const [statsRes, agencySizeRes] = await Promise.all([
+          fetch("/api/stats"),
+          fetch("/api/stats/by-agency-size"),
+        ]);
+        const [statsData, agencySizeData] = await Promise.all([
+          statsRes.json(),
+          agencySizeRes.json(),
+        ]);
+        setStats(statsData);
+        setAgencySizeStats(agencySizeData);
       } catch (error) {
         console.error("Failed to fetch stats:", error);
         setStats({ available: false });
+        setAgencySizeStats({ available: false, data: [] });
       } finally {
         setLoading(false);
       }
@@ -136,7 +168,7 @@ export default function ResultsPage() {
             ) : stats?.available && stats.data ? (
               <>
                 {/* Summary Stats Row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <StatCard
                     value={stats.data.overall.totalResponses.toLocaleString()}
                     label="Total Responses"
@@ -144,21 +176,29 @@ export default function ResultsPage() {
                   <StatCard
                     value={`${stats.data.overall.avgPercentage}%`}
                     label="Average Score"
-                    trend={stats.data.overall.avgPercentage >= 75 ? 'up' : stats.data.overall.avgPercentage >= 60 ? 'neutral' : 'down'}
-                  />
-                  <StatCard
-                    value={stats.data.distribution.strong}
-                    label="Strong Alignment"
-                    trend="up"
-                  />
-                  <StatCard
-                    value={stats.data.distribution.needsImprovement}
-                    label="Needs Improvement"
-                    trend="down"
+                    trend={stats.data.overall.avgPercentage >= 90 ? 'up' : stats.data.overall.avgPercentage >= 70 ? 'neutral' : 'down'}
                   />
                 </div>
 
-                {/* Charts Row */}
+                {/* CTA */}
+                <Card className="bg-gradient-to-r from-teal-50 to-emerald-50 border-teal-200">
+                  <CardContent className="py-8 text-center">
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      Ready to See How You Compare?
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Take our 5-minute assessment to see your personalized results
+                    </p>
+                    <Button asChild size="lg">
+                      <Link href="/survey">
+                        Take the Assessment
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Charts Row 1: Pie Chart + Histogram */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Performance Distribution Pie Chart */}
                   <PieChartCard
@@ -166,17 +206,17 @@ export default function ResultsPage() {
                     description={`How ${stats.data.overall.totalResponses.toLocaleString()} respondents scored`}
                     data={[
                       {
-                        name: 'Strong (85%+)',
+                        name: 'Strong (90%+)',
                         value: stats.data.distribution.strong,
                         color: 'hsl(160, 84%, 39%)',
                       },
                       {
-                        name: 'Moderate (60-84%)',
+                        name: 'Moderate (70-89%)',
                         value: stats.data.distribution.moderate,
                         color: 'hsl(38, 92%, 50%)',
                       },
                       {
-                        name: 'Needs Work (<60%)',
+                        name: 'Needs Work (<70%)',
                         value: stats.data.distribution.needsImprovement,
                         color: 'hsl(351, 95%, 71%)', // rose-400 #FB7185
                       },
@@ -185,20 +225,41 @@ export default function ResultsPage() {
                     centerValue={stats.data.overall.totalResponses}
                   />
 
-                  {/* Category Averages Bar Chart */}
+                  {/* Score Distribution Histogram */}
+                  <ScoreHistogramCard data={stats.data.histogram} totalResponses={stats.data.overall.totalResponses} />
+                </div>
+
+                {/* Charts Row 2: Category Bars + Agency Size */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <HorizontalBarChartCard
                     title="Category Averages"
                     description="Average scores by category across all respondents"
                     data={categoryOrder.map((key) => ({
                       name: categoryNames[key] || key,
                       value: stats.data!.categories[key]?.avgPercentage || 0,
-                      color: (stats.data!.categories[key]?.avgPercentage || 0) >= 85
+                      color: (stats.data!.categories[key]?.avgPercentage || 0) >= 90
                         ? 'hsl(160, 84%, 39%)' // emerald-500
-                        : (stats.data!.categories[key]?.avgPercentage || 0) >= 60
+                        : (stats.data!.categories[key]?.avgPercentage || 0) >= 70
                         ? 'hsl(38, 92%, 50%)' // amber-500
                         : 'hsl(351, 95%, 71%)', // rose-400 #FB7185
                     }))}
                   />
+
+                  {agencySizeStats?.available && agencySizeStats.data.length > 0 && (
+                    <HorizontalBarChartCard
+                      title="Scores by Agency Size"
+                      description="Average scores segmented by agency size (BCBAs on staff)"
+                      data={agencySizeStats.data.map((s) => ({
+                        name: agencySizeLabels[s.agencySize] || s.agencySize,
+                        value: s.avgPercentage,
+                        color: s.avgPercentage >= 90
+                          ? 'hsl(160, 84%, 39%)'
+                          : s.avgPercentage >= 70
+                          ? 'hsl(38, 92%, 50%)'
+                          : 'hsl(351, 95%, 71%)',
+                      }))}
+                    />
+                  )}
                 </div>
 
                 {/* Top & Bottom Practices */}
@@ -283,23 +344,6 @@ export default function ResultsPage() {
                   </CardContent>
                 </Card>
 
-                {/* CTA */}
-                <Card className="bg-gradient-to-r from-teal-50 to-emerald-50 border-teal-200">
-                  <CardContent className="py-8 text-center">
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
-                      Ready to See How You Compare?
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      Take our 5-minute assessment to see your personalized results
-                    </p>
-                    <Button asChild size="lg">
-                      <Link href="/survey">
-                        Take the Assessment
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
               </>
             ) : (
               <Card>
@@ -309,13 +353,8 @@ export default function ResultsPage() {
                     Building Our Benchmarks
                   </h3>
                   <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-                    We need at least {stats?.meta?.minRequired || 10} survey responses to
-                    show meaningful population statistics.
-                    {stats?.meta?.currentCount !== undefined && (
-                      <span className="block mt-2 text-sm">
-                        Current: {stats.meta.currentCount} responses
-                      </span>
-                    )}
+                    No survey responses yet. Take the assessment to be the first
+                    to contribute to our population benchmarks.
                   </p>
                   <Button asChild>
                     <Link href="/survey">

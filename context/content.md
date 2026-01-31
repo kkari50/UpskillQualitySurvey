@@ -173,9 +173,9 @@ This document contains all copywriting and content for the application.
 > {score}/{max} ({percentage}%)
 
 **Performance Labels:**
-- **Strong Alignment** (85%+): "Excellent! Your quality infrastructure is well-established."
-- **Moderate Alignment** (60-84%): "Good foundation with room for targeted improvements."
-- **Needs Improvement** (<60%): "Opportunity to strengthen your quality practices."
+- **Strong Alignment** (90%+): "Excellent! Your quality infrastructure is well-established."
+- **Moderate Alignment** (70-89%): "Good foundation with room for targeted improvements."
+- **Needs Improvement** (<70%): "Opportunity to strengthen your quality practices."
 
 ---
 

@@ -33,8 +33,8 @@ function MiniProgress({ percentage, delay }: { percentage: number; delay: number
 
   // Color based on score
   const getStrokeColor = () => {
-    if (percentage >= 85) return "stroke-emerald-500";
-    if (percentage >= 60) return "stroke-amber-500";
+    if (percentage >= 90) return "stroke-emerald-500";
+    if (percentage >= 70) return "stroke-amber-500";
     return "stroke-rose-400";
   };
 

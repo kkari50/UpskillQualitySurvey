@@ -9,8 +9,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { statsQuerySchema } from '@/lib/validation/survey';
 
-const MIN_RESPONSES = 10;
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -44,16 +42,15 @@ export async function GET(request: NextRequest) {
       console.error('Survey stats error:', statsError);
     }
 
-    // Check minimum responses threshold
-    if (!surveyStats || (surveyStats.total_responses ?? 0) < MIN_RESPONSES) {
+    // No data at all
+    if (!surveyStats || (surveyStats.total_responses ?? 0) === 0) {
       return NextResponse.json({
         available: false,
-        message: 'Not enough responses for comparison data',
+        message: 'No responses yet',
         data: null,
         meta: {
           surveyVersion: parsed.data.version,
-          minRequired: MIN_RESPONSES,
-          currentCount: surveyStats?.total_responses ?? 0,
+          currentCount: 0,
         },
       });
     }
@@ -71,7 +68,7 @@ export async function GET(request: NextRequest) {
       .eq('survey_version', parsed.data.version);
 
     // Get performance distribution (count by tier)
-    // Strong: 85%+ (24-28), Moderate: 60-84% (17-23), Needs Improvement: <60% (0-16)
+    // Strong: 90%+ (26-28), Moderate: 70-89% (20-25), Needs Improvement: <70% (0-19)
     const { data: allScores } = await supabase
       .from('survey_responses')
       .select('total_score')
@@ -79,21 +76,43 @@ export async function GET(request: NextRequest) {
       .eq('is_test', false);
 
     const distribution = {
-      strong: 0,      // 85%+ (score >= 24)
-      moderate: 0,    // 60-84% (score 17-23)
-      needsImprovement: 0,  // <60% (score <= 16)
+      strong: 0,      // 90%+ (score >= 26)
+      moderate: 0,    // 70-89% (score 20-25)
+      needsImprovement: 0,  // <70% (score <= 19)
     };
 
     if (allScores) {
       allScores.forEach((r) => {
         const score = r.total_score ?? 0;
-        if (score >= 24) {
+        if (score >= 26) {
           distribution.strong++;
-        } else if (score >= 17) {
+        } else if (score >= 20) {
           distribution.moderate++;
         } else {
           distribution.needsImprovement++;
         }
+      });
+    }
+
+    // Build histogram bins from allScores
+    const histogramBins = [
+      { range: '0-4', label: 'Needs Improvement', tier: 'needs_improvement', count: 0 },
+      { range: '5-9', label: 'Needs Improvement', tier: 'needs_improvement', count: 0 },
+      { range: '10-14', label: 'Needs Improvement', tier: 'needs_improvement', count: 0 },
+      { range: '15-19', label: 'Needs Improvement', tier: 'needs_improvement', count: 0 },
+      { range: '20-25', label: 'Moderate', tier: 'moderate', count: 0 },
+      { range: '26-28', label: 'Strong', tier: 'strong', count: 0 },
+    ];
+
+    if (allScores) {
+      allScores.forEach((r) => {
+        const score = r.total_score ?? 0;
+        if (score <= 4) histogramBins[0].count++;
+        else if (score <= 9) histogramBins[1].count++;
+        else if (score <= 14) histogramBins[2].count++;
+        else if (score <= 19) histogramBins[3].count++;
+        else if (score <= 25) histogramBins[4].count++;
+        else histogramBins[5].count++;
       });
     }
 
@@ -108,6 +127,8 @@ export async function GET(request: NextRequest) {
           medianScore: surveyStats.median_score,
           p25Score: surveyStats.p25_score,
           p75Score: surveyStats.p75_score,
+          minScore: surveyStats.min_score ?? 0,
+          maxScore: surveyStats.max_score ?? 0,
         },
         questions:
           questionStats?.reduce(
@@ -131,6 +152,7 @@ export async function GET(request: NextRequest) {
             {} as Record<string, { avgPercentage: number }>
           ) ?? {},
         distribution,
+        histogram: histogramBins,
       },
       meta: {
         surveyVersion: parsed.data.version,

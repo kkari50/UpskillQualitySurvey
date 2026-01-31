@@ -16,9 +16,9 @@ interface ResultsHeroProps {
 }
 
 // Colors per style-guide.md Section 3.4:
-// Strong (85%+): emerald-500 (#10B981)
-// Moderate (60-84%): amber-500 (#F59E0B)
-// Needs Improvement (<60%): rose-400 (#FB7185)
+// Strong (90%+): emerald-500 (#10B981)
+// Moderate (70-89%): amber-500 (#F59E0B)
+// Needs Improvement (<70%): rose-400 (#FB7185)
 const colorMap: Record<string, { badge: string; ring: string; stroke: string }> = {
   emerald: {
     badge: "bg-emerald-100 text-emerald-700",

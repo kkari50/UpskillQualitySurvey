@@ -449,29 +449,29 @@ describe('getScoreSummary', () => {
 // =============================================================================
 
 describe('getPerformanceLevel', () => {
-  it('returns "strong" for percentage >= 85', () => {
-    expect(getPerformanceLevel(85)).toBe('strong')
+  it('returns "strong" for percentage >= 90', () => {
     expect(getPerformanceLevel(90)).toBe('strong')
+    expect(getPerformanceLevel(95)).toBe('strong')
     expect(getPerformanceLevel(100)).toBe('strong')
   })
 
-  it('returns "moderate" for percentage 60-84', () => {
-    expect(getPerformanceLevel(60)).toBe('moderate')
+  it('returns "moderate" for percentage 70-89', () => {
     expect(getPerformanceLevel(70)).toBe('moderate')
-    expect(getPerformanceLevel(84)).toBe('moderate')
+    expect(getPerformanceLevel(80)).toBe('moderate')
+    expect(getPerformanceLevel(89)).toBe('moderate')
   })
 
-  it('returns "needs_improvement" for percentage < 60', () => {
+  it('returns "needs_improvement" for percentage < 70', () => {
     expect(getPerformanceLevel(0)).toBe('needs_improvement')
     expect(getPerformanceLevel(30)).toBe('needs_improvement')
-    expect(getPerformanceLevel(59)).toBe('needs_improvement')
+    expect(getPerformanceLevel(69)).toBe('needs_improvement')
   })
 
   it('handles boundary values correctly', () => {
-    expect(getPerformanceLevel(59)).toBe('needs_improvement')
-    expect(getPerformanceLevel(60)).toBe('moderate')
-    expect(getPerformanceLevel(84)).toBe('moderate')
-    expect(getPerformanceLevel(85)).toBe('strong')
+    expect(getPerformanceLevel(69)).toBe('needs_improvement')
+    expect(getPerformanceLevel(70)).toBe('moderate')
+    expect(getPerformanceLevel(89)).toBe('moderate')
+    expect(getPerformanceLevel(90)).toBe('strong')
   })
 })
 

@@ -16,6 +16,9 @@ export type Database = {
           name: string | null
           role: Database["public"]["Enums"]["user_role"] | null
           email_domain: string | null
+          agency_size: string | null
+          primary_setting: string | null
+          state: string | null
           marketing_consent: boolean
           is_test: boolean
           user_id: string | null
@@ -29,6 +32,9 @@ export type Database = {
           name?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           email_domain?: string | null
+          agency_size?: string | null
+          primary_setting?: string | null
+          state?: string | null
           marketing_consent?: boolean
           is_test?: boolean
           user_id?: string | null
@@ -42,6 +48,9 @@ export type Database = {
           name?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           email_domain?: string | null
+          agency_size?: string | null
+          primary_setting?: string | null
+          state?: string | null
           marketing_consent?: boolean
           is_test?: boolean
           user_id?: string | null
@@ -61,6 +70,10 @@ export type Database = {
           results_token: string
           is_test: boolean
           completed_at: string
+          agency_size: string | null
+          role: string | null
+          primary_setting: string | null
+          state: string | null
         }
         Insert: {
           id?: string
@@ -71,6 +84,10 @@ export type Database = {
           results_token: string
           is_test?: boolean
           completed_at?: string
+          agency_size?: string | null
+          role?: string | null
+          primary_setting?: string | null
+          state?: string | null
         }
         Update: {
           id?: string
@@ -81,6 +98,10 @@ export type Database = {
           results_token?: string
           is_test?: boolean
           completed_at?: string
+          agency_size?: string | null
+          role?: string | null
+          primary_setting?: string | null
+          state?: string | null
         }
         Relationships: [
           {
@@ -173,6 +194,56 @@ export type Database = {
         }
         Relationships: []
       }
+      stats_by_agency_size: {
+        Row: {
+          survey_version: string | null
+          agency_size: string | null
+          total_responses: number | null
+          avg_score: number | null
+          avg_percentage: number | null
+          median_score: number | null
+        }
+        Relationships: []
+      }
+      stats_by_setting: {
+        Row: {
+          survey_version: string | null
+          primary_setting: string | null
+          total_responses: number | null
+          avg_score: number | null
+          avg_percentage: number | null
+          median_score: number | null
+        }
+        Relationships: []
+      }
+      stats_by_state: {
+        Row: {
+          survey_version: string | null
+          state: string | null
+          total_responses: number | null
+          avg_score: number | null
+          avg_percentage: number | null
+          median_score: number | null
+        }
+        Relationships: []
+      }
+      latest_survey_responses: {
+        Row: {
+          id: string
+          lead_id: string
+          survey_version: string
+          total_score: number
+          max_possible_score: number
+          results_token: string
+          is_test: boolean
+          completed_at: string
+          agency_size: string | null
+          role: string | null
+          primary_setting: string | null
+          state: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       cleanup_test_data: {
@@ -234,5 +305,9 @@ export type SurveyStats = Views<"survey_stats">
 export type QuestionStats = Views<"question_stats">
 export type CategoryStats = Views<"category_stats">
 export type ScoreDistribution = Views<"score_distribution">
+export type StatsByAgencySize = Views<"stats_by_agency_size">
+export type StatsBySetting = Views<"stats_by_setting">
+export type StatsByState = Views<"stats_by_state">
+export type LatestSurveyResponse = Views<"latest_survey_responses">
 
 export type UserRole = Enums<"user_role">

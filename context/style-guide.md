@@ -71,9 +71,9 @@ Update `tailwind.config.ts` with UpskillABA brand colors (see Section 3).
 |-------|-----|----------|-------|
 | `success` | `#10B981` | `emerald-500` | Yes responses, high scores |
 | `success-soft` | `#D1FAE5` | `emerald-100` | Success backgrounds |
-| `warning` | `#F59E0B` | `amber-500` | Moderate scores (60-84%) |
+| `warning` | `#F59E0B` | `amber-500` | Moderate scores (70-89%) |
 | `warning-soft` | `#FEF3C7` | `amber-100` | Warning backgrounds |
-| `attention` | `#FB7185` | `rose-400` | No responses, low scores (<60%) |
+| `attention` | `#FB7185` | `rose-400` | No responses, low scores (<70%) |
 | `attention-soft` | `#FFE4E6` | `rose-100` | Attention backgrounds |
 
 > Using `rose-400` instead of dark red - softer, modern, less alarming
@@ -95,9 +95,9 @@ Update `tailwind.config.ts` with UpskillABA brand colors (see Section 3).
 
 | Performance Level | Score Range | Color | Hex |
 |-------------------|-------------|-------|-----|
-| Strong Alignment | 85-100% (23-27) | Emerald | `#10B981` |
-| Moderate Alignment | 60-84% (16-22) | Amber | `#F59E0B` |
-| Needs Improvement | <60% (0-15) | Rose | `#FB7185` |
+| Strong Alignment | 90-100% (26-28) | Emerald | `#10B981` |
+| Moderate Alignment | 70-89% (20-25) | Amber | `#F59E0B` |
+| Needs Improvement | <70% (0-19) | Rose | `#FB7185` |
 
 ---
 
@@ -450,9 +450,9 @@ function HeroCircularProgress({ percentage, strokeColor }) {
 
 // Stroke colors per Section 3.4
 const strokeColors = {
-  emerald: "stroke-emerald-500", // Strong (85%+)
-  amber: "stroke-amber-500",     // Moderate (60-84%)
-  rose: "stroke-rose-400",       // Needs Improvement (<60%)
+  emerald: "stroke-emerald-500", // Strong (90%+)
+  amber: "stroke-amber-500",     // Moderate (70-89%)
+  rose: "stroke-rose-400",       // Needs Improvement (<70%)
 };
 ```
 

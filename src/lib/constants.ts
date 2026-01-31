@@ -15,7 +15,7 @@ export const APP_URL = process.env.NEXT_PUBLIC_URL ?? 'http://localhost:3000'
 export const BRAND_URL = 'https://upskillaba.com'
 
 // Privacy & Stats thresholds
-export const MIN_RESPONSES_FOR_STATS = 10 // Minimum responses before showing population comparison
+export const MIN_RESPONSES_FOR_STATS = 0 // Threshold disabled — show stats with any amount of data
 export const STATS_STALE_HOURS = 1 // Materialized views refresh hourly
 
 // Rate limits (requests per minute)

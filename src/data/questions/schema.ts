@@ -100,8 +100,8 @@ export type PerformanceLevel = 'strong' | 'moderate' | 'needs_improvement'
  * Performance thresholds
  */
 export const PERFORMANCE_THRESHOLDS = {
-  strong: { min: 85, label: 'Strong Alignment', color: 'emerald' },
-  moderate: { min: 60, label: 'Moderate Alignment', color: 'amber' },
+  strong: { min: 90, label: 'Strong Alignment', color: 'emerald' },
+  moderate: { min: 70, label: 'Moderate Alignment', color: 'amber' },
   needs_improvement: { min: 0, label: 'Needs Improvement', color: 'rose' },
 } as const
 

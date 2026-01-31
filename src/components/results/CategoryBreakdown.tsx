@@ -35,8 +35,8 @@ function CircularProgress({
 
   // Color based on score per style-guide.md Section 3.4
   const getStrokeColor = () => {
-    if (percentage >= 85) return "stroke-emerald-500"; // Strong - #10B981
-    if (percentage >= 60) return "stroke-amber-500";   // Moderate - #F59E0B
+    if (percentage >= 90) return "stroke-emerald-500"; // Strong - #10B981
+    if (percentage >= 70) return "stroke-amber-500";   // Moderate - #F59E0B
     return "stroke-rose-400";                          // Needs Improvement - #FB7185
   };
 

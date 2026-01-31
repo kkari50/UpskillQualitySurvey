@@ -403,9 +403,9 @@ Each decision follows this structure:
 **Implementation:**
 - SVG-based circular progress with animated fill
 - Colors follow Section 3.4 score thresholds:
-  - Strong (85%+): `emerald-500` (#10B981)
-  - Moderate (60-84%): `amber-500` (#F59E0B)
-  - Needs Improvement (<60%): `rose-400` (#FB7185)
+  - Strong (90%+): `emerald-500` (#10B981)
+  - Moderate (70-89%): `amber-500` (#F59E0B)
+  - Needs Improvement (<70%): `rose-400` (#FB7185)
 - 5-column grid on desktop (lg:grid-cols-5), responsive grid on smaller screens
 - Percentage displayed in center of ring
 
@@ -781,9 +781,9 @@ This made the question difficult to answer accurately since respondents might ha
 - Total survey questions: 27 → 28
 - Max score: 27 → 28
 - Performance thresholds updated:
-  - Strong: 85%+ (24-28)
-  - Moderate: 60-84% (17-23)
-  - Needs Improvement: <60% (0-16)
+  - Strong: 90%+ (26-28)
+  - Moderate: 70-89% (20-25)
+  - Needs Improvement: <70% (0-19)
 
 **Rationale:** Each question should measure a single, clear practice. Compound questions create ambiguity and reduce data quality. Splitting allows more precise identification of improvement areas.
 
@@ -1041,3 +1041,74 @@ interface Resource {
 - Ranking may not be available for all size categories initially
 - Need clear messaging for insufficient data
 - Consistent user expectations across features
+
+---
+
+### DES-010: Performance Threshold Update (85%/60% → 90%/70%)
+
+**Date:** January 2026
+
+**Context:** The original performance thresholds (Strong: 85%+, Moderate: 60-84%, Needs Improvement: <60%) were set during initial development. After review, thresholds were tightened to raise the bar for "Strong Alignment" and reduce the "Needs Improvement" range.
+
+**Decision:** Update performance thresholds:
+- Strong Alignment: 90%+ (26-28 out of 28)
+- Moderate Alignment: 70-89% (20-25 out of 28)
+- Needs Improvement: <70% (0-19 out of 28)
+
+**Rationale:** Higher thresholds encourage agencies to strive for higher quality standards. The original 85% threshold for "Strong" was too generous, and 60% for "Moderate" allowed too many low-performing agencies to avoid the "Needs Improvement" classification.
+
+**Consequences:**
+- Fewer agencies will initially qualify as "Strong Alignment"
+- More agencies may see "Needs Improvement" classification
+- Stronger incentive for quality improvement
+- All code, tests, and documentation updated to reflect new thresholds
+
+---
+
+### DES-011: Remove Box Plot Chart from Population Benchmarks
+
+**Date:** January 2026
+
+**Context:** A box plot (score spread) chart was added to the population benchmarks page showing min, Q1, median, Q3, and max as a horizontal stacked bar approximation. During review, the chart was found to be confusing for the target audience (ABA agency professionals, not data analysts). Concepts like quartiles and IQR require statistical literacy that cannot be assumed.
+
+**Decision:** Remove the box plot chart entirely. The score distribution histogram already conveys the distribution information in a more intuitive format (simple bar heights with count labels and tier colors).
+
+**Rationale:** If the product owner finds it confusing, end users will too. The histogram communicates the same story (where scores cluster) without requiring knowledge of statistical concepts. Added percentages to histogram bar labels for additional clarity.
+
+**Consequences:**
+- BoxPlotCard component and tests deleted
+- minScore/maxScore kept in API response (cheap data, may be useful later)
+- Histogram bar labels now show count and percentage (e.g., "20 (32%)")
+- Tooltip also shows percentage
+- Simpler, more intuitive benchmarks page
+
+---
+
+### DES-012: All Responses Count in Population Statistics
+
+**Date:** January 2026
+**Status:** Complete (revised)
+
+**Context:** Initially, population stats deduplicated by `lead_id` (only latest response per respondent). After review, the decision was reversed: each survey submission is a valid, independent data point. A respondent who retakes the survey provides new information about current practices at that moment, and deduplication discards useful data.
+
+**Decision:** Use **all non-test completed responses** for population statistics. Every submission counts. The `latest_survey_responses` view and demographic snapshot columns remain — they're useful for other features (e.g., trend-over-time, future per-user dashboards), just not for population aggregation.
+
+**What stays from previous dedup work:**
+- Snapshot columns on `survey_responses` (agency_size, role, primary_setting, state) — kept
+- Submit API snapshotting demographics at insert time — kept
+- `latest_survey_responses` view — kept (useful for future features)
+- Backfilled snapshot data — kept
+
+**What changed:**
+- Migration `009_population_stats_all_responses.sql`: recreates all 7 materialized views querying `survey_responses` directly (no `DISTINCT ON` CTE)
+- Stats API: queries `survey_responses` with `is_test = false` filter (not `latest_survey_responses`)
+- Results page: queries `survey_responses` with `is_test = false` and null filters (not `latest_survey_responses`)
+- Segmented views still use snapshot columns from `survey_responses` directly
+
+**Rationale:** Each survey submission captures a snapshot of practices at a specific moment. Repeat submissions reflect real changes over time and contribute valid data to the population picture. Deduplication discarded useful information and reduced sample sizes unnecessarily.
+
+**Consequences:**
+- `totalResponses` reflects total submissions, not unique respondents
+- Larger sample sizes for population statistics
+- Repeat respondents have proportional influence on averages (acceptable at current scale)
+- Historical responses with NULL snapshot columns excluded from segmented views via `IS NOT NULL` filters

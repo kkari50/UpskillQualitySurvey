@@ -4,6 +4,7 @@ import {
   ResultsHero,
   GapsList,
   PopulationComparison,
+  AgencySizeComparison,
   ShareButtons,
   TrendOverTime,
   SurveyClearer,
@@ -22,7 +23,6 @@ interface ResultsPageProps {
   params: Promise<{ token: string }>;
 }
 
-const MIN_RESPONSES = 10;
 
 function getOrdinalSuffix(n: number): string {
   const s = ["th", "st", "nd", "rd"];
@@ -95,7 +95,7 @@ async function getResultsData(token: string) {
     {} as SurveyAnswers
   );
 
-  // Get population stats using LIVE queries (not materialized views)
+  // Get population stats using LIVE queries (all non-test completed responses)
   let populationStats = null;
   let percentile: number | null = null;
 
@@ -111,7 +111,7 @@ async function getResultsData(token: string) {
 
     const totalResponses = allResponses?.length ?? 0;
 
-    if (totalResponses >= MIN_RESPONSES) {
+    if (totalResponses > 0) {
       // Calculate overall stats from live data
       const scores = allResponses!.map((r) => r.total_score ?? 0);
       const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
@@ -220,12 +220,45 @@ async function getResultsData(token: string) {
     // Ignore errors, just don't show trend
   }
 
+  // Get agency size comparison data
+  let agencySizeSegments: Array<{
+    agencySize: string;
+    totalResponses: number;
+    avgPercentage: number;
+    medianScore: number;
+  }> = [];
+  const userAgencySize = response.leads?.agency_size ?? null;
+
+  if (userAgencySize) {
+    try {
+      const { data: segments } = await supabase
+        .from("stats_by_agency_size")
+        .select("*")
+        .eq("survey_version", response.survey_version);
+
+      if (segments && segments.length > 0) {
+        agencySizeSegments = segments
+          .filter((s) => s.agency_size !== null)
+          .map((s) => ({
+            agencySize: s.agency_size!,
+            totalResponses: s.total_responses ?? 0,
+            avgPercentage: Math.round(s.avg_percentage ?? 0),
+            medianScore: s.median_score ?? 0,
+          }));
+      }
+    } catch {
+      // Ignore errors, just don't show agency size comparison
+    }
+  }
+
   return {
     response,
     answers,
     populationStats,
     percentile,
     historicalScores,
+    agencySizeSegments,
+    userAgencySize,
   };
 }
 
@@ -237,7 +270,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
     notFound();
   }
 
-  const { response, answers, populationStats, percentile, historicalScores } = data;
+  const { response, answers, populationStats, percentile, historicalScores, agencySizeSegments, userAgencySize } = data;
   const currentToken = response.results_token;
 
   // Calculate scores and summary
@@ -301,7 +334,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
               <StatCard
                 value={`${summary.percentage}%`}
                 label="Overall Score"
-                trend={summary.percentage >= 85 ? 'up' : summary.percentage >= 60 ? 'neutral' : 'down'}
+                trend={summary.percentage >= 90 ? 'up' : summary.percentage >= 70 ? 'neutral' : 'down'}
               />
               <StatCard
                 value={`${summary.total}/${summary.maxPossible}`}
@@ -334,9 +367,9 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
               data={summary.categories.map((c) => ({
                 name: c.name,
                 value: c.percentage,
-                color: c.percentage >= 85
+                color: c.percentage >= 90
                   ? 'hsl(160, 84%, 39%)' // emerald-500
-                  : c.percentage >= 60
+                  : c.percentage >= 70
                   ? 'hsl(38, 92%, 50%)' // amber-500
                   : 'hsl(351, 95%, 71%)', // rose-400 #FB7185
               }))}
@@ -357,7 +390,14 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
               percentile={percentile}
             />
 
-            {/* 5. Trend Over Time - "Here's your progress over time" (repeat users only) */}
+            {/* 5. Agency Size Comparison - "How you compare to similar-sized agencies" */}
+            <AgencySizeComparison
+              segments={agencySizeSegments}
+              userPercentage={summary.percentage}
+              userAgencySize={userAgencySize}
+            />
+
+            {/* 6. Trend Over Time - "Here's your progress over time" (repeat users only) */}
             <TrendOverTime historicalScores={historicalScores} currentToken={currentToken} />
 
             {/* 6. Share Your Results - "Share your results" */}

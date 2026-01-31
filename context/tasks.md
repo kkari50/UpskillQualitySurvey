@@ -253,10 +253,18 @@ This is the source of truth for all project tasks. Update status as work progres
 - [ ] Remove "Strong Alignment" count card from benchmarks (redundant with chart)
 - [ ] Remove "Needs Improvement" count card from benchmarks (redundant with chart)
 - [ ] Verify population benchmark hides when <10 responses
+- [ ] Fix Average Score trend arrow thresholds to match performance tiers (use 85%/60%, not 75%/60%)
+
+### Population Benchmarks Enhancements (`/results`)
+- [ ] Add candlestick/box plot chart showing score spread (min, P25, median, P75, max) — data already returned by `/api/stats`
+- [ ] Add score distribution histogram with finer bins (e.g., 0–4, 5–8, ..., 25–28) instead of only 3-tier grouping
+
+### Personalized Results Enhancements (`/results/[token]`)
+- [ ] Add segmented benchmarks by agency size — compare user's score to agencies their size (DB views `stats_by_agency_size` already exist, needs API wiring)
 
 ### Branding Integration
 - [!] Apply "Upskill ABA" branding (with space, not "UpskillABA") - need web artifacts from Kristen
-- [!] Integrate full logo (Blocked: waiting on Kristen)
+- [x] Integrate full logo
 - [!] Integrate avatar/icon logo (Blocked: waiting on Kristen)
 - [!] Apply color palette from brand guide (Blocked: waiting on Kristen)
 - [!] Apply fonts from brand guide (Blocked: waiting on Kristen)
@@ -353,6 +361,37 @@ This is the source of truth for all project tasks. Update status as work progres
 ## Bugs & Issues
 
 _No bugs reported yet._
+
+---
+
+## KPI Changes (January 2026)
+
+### Performance Threshold Update
+- [x] Update PERFORMANCE_THRESHOLDS from 85%/60% to 90%/70% (DES-010)
+- [x] Update all tests for new threshold boundaries
+- [x] Update hardcoded thresholds in stats API route (score cutoffs 24→26, 17→20)
+- [x] Update results page (trend arrow, pie labels, bar thresholds)
+- [x] Update individual results page (trend arrow, bar chart colors)
+- [x] Update CategoryBreakdown, ResultsHero, ScoreOverview components
+- [x] Update landing page MiniProgress thresholds
+- [x] Update all documentation (CLAUDE.md, style-guide, requirements, decisions, content)
+
+### Population Benchmarks Page Improvements
+- [x] Remove redundant "Strong Alignment" and "Needs Improvement" stat cards
+- [x] Update stat card grid from 4-column to 2-column layout
+- [x] Add Box Plot chart (Score Spread) with 5-number summary
+- [x] Add Score Distribution Histogram with tier-colored bins
+- [x] Extend stats API with minScore, maxScore, and histogram data
+
+### Segmented Benchmarks by Agency Size
+- [x] Add stats_by_agency_size view to database types
+- [x] Add agency_size column to leads table types
+- [x] Create GET /api/stats/by-agency-size endpoint
+- [x] Create AgencySizeComparison component with bar chart
+- [x] Integrate into individual results page (after PopulationComparison)
+
+### Data Accuracy
+- [x] Deduplicate survey responses in population statistics — use only latest response per respondent (DES-012)
 
 ---
 

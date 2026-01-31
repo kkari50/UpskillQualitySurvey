@@ -187,9 +187,9 @@ A web-based Quick Quality Assessment Survey tool for ABA (Applied Behavior Analy
 **Performance Thresholds:**
 | Level | Score Range | Meaning |
 |-------|-------------|---------|
-| Strong Alignment | 85-100% (24-28) | Well-established practices |
-| Moderate Alignment | 60-84% (17-23) | Room for improvement |
-| Needs Improvement | <60% (0-16) | Significant gaps |
+| Strong Alignment | 90-100% (26-28) | Well-established practices |
+| Moderate Alignment | 70-89% (20-25) | Room for improvement |
+| Needs Improvement | <70% (0-19) | Significant gaps |
 
 **Category Breakdown:**
 - Individual score per category
@@ -202,9 +202,9 @@ All score visualizations use consistent score-based coloring:
 
 | Performance Level | Score Range | Color | Tailwind |
 |-------------------|-------------|-------|----------|
-| Strong Alignment | 85-100% | Emerald | `emerald-500` (#10B981) |
-| Moderate Alignment | 60-84% | Amber | `amber-500` (#F59E0B) |
-| Needs Improvement | <60% | Rose | `rose-400` (#FB7185) |
+| Strong Alignment | 90-100% | Emerald | `emerald-500` (#10B981) |
+| Moderate Alignment | 70-89% | Amber | `amber-500` (#F59E0B) |
+| Needs Improvement | <70% | Rose | `rose-400` (#FB7185) |
 
 This applies to:
 - Overall score display: Circular progress ring (144px diameter, 10px stroke)

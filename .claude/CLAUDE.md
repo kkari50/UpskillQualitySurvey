@@ -390,7 +390,7 @@ See `CONTRIBUTING.md` for complete Git workflow documentation.
 - 28 Yes/No questions across 5 categories
 - Categories: Daily Sessions (7), Treatment Fidelity (5), Data Analysis (6), Caregiver Guidance (6), Supervision (4)
 - Score = count of "Yes" answers
-- Performance levels: Strong (85%+), Moderate (60-84%), Needs Improvement (<60%)
+- Performance levels: Strong (90%+), Moderate (70-89%), Needs Improvement (<70%)
 
 ## Brand
 

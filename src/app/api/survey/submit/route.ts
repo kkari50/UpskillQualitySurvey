@@ -131,6 +131,11 @@ export async function POST(request: NextRequest) {
         max_possible_score: scores.maxPossible,
         results_token: resultsToken,
         is_test: isTest,
+        // Snapshot demographics at submission time
+        agency_size: lead.agencySize || null,
+        role: lead.role || null,
+        primary_setting: lead.primarySetting || null,
+        state: lead.state || null,
       })
       .select()
       .single();
