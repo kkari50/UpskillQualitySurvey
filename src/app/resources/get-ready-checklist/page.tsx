@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { Download, Printer, RotateCcw, Loader2, Check, X, Minus, CalendarIcon } from "lucide-react";
+import { Download, RotateCcw, Loader2, Check, X, Minus, CalendarIcon } from "lucide-react";
 
 import { Header, Footer } from "@/components/layout";
 import { ResourceNotice } from "@/components/layout/ResourceNotice";
@@ -40,10 +40,6 @@ export default function GetReadyChecklistPage() {
     setName("");
     setNotes("");
     setAnswers({});
-  };
-
-  const handlePrint = () => {
-    window.print();
   };
 
   const handleDownloadPDF = async () => {
@@ -427,15 +423,6 @@ export default function GetReadyChecklistPage() {
               {isGenerating ? "Generating..." : "Download PDF"}
             </Button>
             <Button
-              onClick={handlePrint}
-              size="lg"
-              variant="outline"
-              className="border-slate-300 hover:bg-slate-50"
-            >
-              <Printer className="w-4 h-4 mr-2" />
-              Print
-            </Button>
-            <Button
               onClick={handleReset}
               size="lg"
               variant="outline"
@@ -451,13 +438,6 @@ export default function GetReadyChecklistPage() {
 
       <Footer />
 
-      <style jsx global>{`
-        @media print {
-          .print\\:hidden {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

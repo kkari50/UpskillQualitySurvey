@@ -4,7 +4,6 @@ import { useState } from "react";
 import { format } from "date-fns";
 import {
   Download,
-  Printer,
   RotateCcw,
   Loader2,
   Plus,
@@ -85,10 +84,6 @@ export default function BuildingNewPreferencesPage() {
     setTherapistName("");
     setEntries([{ ...INITIAL_ENTRY, id: generateId() }]);
     setNotes("");
-  };
-
-  const handlePrint = () => {
-    window.print();
   };
 
   const handleDownloadPDF = async () => {
@@ -480,15 +475,6 @@ export default function BuildingNewPreferencesPage() {
               {isGenerating ? "Generating..." : "Download PDF"}
             </Button>
             <Button
-              onClick={handlePrint}
-              size="lg"
-              variant="outline"
-              className="border-slate-300 hover:bg-slate-50"
-            >
-              <Printer className="w-4 h-4 mr-2" />
-              Print
-            </Button>
-            <Button
               onClick={handleReset}
               size="lg"
               variant="outline"
@@ -503,13 +489,6 @@ export default function BuildingNewPreferencesPage() {
 
       <Footer />
 
-      <style jsx global>{`
-        @media print {
-          .print\\:hidden {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
