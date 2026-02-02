@@ -263,11 +263,11 @@ export const QUESTION_INSIGHTS: QuestionInsight[] = [
       },
       {
         id: "behavior-intensity-scale",
-        title: "Behavior Intensity Scale",
+        title: "Intensity Measure Development Quick Reference",
         description:
-          "An interactive tool to log and track behavior intensity (0-7) during observations using the standardized IRS from Reeve & Carr (2000).",
+          "A job aid for developing behavior-specific intensity scales (0-7) with inter-observer agreement targets and rater training guidance.",
         url: "/resources/behavior-intensity-scale",
-        type: "tool",
+        type: "guide",
       },
     ],
   },
